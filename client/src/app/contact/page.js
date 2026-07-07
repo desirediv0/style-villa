@@ -103,7 +103,7 @@ export default function ContactPage() {
 
             {/* Email */}
             <a
-              href="mailto:stylevillabypoojakhan@gmail.com"
+              href="mailto:stylevilla@gmail.com"
               className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300"
             >
               <div className="w-12 h-12 bg-blue-50 text-[#14A8E6] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#14A8E6] group-hover:text-white transition-all duration-300">
@@ -111,7 +111,7 @@ export default function ContactPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Email</h4>
-                <p className="text-xs text-gray-400 mt-0.5 break-all">stylevillabypoojakhan@gmail.com</p>
+                <p className="text-xs text-gray-400 mt-0.5 break-all">stylevilla@gmail.com</p>
               </div>
               <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-[#14A8E6] group-hover:translate-x-1 transition-all" />
             </a>

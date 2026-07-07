@@ -32,7 +32,7 @@ import {
 } from "@tabler/icons-react";
 
 const CONTACT = {
-  email: "stylevillabypoojakhan@gmail.com",
+  email: "stylevilla@gmail.com",
   phone: "+91 87964 49692",
   whatsapp: "918796449692",
 };

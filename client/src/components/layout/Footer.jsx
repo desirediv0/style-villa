@@ -162,11 +162,11 @@ export const Footer = () => {
                 </div>
                 <span>+91 87964 49692</span>
               </a>
-              <a href="mailto:stylevillabypoojakhan@gmail.com" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-[#A458A6] transition-colors group">
+              <a href="mailto:stylevilla@gmail.com" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-[#A458A6] transition-colors group">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-100 group-hover:bg-purple-50 transition-colors flex-shrink-0">
                   <Mail className="h-3.5 w-3.5 text-gray-400 group-hover:text-[#A458A6]" />
                 </div>
-                <span className="break-all text-xs">stylevillabypoojakhan@gmail.com</span>
+                <span className="break-all text-xs">stylevilla@gmail.com</span>
               </a>
               <a href="https://maps.app.goo.gl/MTy3mYLeAXTr7jxP" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-[#A458A6] transition-colors group">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-100 group-hover:bg-purple-50 transition-colors flex-shrink-0">

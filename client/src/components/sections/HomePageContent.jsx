@@ -234,37 +234,118 @@ export default function HomePageContent() {
       dateText: dbSection?.description || defaultBanner.dateText,
     };
 
+    // Alternate banner card position: Left on featured, bestseller, new; Right on latest, trending
+    const isEven = ["featured", "bestseller", "new"].includes(key.toLowerCase());
+
     return (
-      <section className="py-16 md:py-20 bg-white">
+      <section className="py-16 md:py-24 bg-white overflow-hidden border-b border-gray-100/50">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <Reveal>
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.3em] font-medium block mb-2" style={{ color: "#A458A6" }}>
-                  {banner.tag}
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
-                  {banner.title?.toLowerCase()}
-                  {banner.subtitle && (
-                    <span className="font-light text-gray-400 ml-2">{banner.subtitle?.toLowerCase()}</span>
-                  )}
-                </h2>
-                {banner.dateText && (
-                  <p className="text-sm text-gray-500 mt-2 max-w-md">{banner.dateText}</p>
-                )}
-              </div>
-              <Link
-                href={banner.linkUrl}
-                className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-medium text-gray-900 hover:text-[#A458A6] transition-colors group/link w-fit"
-              >
-                View All
-                <IconArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" stroke={1.5} />
-              </Link>
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+              
+              {/* Banner Card - Left on Even */}
+              {isEven && (
+                <div className="lg:col-span-4 flex flex-col justify-between p-8 rounded-3xl relative overflow-hidden group min-h-[350px] lg:min-h-full">
+                  <Image
+                    src={banner.bannerImage}
+                    alt={banner.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                  
+                  <div className="relative z-10">
+                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
+                      {banner.tag}
+                    </span>
+                  </div>
 
-            {/* Products */}
-            <ProductCarousel products={sectionProducts || []} isLoading={loading} />
+                  <div className="relative z-10 text-white">
+                    <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2 uppercase">
+                      {banner.title}
+                      {banner.subtitle && (
+                        <span className="font-light text-white/80 block text-xl md:text-2xl mt-1">{banner.subtitle}</span>
+                      )}
+                    </h3>
+                    {banner.dateText && (
+                      <p className="text-xs text-white/70 leading-relaxed mb-6 font-light max-w-xs">{banner.dateText}</p>
+                    )}
+                    <Link
+                      href={banner.linkUrl}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
+                      style={{ background: "linear-gradient(135deg, #ffffff, #f3f4f6)" }}
+                    >
+                      Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={2.5} />
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* Products Slider & Title */}
+              <div className="lg:col-span-8 flex flex-col justify-center">
+                {/* Horizontal Header for sections with banner on Right, or hidden on mobile for Even */}
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-semibold block mb-1" style={{ color: "#A458A6" }}>
+                      {banner.tag}
+                    </span>
+                    <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">
+                      {banner.title?.toLowerCase()}
+                      {banner.subtitle && (
+                        <span className="font-light text-gray-400 ml-2">{banner.subtitle?.toLowerCase()}</span>
+                      )}
+                    </h2>
+                  </div>
+                  <Link
+                    href={banner.linkUrl}
+                    className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 hover:text-[#A458A6] transition-colors group/link"
+                  >
+                    View All <IconArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" stroke={1.5} />
+                  </Link>
+                </div>
+
+                <ProductCarousel products={sectionProducts || []} isLoading={loading} />
+              </div>
+
+              {/* Banner Card - Right on Odd */}
+              {!isEven && (
+                <div className="lg:col-span-4 flex flex-col justify-between p-8 rounded-3xl relative overflow-hidden group min-h-[350px] lg:min-h-full">
+                  <Image
+                    src={banner.bannerImage}
+                    alt={banner.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                  
+                  <div className="relative z-10">
+                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
+                      {banner.tag}
+                    </span>
+                  </div>
+
+                  <div className="relative z-10 text-white">
+                    <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2 uppercase">
+                      {banner.title}
+                      {banner.subtitle && (
+                        <span className="font-light text-white/80 block text-xl md:text-2xl mt-1">{banner.subtitle}</span>
+                      )}
+                    </h3>
+                    {banner.dateText && (
+                      <p className="text-xs text-white/70 leading-relaxed mb-6 font-light max-w-xs">{banner.dateText}</p>
+                    )}
+                    <Link
+                      href={banner.linkUrl}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
+                      style={{ background: "linear-gradient(135deg, #ffffff, #f3f4f6)" }}
+                    >
+                      Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={2.5} />
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+            </div>
           </Reveal>
         </div>
       </section>

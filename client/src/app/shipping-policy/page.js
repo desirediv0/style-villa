@@ -146,11 +146,11 @@ export default function ShippingPolicyPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <a
-                  href="mailto:stylevillabypoojakhan@gmail.com"
+                  href="mailto:stylevilla@gmail.com"
                   className="text-xs px-4 py-2.5 rounded-xl border transition-colors hover:opacity-90 text-center"
                   style={{ color: "#003E29", background: "rgba(0,62,41,0.06)", borderColor: "#E5E7EB" }}
                 >
-                  stylevillabypoojakhan@gmail.com
+                  stylevilla@gmail.com
                 </a>
                 <a
                   href="https://wa.me/918796449692"
