@@ -11,8 +11,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
 } from "@/components/ui/carousel";
 import { IconArrowRight, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
@@ -22,7 +20,7 @@ const SECTION_METADATA = {
     tag: "CURATED STYLE",
     title: "FEATURED",
     subtitle: "COLLECTIONS",
-    dateText: "Handpicked premium fashion pieces selected for your style",
+    dateText: "Handpicked handcrafted jewellery pieces selected for your style",
     linkUrl: "/products?search=featured"
   },
   latest: {
@@ -30,7 +28,7 @@ const SECTION_METADATA = {
     tag: "JUST LANDED",
     title: "LATEST",
     subtitle: "ADDITIONS",
-    dateText: "Newly added premium fashion collections",
+    dateText: "Newly added premium jewellery collections",
     linkUrl: "/products?search=latest"
   },
   bestseller: {
@@ -38,7 +36,7 @@ const SECTION_METADATA = {
     tag: "BEST LOVED",
     title: "BEST",
     subtitle: "SELLERS",
-    dateText: "Our most popular fashion picks loved by customers",
+    dateText: "Our most popular jewellery designs loved by clients across India",
     linkUrl: "/products?search=bestseller"
   },
   trending: {
@@ -46,7 +44,7 @@ const SECTION_METADATA = {
     tag: "MUST HAVE",
     title: "TRENDING",
     subtitle: "NOW",
-    dateText: "The most loved styles and accessories this week",
+    dateText: "Most loved and trending handmade designs this week",
     linkUrl: "/products?search=trending"
   },
   new: {
@@ -54,19 +52,19 @@ const SECTION_METADATA = {
     tag: "JUST IN",
     title: "NEW",
     subtitle: "ARRIVALS",
-    dateText: "Fresh fashion pieces added to our collection",
+    dateText: "Fresh handcrafted creations added to our collection",
     linkUrl: "/products?search=new"
   }
 };
 
 const ProductSkeleton = () => (
   <div className="bg-white overflow-hidden animate-pulse">
-    <div className="aspect-[3/4] w-full bg-gray-100 rounded-lg" />
+    <div className="aspect-[3/4] w-full bg-gray-100" />
     <div className="pt-3 pb-1 space-y-2">
-      <div className="h-2.5 w-14 bg-gray-200 rounded" />
-      <div className="h-3.5 w-full bg-gray-200 rounded" />
-      <div className="h-3.5 w-2/3 bg-gray-200 rounded" />
-      <div className="h-4 w-16 bg-gray-200 rounded mt-2" />
+      <div className="h-2.5 w-14 bg-gray-200" />
+      <div className="h-3.5 w-full bg-gray-200" />
+      <div className="h-3.5 w-2/3 bg-gray-200" />
+      <div className="h-4 w-16 bg-gray-200 mt-2" />
     </div>
   </div>
 );
@@ -132,7 +130,7 @@ function ProductCarousel({ products, isLoading }) {
       {canScrollPrev && (
         <button
           onClick={() => api?.scrollPrev()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-black hover:border-gray-400 transition-all opacity-0 group-hover/carousel:opacity-100 shadow-sm z-10"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black hover:border-gray-400 transition-all opacity-0 group-hover/carousel:opacity-100 shadow-sm z-10"
         >
           <IconChevronLeft className="h-5 w-5" stroke={1.5} />
         </button>
@@ -140,7 +138,7 @@ function ProductCarousel({ products, isLoading }) {
       {canScrollNext && (
         <button
           onClick={() => api?.scrollNext()}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:text-black hover:border-gray-400 transition-all opacity-0 group-hover/carousel:opacity-100 shadow-sm z-10"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black hover:border-gray-400 transition-all opacity-0 group-hover/carousel:opacity-100 shadow-sm z-10"
         >
           <IconChevronRight className="h-5 w-5" stroke={1.5} />
         </button>
@@ -234,18 +232,17 @@ export default function HomePageContent() {
       dateText: dbSection?.description || defaultBanner.dateText,
     };
 
-    // Alternate banner card position: Left on featured, bestseller, new; Right on latest, trending
     const isEven = ["featured", "bestseller", "new"].includes(key.toLowerCase());
 
     return (
-      <section className="py-16 md:py-24 bg-white overflow-hidden border-b border-gray-100/50">
+      <section className="py-12 md:py-16 bg-white overflow-hidden border-b border-gray-100/50">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <Reveal>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-              
+
               {/* Banner Card - Left on Even */}
               {isEven && (
-                <div className="lg:col-span-4 flex flex-col justify-between p-8 rounded-3xl relative overflow-hidden group min-h-[350px] lg:min-h-full">
+                <div className="lg:col-span-4 flex flex-col justify-between p-8 relative overflow-hidden group min-h-[350px] lg:min-h-full">
                   <Image
                     src={banner.bannerImage}
                     alt={banner.title}
@@ -253,9 +250,9 @@ export default function HomePageContent() {
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-                  
+
                   <div className="relative z-10">
-                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
+                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
                       {banner.tag}
                     </span>
                   </div>
@@ -272,7 +269,7 @@ export default function HomePageContent() {
                     )}
                     <Link
                       href={banner.linkUrl}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
                       style={{ background: "linear-gradient(135deg, #ffffff, #f3f4f6)" }}
                     >
                       Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={2.5} />
@@ -283,7 +280,6 @@ export default function HomePageContent() {
 
               {/* Products Slider & Title */}
               <div className="lg:col-span-8 flex flex-col justify-center">
-                {/* Horizontal Header for sections with banner on Right, or hidden on mobile for Even */}
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <span className="text-[10px] uppercase tracking-[0.3em] font-semibold block mb-1" style={{ color: "#A458A6" }}>
@@ -309,7 +305,7 @@ export default function HomePageContent() {
 
               {/* Banner Card - Right on Odd */}
               {!isEven && (
-                <div className="lg:col-span-4 flex flex-col justify-between p-8 rounded-3xl relative overflow-hidden group min-h-[350px] lg:min-h-full">
+                <div className="lg:col-span-4 flex flex-col justify-between p-8 relative overflow-hidden group min-h-[350px] lg:min-h-full">
                   <Image
                     src={banner.bannerImage}
                     alt={banner.title}
@@ -317,9 +313,9 @@ export default function HomePageContent() {
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-                  
+
                   <div className="relative z-10">
-                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
+                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
                       {banner.tag}
                     </span>
                   </div>
@@ -336,7 +332,7 @@ export default function HomePageContent() {
                     )}
                     <Link
                       href={banner.linkUrl}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
                       style={{ background: "linear-gradient(135deg, #ffffff, #f3f4f6)" }}
                     >
                       Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={2.5} />
@@ -355,12 +351,12 @@ export default function HomePageContent() {
   const displaySections = dbSections.length > 0
     ? [...dbSections].sort((a, b) => a.displayOrder - b.displayOrder)
     : [
-        { id: "featured", slug: "featured", name: "FEATURED COLLECTIONS", description: "Handpicked premium fashion pieces selected for your style" },
-        { id: "latest", slug: "latest", name: "LATEST ADDITIONS", description: "Newly added premium fashion collections" },
-        { id: "bestseller", slug: "bestseller", name: "BEST SELLERS", description: "Our most popular fashion picks loved by customers" },
-        { id: "trending", slug: "trending", name: "TRENDING NOW", description: "The most loved styles and accessories this week" },
-        { id: "new", slug: "new", name: "NEW ARRIVALS", description: "Fresh fashion pieces added to our collection" },
-      ];
+      { id: "featured", slug: "featured", name: "FEATURED COLLECTIONS", description: "Handpicked handcrafted jewellery pieces selected for your style" },
+      { id: "latest", slug: "latest", name: "LATEST ADDITIONS", description: "Newly added premium jewellery collections" },
+      { id: "bestseller", slug: "bestseller", name: "BEST SELLERS", description: "Our most popular jewellery designs loved by clients across India" },
+      { id: "trending", slug: "trending", name: "TRENDING NOW", description: "Most loved and trending handmade designs this week" },
+      { id: "new", slug: "new", name: "NEW ARRIVALS", description: "Fresh handcrafted creations added to our collection" },
+    ];
 
   return (
     <>

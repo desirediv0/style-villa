@@ -98,7 +98,7 @@ export default function AboutPage() {
       </section>
 
       {/* Story */}
-      <section className="py-16 md:py-24 px-5">
+      <section className="py-12 md:py-16 px-5">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 

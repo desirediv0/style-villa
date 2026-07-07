@@ -7,12 +7,12 @@ import Reveal from "@/components/ui/Reveal";
 
 export const WhyBuySection = () => {
   return (
-    <section className="py-16 md:py-24 bg-gray-50">
+    <section className="py-12 md:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
 
         {/* Full Width Hero Banner */}
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl mb-8 group">
+          <div className="relative overflow-hidden rounded mb-8 group">
             <div className="relative h-[300px] md:h-[400px]">
               <Image
                 src="/deals-hero.png"

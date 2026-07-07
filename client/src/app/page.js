@@ -7,7 +7,8 @@ import WatchAndBuySection from "@/components/sections/WatchAndBuySection";
 import { WhyBuySection } from "@/components/sections/WhyBuySection";
 import { ColdChainBanner } from "@/components/sections/JewelryHomeSections";
 import CategoryGrid from "@/components/sections/CategoryGrid";
-import SocialMediaSection from "@/components/sections/SocialMediaSection";
+// import SocialMediaSection from "@/components/sections/SocialMediaSection";
+import JournalSection from "@/components/sections/JournalSection";
 
 export const metadata = {
   title: "Style Villa | Premium Fashion & Lifestyle",
@@ -24,9 +25,10 @@ export default function Home() {
         <CategoryGrid />
         <HomePageContent />
         <WatchAndBuySection />
+        <JournalSection />
         <ColdChainBanner />
         <WhyBuySection />
-        <SocialMediaSection />
+        {/* <SocialMediaSection /> */}
       </main>
     </>
   );

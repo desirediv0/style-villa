@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Send, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { fetchApi } from "@/lib/utils";
 
 export const Footer = () => {
   const [categories, setCategories] = useState([]);
-  const [email, setEmail] = useState("");
 
   useEffect(() => {
     fetchApi("/public/categories")
@@ -28,41 +27,7 @@ export const Footer = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-100">
 
-      {/* Newsletter */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-5 py-12 md:py-16">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="text-center md:text-left">
-              <span className="text-[10px] uppercase tracking-[0.3em] font-semibold block mb-2" style={{ color: "#A458A6" }}>
-                Stay Updated
-              </span>
-              <h3 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">
-                Subscribe to Our Newsletter
-              </h3>
-              <p className="text-sm text-gray-400 mt-1">
-                New arrivals, exclusive offers & style tips.
-              </p>
-            </div>
-            <form className="flex w-full md:w-auto" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 md:w-72 h-12 px-5 text-sm bg-gray-50 border border-gray-200 rounded-l-full focus:outline-none focus:border-[#A458A6] transition-colors placeholder:text-gray-400"
-              />
-              <button
-                type="submit"
-                className="h-12 px-6 text-white text-[11px] uppercase tracking-[0.15em] font-bold rounded-r-full transition-all hover:shadow-lg hover:shadow-purple-500/25 flex items-center gap-2 flex-shrink-0"
-                style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
-              >
-                <Send className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Subscribe</span>
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+
 
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-5 pt-12 pb-8">

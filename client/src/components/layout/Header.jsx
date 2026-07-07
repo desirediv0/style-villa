@@ -78,7 +78,7 @@ export function Navbar() {
       if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 10);
+        setIsScrolled(window.scrollY > 50);
         ticking = false;
       });
     };
@@ -116,60 +116,76 @@ export function Navbar() {
   };
 
   const cartCount = getCartItemCount();
+  const isHomePage = pathname === "/";
 
   return (
     <>
       <header
         ref={navbarRef}
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-300",
-          isScrolled ? "shadow-md" : ""
+          "top-0 left-0 right-0 z-50 w-full transition-all duration-500",
+          isHomePage
+            ? cn("fixed", isScrolled ? "bg-white shadow-lg" : "bg-transparent")
+            : "sticky bg-white shadow-sm"
         )}
       >
         <Toaster position="top-center" richColors />
 
         {/* Announcement marquee bar */}
-        <div className="text-white overflow-hidden" style={{ background: "linear-gradient(90deg, #A458A6, #14A8E6)" }}>
-          <div className="py-2 px-4">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <div className="hidden md:flex items-center gap-4">
-                <a href="https://www.instagram.com/stylevillaofficial" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
-                  <IconBrandInstagram className="h-4 w-4" stroke={1.5} />
-                </a>
-                <a href="https://www.facebook.com/stylevillafamily" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
-                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                  </svg>
-                </a>
-              </div>
-
-              <div className="flex-1 mx-4 overflow-hidden">
-                <div className="animate-marquee whitespace-nowrap text-[11px] tracking-[0.15em] uppercase font-medium">
-                  <span className="mx-6">EXTRA 5% OFF PREPAID ORDERS</span>
-                  <span className="mx-6">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
-                  <span className="mx-6">A TRY-ME SAMPLE FREE WITH EVERY ORDER</span>
-                  <span className="mx-6">EXPLORE OUR NEWEST LAUNCHES</span>
-                  <span className="mx-6">EXTRA 5% OFF PREPAID ORDERS</span>
-                  <span className="mx-6">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
+        <div className={cn(
+          "overflow-hidden transition-all duration-500",
+          isHomePage && isScrolled ? "h-0 opacity-0" : "h-auto opacity-100"
+        )}>
+          <div className="text-white" style={{ background: "linear-gradient(90deg, #A458A6, #14A8E6)" }}>
+            <div className="py-2 px-4">
+              <div className="max-w-7xl mx-auto flex items-center justify-between">
+                <div className="hidden md:flex items-center gap-4">
+                  <a href="https://www.instagram.com/stylevillaofficial" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                    <IconBrandInstagram className="h-4 w-4" stroke={1.5} />
+                  </a>
+                  <a href="https://www.facebook.com/stylevillafamily" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                  </a>
                 </div>
-              </div>
 
-              <div className="hidden md:flex items-center gap-5 text-[10px] tracking-[0.15em] uppercase font-medium">
-                <Link href="/track-order" className="hover:text-white/80 transition-colors">Track Order</Link>
+                <div className="flex-1 mx-4 overflow-hidden">
+                  <div className="animate-marquee whitespace-nowrap text-[11px] tracking-[0.15em] uppercase font-medium">
+                    <span className="mx-6">EXTRA 5% OFF PREPAID ORDERS</span>
+                    <span className="mx-6">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
+                    <span className="mx-6">A TRY-ME SAMPLE FREE WITH EVERY ORDER</span>
+                    <span className="mx-6">EXPLORE OUR NEWEST LAUNCHES</span>
+                    <span className="mx-6">EXTRA 5% OFF PREPAID ORDERS</span>
+                    <span className="mx-6">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
+                  </div>
+                </div>
+
+                <div className="hidden md:flex items-center gap-5 text-[10px] tracking-[0.15em] uppercase font-medium">
+                  <Link href="/track-order" className="hover:text-white/80 transition-colors">Track Order</Link>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main header */}
-        <div className="bg-white border-b border-gray-100">
+        {/* Main header row */}
+        <div className={cn(
+          "transition-all duration-500",
+          isHomePage
+            ? (isScrolled ? "bg-white/95 backdrop-blur-md" : "bg-transparent")
+            : "bg-white"
+        )}>
           <div className="max-w-7xl mx-auto px-4 md:px-6">
-            <div className="flex items-center justify-between h-16 md:h-20 gap-4">
+            <div className="flex items-center justify-between h-14 md:h-16 gap-4">
 
               {/* Mobile: Search icon left */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="md:hidden p-2 text-gray-700 hover:text-black transition-colors"
+                className={cn(
+                  "md:hidden p-2 transition-colors rounded-full",
+                  isHomePage && !isScrolled ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"
+                )}
                 aria-label="Search"
               >
                 <IconSearch className="h-5 w-5" stroke={1.5} />
@@ -178,30 +194,58 @@ export function Navbar() {
               {/* Desktop: Logo left */}
               <div className="hidden md:flex items-center">
                 <Link href="/" className="flex items-center">
-                  <Image src="/logo.png" alt="Style Villa" width={100} height={100} className="h-12 w-auto object-contain" />
+                  <Image
+                    src="/logo.png"
+                    alt="Style Villa"
+                    width={100}
+                    height={100}
+                    className={cn(
+                      "h-10 w-auto object-contain transition-all duration-500",
+                      isHomePage && !isScrolled ? "brightness-0 invert" : ""
+                    )}
+                  />
                 </Link>
               </div>
 
               {/* Mobile: Logo center */}
               <div className="md:hidden flex-1 flex justify-center">
                 <Link href="/" className="flex items-center">
-                  <Image src="/logo.png" alt="Style Villa" width={80} height={80} className="h-10 w-auto object-contain" />
+                  <Image
+                    src="/logo.png"
+                    alt="Style Villa"
+                    width={80}
+                    height={80}
+                    className={cn(
+                      "h-8 w-auto object-contain transition-all duration-500",
+                      isHomePage && !isScrolled ? "brightness-0 invert" : ""
+                    )}
+                  />
                 </Link>
               </div>
 
               {/* Desktop: Search bar center */}
-              <div className="hidden md:flex flex-1 max-w-xl mx-8">
+              <div className="hidden md:flex flex-1 max-w-lg mx-6">
                 <form onSubmit={handleSearch} className="w-full relative">
                   <input
                     type="text"
                     placeholder="Search products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full h-11 pl-4 pr-12 text-sm bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:border-gray-400 transition-colors placeholder:text-gray-400"
+                    className={cn(
+                      "w-full h-10 pl-4 pr-11 text-sm rounded-full transition-all duration-300 placeholder:text-gray-400",
+                      isHomePage && !isScrolled
+                        ? "bg-white/15 border border-white/30 text-white placeholder:text-white/60 focus:outline-none focus:bg-white/25 focus:border-white/60"
+                        : "bg-gray-100 border border-gray-200 text-gray-900 focus:outline-none focus:border-[#14A8E6] focus:bg-white focus:shadow-[0_0_0_3px_rgba(20,168,230,0.1)]"
+                    )}
                   />
                   <button
                     type="submit"
-                    className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
+                    className={cn(
+                      "absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-full transition-all duration-300",
+                      isHomePage && !isScrolled
+                        ? "text-white/80 hover:text-white hover:bg-white/20"
+                        : "text-gray-500 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
+                    )}
                   >
                     <IconSearch className="h-4 w-4" stroke={1.5} />
                   </button>
@@ -209,14 +253,19 @@ export function Navbar() {
               </div>
 
               {/* Right: Icons */}
-              <div className="flex items-center gap-1 sm:gap-2">
+              <div className="flex items-center gap-0.5 sm:gap-1">
                 {/* Desktop: User icon */}
                 <div className="hidden sm:block">
                   <ClientOnly>
                     {isAuthenticated ? (
                       <Link
                         href="/account"
-                        className="p-2 text-gray-700 hover:text-black transition-colors relative"
+                        className={cn(
+                          "p-2 transition-colors rounded-full relative",
+                          isHomePage && !isScrolled
+                            ? "text-white hover:bg-white/10"
+                            : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
+                        )}
                         aria-label="Account"
                       >
                         <AvatarCircle name={user?.name} size="sm" />
@@ -224,7 +273,12 @@ export function Navbar() {
                     ) : (
                       <Link
                         href="/auth"
-                        className="p-2 text-gray-700 hover:text-black transition-colors"
+                        className={cn(
+                          "p-2 transition-colors rounded-full",
+                          isHomePage && !isScrolled
+                            ? "text-white hover:bg-white/10"
+                            : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
+                        )}
                         aria-label="Login"
                       >
                         <IconUser className="h-5 w-5" stroke={1.5} />
@@ -236,7 +290,12 @@ export function Navbar() {
                 {/* Wishlist */}
                 <Link
                   href="/wishlist"
-                  className="p-2 text-gray-700 hover:text-black transition-colors relative"
+                  className={cn(
+                    "p-2 transition-colors rounded-full relative",
+                    isHomePage && !isScrolled
+                      ? "text-white hover:bg-white/10"
+                      : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
+                  )}
                   aria-label="Wishlist"
                 >
                   <IconHeart className="h-5 w-5" stroke={1.5} />
@@ -246,7 +305,12 @@ export function Navbar() {
                 <ClientOnly>
                   <Link
                     href="/cart"
-                    className="p-2 text-gray-700 hover:text-black transition-colors relative"
+                    className={cn(
+                      "p-2 transition-colors rounded-full relative",
+                      isHomePage && !isScrolled
+                        ? "text-white hover:bg-white/10"
+                        : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
+                    )}
                     aria-label="Cart"
                   >
                     <IconShoppingBag className="h-5 w-5" stroke={1.5} />
@@ -261,7 +325,10 @@ export function Navbar() {
                 {/* Mobile: Menu */}
                 <button
                   onClick={() => setIsMenuOpen(true)}
-                  className="md:hidden p-2 text-gray-700 hover:text-black transition-colors"
+                  className={cn(
+                    "md:hidden p-2 transition-colors rounded-full",
+                    isHomePage && !isScrolled ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"
+                  )}
                   aria-label="Menu"
                 >
                   <IconMenu2 className="h-5 w-5" stroke={1.5} />
@@ -272,16 +339,23 @@ export function Navbar() {
         </div>
 
         {/* Desktop: Navigation menu below header */}
-        <div className="hidden md:block bg-white border-b border-gray-100">
+        <div className={cn(
+          "hidden md:block transition-all duration-500 border-b",
+          isHomePage
+            ? (isScrolled ? "bg-white border-gray-100" : "bg-transparent border-white/10")
+            : "bg-white border-gray-100"
+        )}>
           <div className="max-w-7xl mx-auto px-4 md:px-6">
-            <nav className="flex items-center justify-center gap-8 h-12">
+            <nav className="flex items-center justify-center gap-8 h-10">
               {NAV_LINKS.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
                   className={cn(
-                    "text-[11px] tracking-[0.2em] font-medium transition-colors hover:text-[#A458A6]",
-                    pathname === href ? "text-[#A458A6]" : "text-gray-700"
+                    "text-[11px] tracking-[0.2em] font-medium transition-all duration-300 relative py-2",
+                    isHomePage && !isScrolled
+                      ? cn("hover:text-white", pathname === href ? "text-white" : "text-white/80")
+                      : cn("hover:text-[#14A8E6]", pathname === href ? "text-[#14A8E6]" : "text-gray-700")
                   )}
                 >
                   {label}
@@ -330,14 +404,14 @@ function SearchDialog({ open, onOpenChange, searchQuery, setSearchQuery, handleS
 
         <div className="px-6 pb-6">
           <form onSubmit={handleSearch} className="relative">
-            <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" stroke={1.5} />
+            <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#14A8E6]" stroke={1.5} />
             <input
               ref={searchInputRef}
               type="text"
               placeholder="Search for products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-11 pr-24 text-sm bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:border-gray-400 transition-colors placeholder:text-gray-400"
+              className="w-full h-12 pl-11 pr-24 text-sm bg-gray-50 border-2 border-gray-200 rounded-full focus:outline-none focus:border-[#14A8E6] focus:shadow-[0_0_0_3px_rgba(20,168,230,0.1)] transition-all duration-300 placeholder:text-gray-400"
               autoComplete="off"
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -352,8 +426,8 @@ function SearchDialog({ open, onOpenChange, searchQuery, setSearchQuery, handleS
               )}
               <button
                 type="submit"
-                className="h-8 px-4 text-white text-[10px] uppercase tracking-wider font-semibold rounded-full transition-all"
-                style={{ background: "#A458A6" }}
+                className="h-8 px-4 text-white text-[10px] uppercase tracking-wider font-semibold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-[#14A8E6]/30"
+                style={{ background: "#14A8E6" }}
               >
                 Search
               </button>
@@ -369,7 +443,7 @@ function SearchDialog({ open, onOpenChange, searchQuery, setSearchQuery, handleS
                     key={cat.id}
                     href={`/category/${cat.slug}`}
                     onClick={() => onOpenChange(false)}
-                    className="px-3 py-1.5 text-[11px] tracking-wide border border-gray-200 rounded-full transition-all text-gray-600 hover:bg-gray-900 hover:text-white hover:border-gray-900"
+                    className="px-3 py-1.5 text-[11px] tracking-wide border border-gray-200 rounded-full transition-all text-gray-600 hover:bg-[#14A8E6] hover:text-white hover:border-[#14A8E6]"
                   >
                     {cat.name}
                   </Link>

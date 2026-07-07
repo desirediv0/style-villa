@@ -90,12 +90,7 @@ export function FeaturedCategoriesSection() {
 }
 
 export function ColdChainBanner() {
-  const stats = [
-    { number: "50K+", label: "Happy Customers" },
-    { number: "10K+", label: "Products Sold" },
-    { number: "4.9", label: "Average Rating" },
-    { number: "100%", label: "Quality Promise" },
-  ];
+
 
   const reasons = [
     "Premium imported fashion from top brands",
@@ -105,22 +100,10 @@ export function ColdChainBanner() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-white overflow-hidden">
+    <section className="py-12 md:py-16 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
 
-        {/* Stats Bar */}
-        <Reveal>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 md:mb-20">
-            {stats.map(({ number, label }, idx) => (
-              <div key={idx} className="text-center py-6 border-b-2 border-gray-100 hover:border-[#A458A6] transition-colors group">
-                <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#A458A6] to-[#14A8E6] bg-clip-text text-transparent block mb-1">
-                  {number}
-                </span>
-                <span className="text-xs uppercase tracking-[0.2em] text-gray-500 font-medium">{label}</span>
-              </div>
-            ))}
-          </div>
-        </Reveal>
+
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -128,7 +111,7 @@ export function ColdChainBanner() {
           {/* Left: Image */}
           <Reveal>
             <div className="relative">
-              <div className="relative rounded-3xl overflow-hidden aspect-[4/5] group">
+              <div className="relative rounded overflow-hidden aspect-[4/5] group">
                 <Image
                   src="/founder-craft.png"
                   alt="Style Villa Craftsmanship"

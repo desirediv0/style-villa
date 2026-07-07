@@ -104,7 +104,7 @@ export default function HeroSection() {
 
   if (isLoading) {
     return (
-      <div className="relative w-full h-[60vh] md:h-[80vh] bg-brand-section animate-pulse flex items-center justify-center">
+      <div className="relative w-full h-[85vh] md:h-screen bg-brand-section animate-pulse flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-brand-purple/30 border-t-brand-purple rounded-full animate-spin" />
       </div>
     );
@@ -123,7 +123,7 @@ export default function HeroSection() {
           {slides.map((slide, index) => (
             <CarouselItem key={index} className="p-0">
               <div
-                className="relative w-full h-[65vh] sm:h-[75vh] md:h-[85vh] overflow-hidden cursor-pointer"
+                className="relative w-full h-[85vh] md:h-screen overflow-hidden cursor-pointer"
                 onClick={() => handleSlideClick(slide.ctaLink)}
               >
                 <Image
@@ -136,8 +136,8 @@ export default function HeroSection() {
                 />
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 flex items-center" style={{ background: "linear-gradient(90deg, rgba(26,26,26,0.65) 0%, rgba(26,26,26,0.3) 50%, rgba(26,26,26,0) 80%)" }}>
-                  <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 w-full">
+                <div className="absolute inset-0 flex items-end md:items-center pb-24 md:pb-0" style={{ background: "linear-gradient(90deg, rgba(26,26,26,0.65) 0%, rgba(26,26,26,0.3) 50%, rgba(26,26,26,0) 80%)" }}>
+                  <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 w-full pt-20 md:pt-0">
                     <div className="max-w-xl text-white">
                       <span className="block text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-brand-blue mb-5 animate-fade-in font-medium">
                         Style Villa — Premium Fashion
