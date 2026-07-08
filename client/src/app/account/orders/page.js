@@ -59,23 +59,23 @@ export default function OrdersPage() {
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl border border-purple-100 shadow-sm p-5 mb-8">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
                         <div>
-                            <div className="text-lg font-medium text-[#A458A6] mb-1">Recent Order: #{orders[0].orderNumber}</div>
+                            <div className="text-lg font-medium text-[#A958A4] mb-1">Recent Order: #{orders[0].orderNumber}</div>
                             <p className="text-sm text-gray-600 mb-3">Placed on {formatDate(orders[0].date)} • {orders[0].items.length} {orders[0].items.length === 1 ? "item" : "items"} • {formatCurrency(orders[0].total)}</p>
                             <span className={`px-2.5 py-1 ${getStatusColor(orders[0].status)} text-xs font-medium rounded-full inline-block`}>{orders[0].status}</span>
                         </div>
-                        <Button className="mt-4 md:mt-0 rounded-xl bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#1296D0] text-white" onClick={() => router.push(`/account/orders/${orders[0].id}`)}><DynamicIcon name="Eye" className="mr-2 h-4 w-4" />View Order Details</Button>
+                        <Button className="mt-4 md:mt-0 rounded-xl bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#1296D0] text-white" onClick={() => router.push(`/account/orders/${orders[0].id}`)}><DynamicIcon name="Eye" className="mr-2 h-4 w-4" />View Order Details</Button>
                     </div>
                 </div>
             )}
 
             {loadingOrders ? (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A458A6]"></div></div>
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A958A4]"></div></div>
             ) : orders.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
                     <DynamicIcon name="ShoppingBag" className="h-16 w-16 mx-auto text-gray-400 mb-4" />
                     <h2 className="text-xl font-semibold mb-2">No Orders Found</h2>
                     <p className="text-gray-600 mb-6">You haven&apos;t placed any orders yet.</p>
-                    <Link href="/products"><Button className="rounded-xl bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#1296D0] text-white">Start Shopping</Button></Link>
+                    <Link href="/products"><Button className="rounded-xl bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#1296D0] text-white">Start Shopping</Button></Link>
                 </div>
             ) : (
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -99,7 +99,7 @@ export default function OrdersPage() {
                                         <td className="px-6 py-4 whitespace-nowrap"><span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`}>{order.status}</span></td>
                                         <td className="px-6 py-4 whitespace-nowrap"><div className="text-sm text-gray-900 font-medium">{formatCurrency(order.total)}</div>{order.discount > 0 && <div className="text-xs text-green-600">Saved {formatCurrency(order.discount)}</div>}</td>
                                         <td className="px-6 py-4 whitespace-nowrap"><div className="flex items-center text-sm text-gray-900"><DynamicIcon name={getPaymentIcon(order.paymentMethod)} className="h-4 w-4 mr-1 text-gray-500" />{order.paymentMethod}</div></td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><Link href={`/account/orders/${order.id}`} className="text-[#A458A6] hover:text-[#8E4A90] transition-colors" onClick={(e) => e.stopPropagation()}>View Details</Link></td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><Link href={`/account/orders/${order.id}`} className="text-[#A958A4] hover:text-[#8C4188] transition-colors" onClick={(e) => e.stopPropagation()}>View Details</Link></td>
                                     </tr>
                                 ))}
                             </tbody>

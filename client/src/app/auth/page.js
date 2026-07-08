@@ -31,7 +31,7 @@ function AuthForm() {
         {/* Logo */}
         <div className="text-center mb-10">
           <Link href="/" className="inline-block">
-            <span className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Style Villa
             </span>
           </Link>
@@ -116,7 +116,7 @@ function LoginForm({ onSwitch }) {
           <input
             type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
             placeholder="you@example.com"
-            className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all placeholder:text-gray-400"
+            className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all placeholder:text-gray-400"
           />
         </div>
       </div>
@@ -124,14 +124,14 @@ function LoginForm({ onSwitch }) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-xs font-medium text-gray-700">Password</label>
-          <Link href="/forgot-password" className="text-xs font-medium text-[#A458A6] hover:underline">Forgot?</Link>
+          <Link href="/forgot-password" className="text-xs font-medium text-[#A958A4] hover:underline">Forgot?</Link>
         </div>
         <div className="relative">
           <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required
             placeholder="Enter your password"
-            className="w-full h-12 pl-10 pr-11 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all placeholder:text-gray-400"
+            className="w-full h-12 pl-10 pr-11 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all placeholder:text-gray-400"
           />
           <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -142,14 +142,14 @@ function LoginForm({ onSwitch }) {
       <button
         type="submit" disabled={isSubmitting}
         className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50 hover:shadow-lg hover:shadow-purple-500/20"
-        style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+        style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}
       >
         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Sign In <ArrowRight className="h-4 w-4" /></>}
       </button>
 
       <p className="text-center text-sm text-gray-500 pt-2">
         Don&apos;t have an account?{" "}
-        <button type="button" onClick={onSwitch} className="font-semibold text-[#A458A6] hover:underline">Register</button>
+        <button type="button" onClick={onSwitch} className="font-semibold text-[#A958A4] hover:underline">Register</button>
       </p>
     </form>
   );
@@ -219,7 +219,7 @@ function RegisterForm({ onSwitch }) {
             <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type={type} name={name} value={formData[name]} onChange={handleChange} required placeholder={placeholder}
-              className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all placeholder:text-gray-400"
+              className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -232,7 +232,7 @@ function RegisterForm({ onSwitch }) {
           <input
             type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} required
             placeholder="Min 8 characters"
-            className="w-full h-12 pl-10 pr-11 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all placeholder:text-gray-400"
+            className="w-full h-12 pl-10 pr-11 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all placeholder:text-gray-400"
           />
           <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -247,7 +247,7 @@ function RegisterForm({ onSwitch }) {
           <input
             type={showPassword ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required
             placeholder="Confirm your password"
-            className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all placeholder:text-gray-400"
+            className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all placeholder:text-gray-400"
           />
         </div>
       </div>
@@ -255,14 +255,14 @@ function RegisterForm({ onSwitch }) {
       <button
         type="submit" disabled={isSubmitting}
         className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50 hover:shadow-lg hover:shadow-purple-500/20"
-        style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+        style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}
       >
         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Create Account <ArrowRight className="h-4 w-4" /></>}
       </button>
 
       <p className="text-center text-sm text-gray-500 pt-2">
         Already have an account?{" "}
-        <button type="button" onClick={onSwitch} className="font-semibold text-[#A458A6] hover:underline">Sign In</button>
+        <button type="button" onClick={onSwitch} className="font-semibold text-[#A958A4] hover:underline">Sign In</button>
       </p>
     </form>
   );
@@ -272,7 +272,7 @@ export default function AuthPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <Loader2 className="h-6 w-6 animate-spin" style={{ color: "#A458A6" }} />
+        <Loader2 className="h-6 w-6 animate-spin" style={{ color: "#A958A4" }} />
       </div>
     }>
       <AuthForm />

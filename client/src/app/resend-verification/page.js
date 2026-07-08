@@ -43,7 +43,7 @@ export default function ResendVerificationPage() {
             <div className="w-full max-w-md">
 
                 <div className="text-center mb-10">
-                    <div className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}>
+                    <div className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}>
                         <Send className="h-7 w-7 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-gray-900">Resend OTP</h1>
@@ -64,7 +64,7 @@ export default function ResendVerificationPage() {
                             <Link
                                 href={`/verify-otp?email=${encodeURIComponent(email)}`}
                                 className="inline-flex items-center gap-1.5 mt-5 px-5 py-2.5 rounded-xl text-sm font-semibold text-white hover:shadow-lg hover:shadow-purple-500/20 transition-all"
-                                style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+                                style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}
                             >
                                 Enter OTP <ArrowRight className="h-4 w-4" />
                             </Link>
@@ -80,7 +80,7 @@ export default function ResendVerificationPage() {
                                     <input
                                         type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
                                         placeholder="you@example.com"
-                                        className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all placeholder:text-gray-400"
+                                        className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all placeholder:text-gray-400"
                                     />
                                 </div>
                             </div>
@@ -88,7 +88,7 @@ export default function ResendVerificationPage() {
                             <button
                                 type="submit" disabled={status === "submitting"}
                                 className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50 hover:shadow-lg hover:shadow-purple-500/20"
-                                style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+                                style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}
                             >
                                 {status === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Send OTP <ArrowRight className="h-4 w-4" /></>}
                             </button>
@@ -97,14 +97,14 @@ export default function ResendVerificationPage() {
 
                     {status === "submitting" && (
                         <div className="text-center py-8">
-                            <Loader2 className="h-8 w-8 animate-spin mx-auto" style={{ color: "#A458A6" }} />
+                            <Loader2 className="h-8 w-8 animate-spin mx-auto" style={{ color: "#A958A4" }} />
                             <p className="text-sm text-gray-500 mt-4">Sending verification email...</p>
                         </div>
                     )}
                 </div>
 
                 <p className="text-center text-sm text-gray-500 mt-6">
-                    <Link href="/auth?tab=login" className="font-semibold text-[#A458A6] hover:underline">Back to Sign In</Link>
+                    <Link href="/auth?tab=login" className="font-semibold text-[#A958A4] hover:underline">Back to Sign In</Link>
                 </p>
             </div>
         </div>

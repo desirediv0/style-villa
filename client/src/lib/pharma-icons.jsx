@@ -15,14 +15,14 @@ import {
 
 // Map: keyword → { icon component, color }
 export const PHARMA_ICON_MAP = [
-  { keys: ["hair", "accessories", "headband", "clip"], Icon: Crown, color: "#A458A6" },
-  { keys: ["diy", "kit", "craft"], Icon: Wrench, color: "#14A8E6" },
-  { keys: ["necklace", "pendant", "chain"], Icon: Gem, color: "#A458A6" },
-  { keys: ["earrings", "jhumka", "studs"], Icon: Sparkles, color: "#14A8E6" },
-  { keys: ["ring", "bands"], Icon: Heart, color: "#A458A6" },
-  { keys: ["bracelets", "bangles"], Icon: Gift, color: "#14A8E6" },
-  { keys: ["custom", "bespoke", "founder"], Icon: Award, color: "#A458A6" },
-  { keys: ["box", "gift", "packaging"], Icon: Package, color: "#14A8E6" },
+  { keys: ["hair", "accessories", "headband", "clip"], Icon: Crown, color: "#A958A4" },
+  { keys: ["diy", "kit", "craft"], Icon: Wrench, color: "#00AEEF" },
+  { keys: ["necklace", "pendant", "chain"], Icon: Gem, color: "#A958A4" },
+  { keys: ["earrings", "jhumka", "studs"], Icon: Sparkles, color: "#00AEEF" },
+  { keys: ["ring", "bands"], Icon: Heart, color: "#A958A4" },
+  { keys: ["bracelets", "bangles"], Icon: Gift, color: "#00AEEF" },
+  { keys: ["custom", "bespoke", "founder"], Icon: Award, color: "#A958A4" },
+  { keys: ["box", "gift", "packaging"], Icon: Package, color: "#00AEEF" },
 ];
 
 export function getPharmaIcon(name = "", slug = "") {
@@ -34,5 +34,5 @@ export function getPharmaIcon(name = "", slug = "") {
     }
   }
   // Default fallback icon
-  return { Icon: Sparkles, color: "#A458A6" };
+  return { Icon: Sparkles, color: "#A958A4" };
 }

@@ -43,20 +43,24 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
 
-      {/* Hero — clean dark with gradient accent */}
-      <section className="relative py-20 md:py-28 overflow-hidden bg-gray-950">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full blur-[120px] opacity-30" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }} />
-        </div>
+      {/* Hero — noir editorial */}
+      <section className="relative py-20 md:py-28 overflow-hidden bg-noir luxe-grain luxe-aurora">
+        <span
+          className="pointer-events-none select-none absolute -bottom-8 left-1/2 -translate-x-1/2 font-display italic whitespace-nowrap text-[10rem] leading-none text-hollow opacity-40 hidden lg:block"
+          aria-hidden="true"
+        >
+          Bonjour
+        </span>
         <div className="relative z-10 max-w-7xl mx-auto px-5 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-semibold mb-6 bg-white/10 text-white/80 border border-white/10">
+          <div className="inline-flex items-center gap-2.5 mb-6 text-[10px] uppercase tracking-[0.35em] text-gold-light font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             We&apos;re Online
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-            Let&apos;s Talk
+          <h1 className="font-display text-4xl md:text-6xl text-ivory mb-6 tracking-tight">
+            Let&apos;s <em className="luxe-italic text-gradient-light">Talk</em>
           </h1>
-          <p className="text-white/40 max-w-md mx-auto text-sm md:text-base">
+          <span className="mx-auto block h-px w-24 bg-gradient-to-r from-transparent via-gold to-transparent mb-6" />
+          <p className="text-white/50 max-w-md mx-auto text-sm md:text-base font-light leading-relaxed">
             Questions, orders, collaborations — we&apos;re just a message away.
           </p>
         </div>
@@ -91,14 +95,14 @@ export default function ContactPage() {
               href="tel:+918796449692"
               className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-purple-200 hover:shadow-lg hover:shadow-purple-50 transition-all duration-300"
             >
-              <div className="w-12 h-12 bg-purple-50 text-[#A458A6] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#A458A6] group-hover:text-white transition-all duration-300">
+              <div className="w-12 h-12 bg-purple-50 text-[#A958A4] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#A958A4] group-hover:text-white transition-all duration-300">
                 <Phone className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Call Us</h4>
                 <p className="text-sm text-gray-400 mt-0.5">+91 87964 49692</p>
               </div>
-              <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-[#A458A6] group-hover:translate-x-1 transition-all" />
+              <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-[#A958A4] group-hover:translate-x-1 transition-all" />
             </a>
 
             {/* Email */}
@@ -106,26 +110,26 @@ export default function ContactPage() {
               href="mailto:stylevilla@gmail.com"
               className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300"
             >
-              <div className="w-12 h-12 bg-blue-50 text-[#14A8E6] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#14A8E6] group-hover:text-white transition-all duration-300">
+              <div className="w-12 h-12 bg-blue-50 text-[#00AEEF] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#00AEEF] group-hover:text-white transition-all duration-300">
                 <Mail className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Email</h4>
                 <p className="text-xs text-gray-400 mt-0.5 break-all">stylevilla@gmail.com</p>
               </div>
-              <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-[#14A8E6] group-hover:translate-x-1 transition-all" />
+              <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-[#00AEEF] group-hover:translate-x-1 transition-all" />
             </a>
 
             {/* Info */}
             <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100">
               <div className="flex items-center gap-3 mb-3">
-                <Clock className="h-4 w-4 text-[#A458A6]" />
+                <Clock className="h-4 w-4 text-[#A958A4]" />
                 <span className="text-xs font-bold text-gray-900 uppercase tracking-wider">Business Hours</span>
               </div>
               <p className="text-sm text-gray-400 mb-3">10:30 AM – 7:00 PM (Daily)</p>
               <div className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 text-[#14A8E6]" />
-                <a href="https://maps.app.goo.gl/MTy3mYLeAXTr7jxP" target="_blank" rel="noopener noreferrer" className="text-sm text-[#A458A6] font-semibold hover:underline">
+                <MapPin className="h-4 w-4 text-[#00AEEF]" />
+                <a href="https://maps.app.goo.gl/MTy3mYLeAXTr7jxP" target="_blank" rel="noopener noreferrer" className="text-sm text-[#A958A4] font-semibold hover:underline">
                   View on Google Maps
                 </a>
               </div>
@@ -147,7 +151,7 @@ export default function ContactPage() {
                     <input
                       type="text" name="name" value={formData.name} onChange={handleInputChange} required
                       placeholder="John Doe"
-                      className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A458A6]/10 focus:border-[#A458A6] focus:outline-none transition-all text-sm placeholder:text-gray-300"
+                      className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A958A4]/10 focus:border-[#A958A4] focus:outline-none transition-all text-sm placeholder:text-gray-300"
                     />
                   </div>
                   <div>
@@ -155,7 +159,7 @@ export default function ContactPage() {
                     <input
                       type="text" name="phone" value={formData.phone} onChange={handleInputChange} required
                       placeholder="+91 87964 49692"
-                      className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A458A6]/10 focus:border-[#A458A6] focus:outline-none transition-all text-sm placeholder:text-gray-300"
+                      className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A958A4]/10 focus:border-[#A958A4] focus:outline-none transition-all text-sm placeholder:text-gray-300"
                     />
                   </div>
                 </div>
@@ -165,7 +169,7 @@ export default function ContactPage() {
                   <input
                     type="email" name="email" value={formData.email} onChange={handleInputChange} required
                     placeholder="you@example.com"
-                    className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A458A6]/10 focus:border-[#A458A6] focus:outline-none transition-all text-sm placeholder:text-gray-300"
+                    className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A958A4]/10 focus:border-[#A958A4] focus:outline-none transition-all text-sm placeholder:text-gray-300"
                   />
                 </div>
 
@@ -173,7 +177,7 @@ export default function ContactPage() {
                   <label className="block text-[11px] text-gray-500 mb-1.5 uppercase tracking-wider font-semibold">Subject</label>
                   <select
                     name="subject" value={formData.subject} onChange={handleInputChange}
-                    className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A458A6]/10 focus:border-[#A458A6] focus:outline-none transition-all text-sm text-gray-700"
+                    className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A958A4]/10 focus:border-[#A958A4] focus:outline-none transition-all text-sm text-gray-700"
                   >
                     <option>General Inquiry</option>
                     <option>Order Status</option>
@@ -187,14 +191,14 @@ export default function ContactPage() {
                   <textarea
                     name="message" value={formData.message} onChange={handleInputChange} required rows={4}
                     placeholder="Tell us how we can help..."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A458A6]/10 focus:border-[#A458A6] focus:outline-none transition-all text-sm resize-none placeholder:text-gray-300"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A958A4]/10 focus:border-[#A958A4] focus:outline-none transition-all text-sm resize-none placeholder:text-gray-300"
                   />
                 </div>
 
                 <button
                   type="submit" disabled={formLoading}
                   className="w-full h-13 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 hover:shadow-xl hover:shadow-purple-500/25 hover:-translate-y-0.5 active:translate-y-0"
-                  style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+                  style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}
                 >
                   {formLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

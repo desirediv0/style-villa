@@ -12,59 +12,59 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { IconArrowRight, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { IconArrowRight, IconArrowLeft } from "@tabler/icons-react";
 
 const SECTION_METADATA = {
   featured: {
     bannerImage: "/featured_banner.png",
-    tag: "CURATED STYLE",
+    tag: "Curated Style",
     title: "FEATURED",
     subtitle: "COLLECTIONS",
-    dateText: "Handpicked handcrafted jewellery pieces selected for your style",
+    dateText: "Signature pieces, handpicked by our stylists for the season",
     linkUrl: "/products?search=featured"
   },
   latest: {
     bannerImage: "/latest_banner.png",
-    tag: "JUST LANDED",
+    tag: "Just Landed",
     title: "LATEST",
     subtitle: "ADDITIONS",
-    dateText: "Newly added premium jewellery collections",
+    dateText: "Freshly imported bags and clothing, new to the maison",
     linkUrl: "/products?search=latest"
   },
   bestseller: {
     bannerImage: "/bestseller_banner.png",
-    tag: "BEST LOVED",
+    tag: "Best Loved",
     title: "BEST",
     subtitle: "SELLERS",
-    dateText: "Our most popular jewellery designs loved by clients across India",
+    dateText: "The pieces our clients across India keep coming back for",
     linkUrl: "/products?search=bestseller"
   },
   trending: {
     bannerImage: "/trending_banner.png",
-    tag: "MUST HAVE",
+    tag: "Must Have",
     title: "TRENDING",
     subtitle: "NOW",
-    dateText: "Most loved and trending handmade designs this week",
+    dateText: "The most wanted silhouettes and styles of the week",
     linkUrl: "/products?search=trending"
   },
   new: {
     bannerImage: "/new_banner.png",
-    tag: "JUST IN",
+    tag: "Just In",
     title: "NEW",
     subtitle: "ARRIVALS",
-    dateText: "Fresh handcrafted creations added to our collection",
+    dateText: "Fresh creations added to our curated collection",
     linkUrl: "/products?search=new"
   }
 };
 
 const ProductSkeleton = () => (
   <div className="bg-white overflow-hidden animate-pulse">
-    <div className="aspect-[3/4] w-full bg-gray-100" />
+    <div className="aspect-[3/4] w-full bg-ivory-deep" />
     <div className="pt-3 pb-1 space-y-2">
-      <div className="h-2.5 w-14 bg-gray-200" />
-      <div className="h-3.5 w-full bg-gray-200" />
-      <div className="h-3.5 w-2/3 bg-gray-200" />
-      <div className="h-4 w-16 bg-gray-200 mt-2" />
+      <div className="h-2.5 w-14 bg-ivory-deep" />
+      <div className="h-3.5 w-full bg-ivory-deep" />
+      <div className="h-3.5 w-2/3 bg-ivory-deep" />
+      <div className="h-4 w-16 bg-ivory-deep mt-2" />
     </div>
   </div>
 );
@@ -93,7 +93,7 @@ function ProductCarousel({ products, isLoading }) {
       } else {
         api.scrollTo(0);
       }
-    }, 4000);
+    }, 4500);
     return () => clearInterval(interval);
   }, [api]);
 
@@ -114,11 +114,11 @@ function ProductCarousel({ products, isLoading }) {
         opts={{ align: "start", loop: false, slidesToScroll: 1 }}
         className="w-full"
       >
-        <CarouselContent className="-ml-4">
+        <CarouselContent className="-ml-5">
           {products.map((product, index) => (
             <CarouselItem
               key={product.id || product.slug || index}
-              className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4"
+              className="pl-5 basis-1/2 md:basis-1/3 lg:basis-1/4"
             >
               <ProductCard product={product} />
             </CarouselItem>
@@ -130,17 +130,19 @@ function ProductCarousel({ products, isLoading }) {
       {canScrollPrev && (
         <button
           onClick={() => api?.scrollPrev()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black hover:border-gray-400 transition-all opacity-0 group-hover/carousel:opacity-100 shadow-sm z-10"
+          aria-label="Previous products"
+          className="absolute left-0 top-[38%] -translate-y-1/2 -translate-x-3 w-11 h-11 bg-noir/90 backdrop-blur-sm text-ivory flex items-center justify-center hover:bg-gold hover:text-white transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 z-10"
         >
-          <IconChevronLeft className="h-5 w-5" stroke={1.5} />
+          <IconArrowLeft className="h-4 w-4" stroke={1.5} />
         </button>
       )}
       {canScrollNext && (
         <button
           onClick={() => api?.scrollNext()}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black hover:border-gray-400 transition-all opacity-0 group-hover/carousel:opacity-100 shadow-sm z-10"
+          aria-label="Next products"
+          className="absolute right-0 top-[38%] -translate-y-1/2 translate-x-3 w-11 h-11 bg-noir/90 backdrop-blur-sm text-ivory flex items-center justify-center hover:bg-gold hover:text-white transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 z-10"
         >
-          <IconChevronRight className="h-5 w-5" stroke={1.5} />
+          <IconArrowRight className="h-4 w-4" stroke={1.5} />
         </button>
       )}
     </div>
@@ -202,7 +204,7 @@ export default function HomePageContent() {
     fetchAll();
   }, []);
 
-  const renderSection = (key) => {
+  const renderSection = (key, sectionIndex) => {
     const sectionProducts = products[key];
     if (!loading && sectionProducts?.length === 0) return null;
 
@@ -214,7 +216,7 @@ export default function HomePageContent() {
 
     const defaultBanner = SECTION_METADATA[key] || {
       bannerImage: "/placeholder.jpg",
-      tag: "COLLECTION",
+      tag: "Collection",
       title: key.toUpperCase(),
       subtitle: "",
       dateText: "",
@@ -234,112 +236,84 @@ export default function HomePageContent() {
 
     const isEven = ["featured", "bestseller", "new"].includes(key.toLowerCase());
 
+    const BannerCard = () => (
+      <div className="lg:col-span-4 relative overflow-hidden group min-h-[380px] lg:min-h-full bg-noir" data-cursor="Explore">
+        <Image
+          src={banner.bannerImage}
+          alt={banner.title}
+          fill
+          className="object-cover transition-transform duration-1400 ease-luxe group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/30 to-noir/10" />
+        <div className="absolute inset-3 border border-white/15 pointer-events-none" />
+
+        <div className="relative z-10 h-full flex flex-col justify-between p-8">
+          <div>
+            <span className="inline-block text-[9px] uppercase tracking-[0.4em] font-medium px-4 py-2 text-gold-light border border-gold/40 bg-noir/30 backdrop-blur-sm">
+              {banner.tag}
+            </span>
+          </div>
+
+          <div className="text-white">
+            <h3 className="font-display text-3xl md:text-4xl tracking-tight mb-2">
+              {banner.title.charAt(0) + banner.title.slice(1).toLowerCase()}
+              {banner.subtitle && (
+                <em className="luxe-italic text-gradient-light block text-2xl md:text-3xl mt-1">
+                  {banner.subtitle.charAt(0) + banner.subtitle.slice(1).toLowerCase()}
+                </em>
+              )}
+            </h3>
+            {banner.dateText && (
+              <p className="text-xs text-white/60 leading-relaxed mb-7 font-light max-w-xs">{banner.dateText}</p>
+            )}
+            <Link href={banner.linkUrl} className="btn-luxe-white !px-6 !py-3">
+              Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={1.5} />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+
     return (
-      <section className="py-12 md:py-16 bg-white overflow-hidden border-b border-gray-100/50">
+      <section className={`py-14 md:py-20 overflow-hidden ${sectionIndex % 2 === 1 ? "bg-ivory" : "bg-white"}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <Reveal>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
-              {/* Banner Card - Left on Even */}
-              {isEven && (
-                <div className="lg:col-span-4 flex flex-col justify-between p-8 relative overflow-hidden group min-h-[350px] lg:min-h-full">
-                  <Image
-                    src={banner.bannerImage}
-                    alt={banner.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-                  <div className="relative z-10">
-                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
-                      {banner.tag}
-                    </span>
-                  </div>
-
-                  <div className="relative z-10 text-white">
-                    <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2 uppercase">
-                      {banner.title}
-                      {banner.subtitle && (
-                        <span className="font-light text-white/80 block text-xl md:text-2xl mt-1">{banner.subtitle}</span>
-                      )}
-                    </h3>
-                    {banner.dateText && (
-                      <p className="text-xs text-white/70 leading-relaxed mb-6 font-light max-w-xs">{banner.dateText}</p>
-                    )}
-                    <Link
-                      href={banner.linkUrl}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
-                      style={{ background: "linear-gradient(135deg, #ffffff, #f3f4f6)" }}
-                    >
-                      Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={2.5} />
-                    </Link>
-                  </div>
-                </div>
-              )}
+              {isEven && <BannerCard />}
 
               {/* Products Slider & Title */}
-              <div className="lg:col-span-8 flex flex-col justify-center">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.3em] font-semibold block mb-1" style={{ color: "#A458A6" }}>
-                      {banner.tag}
+              <div className="lg:col-span-8 flex flex-col justify-center min-w-0">
+                <div className="flex items-end justify-between gap-4 mb-8">
+                  <div className="flex items-baseline gap-4">
+                    <span className="font-display text-sm text-gold-dark tracking-[0.2em] hidden sm:block">
+                      {String(sectionIndex + 1).padStart(2, "0")}
                     </span>
-                    <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">
-                      {banner.title?.toLowerCase()}
-                      {banner.subtitle && (
-                        <span className="font-light text-gray-400 ml-2">{banner.subtitle?.toLowerCase()}</span>
-                      )}
-                    </h2>
+                    <div>
+                      <span className="luxe-eyebrow block mb-2">{banner.tag}</span>
+                      <h2 className="font-display text-3xl md:text-4xl tracking-tight text-noir">
+                        {banner.title.charAt(0) + banner.title.slice(1).toLowerCase()}
+                        {banner.subtitle && (
+                          <em className="luxe-italic text-gradient ml-2.5">
+                            {banner.subtitle.toLowerCase()}
+                          </em>
+                        )}
+                      </h2>
+                    </div>
                   </div>
                   <Link
                     href={banner.linkUrl}
-                    className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 hover:text-[#A458A6] transition-colors group/link"
+                    className="luxe-link text-noir shrink-0 inline-flex items-center gap-2 group/link"
                   >
-                    View All <IconArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" stroke={1.5} />
+                    View All
+                    <IconArrowRight className="h-3.5 w-3.5 transition-transform group-hover/link:translate-x-1" stroke={1.5} />
                   </Link>
                 </div>
 
                 <ProductCarousel products={sectionProducts || []} isLoading={loading} />
               </div>
 
-              {/* Banner Card - Right on Odd */}
-              {!isEven && (
-                <div className="lg:col-span-4 flex flex-col justify-between p-8 relative overflow-hidden group min-h-[350px] lg:min-h-full">
-                  <Image
-                    src={banner.bannerImage}
-                    alt={banner.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-                  <div className="relative z-10">
-                    <span className="inline-block text-[9px] uppercase tracking-[0.3em] font-semibold px-3.5 py-1.5 bg-white/15 backdrop-blur-md text-white border border-white/10 mb-4">
-                      {banner.tag}
-                    </span>
-                  </div>
-
-                  <div className="relative z-10 text-white">
-                    <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2 uppercase">
-                      {banner.title}
-                      {banner.subtitle && (
-                        <span className="font-light text-white/80 block text-xl md:text-2xl mt-1">{banner.subtitle}</span>
-                      )}
-                    </h3>
-                    {banner.dateText && (
-                      <p className="text-xs text-white/70 leading-relaxed mb-6 font-light max-w-xs">{banner.dateText}</p>
-                    )}
-                    <Link
-                      href={banner.linkUrl}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-gray-900 transition-all hover:scale-105 active:scale-95 shadow-lg"
-                      style={{ background: "linear-gradient(135deg, #ffffff, #f3f4f6)" }}
-                    >
-                      Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={2.5} />
-                    </Link>
-                  </div>
-                </div>
-              )}
+              {!isEven && <BannerCard />}
 
             </div>
           </Reveal>
@@ -351,11 +325,11 @@ export default function HomePageContent() {
   const displaySections = dbSections.length > 0
     ? [...dbSections].sort((a, b) => a.displayOrder - b.displayOrder)
     : [
-      { id: "featured", slug: "featured", name: "FEATURED COLLECTIONS", description: "Handpicked handcrafted jewellery pieces selected for your style" },
-      { id: "latest", slug: "latest", name: "LATEST ADDITIONS", description: "Newly added premium jewellery collections" },
-      { id: "bestseller", slug: "bestseller", name: "BEST SELLERS", description: "Our most popular jewellery designs loved by clients across India" },
-      { id: "trending", slug: "trending", name: "TRENDING NOW", description: "Most loved and trending handmade designs this week" },
-      { id: "new", slug: "new", name: "NEW ARRIVALS", description: "Fresh handcrafted creations added to our collection" },
+      { id: "featured", slug: "featured", name: "FEATURED COLLECTIONS", description: "Signature pieces, handpicked by our stylists for the season" },
+      { id: "latest", slug: "latest", name: "LATEST ADDITIONS", description: "Freshly imported bags and clothing, new to the maison" },
+      { id: "bestseller", slug: "bestseller", name: "BEST SELLERS", description: "The pieces our clients across India keep coming back for" },
+      { id: "trending", slug: "trending", name: "TRENDING NOW", description: "The most wanted silhouettes and styles of the week" },
+      { id: "new", slug: "new", name: "NEW ARRIVALS", description: "Fresh creations added to our curated collection" },
     ];
 
   return (
@@ -366,9 +340,9 @@ export default function HomePageContent() {
 
         return (
           <div key={sec.id || key}>
-            {renderSection(key)}
-            {idx === 0 && <BrandCarousel tag="HOT" title="TRENDING BRANDS" />}
-            {idx === 3 && <BrandCarousel tag="NEW" title="NEW IN STORE" />}
+            {renderSection(key, idx)}
+            {idx === 0 && <BrandCarousel tag="HOT" title="Trending Brands" />}
+            {idx === 3 && <BrandCarousel tag="NEW" title="New in Store" />}
           </div>
         );
       })}

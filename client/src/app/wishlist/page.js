@@ -54,7 +54,7 @@ export default function WishlistPage() {
         {/* Hero Section */}
         <section className="relative py-14 md:py-16 overflow-hidden bg-gray-950">
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] rounded-full blur-[120px] opacity-25" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }} />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] rounded-full blur-[120px] opacity-25" style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }} />
           </div>
           <div className="max-w-7xl mx-auto px-5 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -62,7 +62,7 @@ export default function WishlistPage() {
               <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">My Wishlist</h1>
             </div>
             {!loadingItems && wishlistItems.length > 0 && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full border" style={{ background: "#A458A612", color: "#A458A6", borderColor: "#A458A630" }}>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full border" style={{ background: "#A958A412", color: "#A958A4", borderColor: "#A958A430" }}>
                 <Heart className="w-3 h-3" />
                 {wishlistItems.length} {wishlistItems.length === 1 ? "Item" : "Items"}
               </span>
@@ -97,15 +97,15 @@ export default function WishlistPage() {
 
             /* Empty state */
             <div className="bg-white rounded-2xl p-12 md:p-16 text-center max-w-lg mx-auto border border-gray-100 shadow-sm mt-8">
-              <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: "linear-gradient(135deg, #A458A612, #14A8E612)" }}>
-                <Heart className="h-8 w-8" style={{ color: "#A458A6" }} />
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: "linear-gradient(135deg, #A958A412, #00AEEF12)" }}>
+                <Heart className="h-8 w-8" style={{ color: "#A958A4" }} />
               </div>
               <h2 className="text-2xl font-extrabold text-gray-900 mb-3">Wishlist is Empty</h2>
               <p className="text-gray-400 mb-8 max-w-xs mx-auto text-sm leading-relaxed">
                 Save your favorite styles for later. Tap the heart icon on any product to save them here.
               </p>
               <Link href="/products">
-                <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:shadow-lg hover:-translate-y-0.5" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}>
+                <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:shadow-lg hover:-translate-y-0.5" style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}>
                   <ShoppingBag className="h-4 w-4" />
                   Browse Collection
                 </button>

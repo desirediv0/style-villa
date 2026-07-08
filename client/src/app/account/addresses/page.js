@@ -51,7 +51,7 @@ export default function AddressesPage() {
         return (
             <div className="p-6 max-w-4xl mx-auto">
                 <h1 className="text-2xl font-semibold mb-8">My Addresses</h1>
-                <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-[#A458A6]" /></div>
+                <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-[#A958A4]" /></div>
             </div>
         );
     }
@@ -60,7 +60,7 @@ export default function AddressesPage() {
         <div className="p-4 max-w-4xl mx-auto">
             <div className="flex justify-between gap-2 items-center mb-8">
                 <h1 className="text-xl lg:text-2xl font-semibold">My Addresses</h1>
-                {!showAddForm && !editingAddress && <Button onClick={() => setShowAddForm(true)} className="px-3 lg:px-4 text-wrap py-2 rounded-xl bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#1296D0] text-white"><Plus className="h-4 w-4 mr-2" />Add New Address</Button>}
+                {!showAddForm && !editingAddress && <Button onClick={() => setShowAddForm(true)} className="px-3 lg:px-4 text-wrap py-2 rounded-xl bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#1296D0] text-white"><Plus className="h-4 w-4 mr-2" />Add New Address</Button>}
             </div>
 
             {showAddForm && (
@@ -82,7 +82,7 @@ export default function AddressesPage() {
                     <MapPin className="h-16 w-16 mx-auto text-gray-400 mb-4" />
                     <h2 className="text-xl font-semibold mb-2">No Addresses Found</h2>
                     <p className="text-gray-600 mb-6">You haven&apos;t added any addresses yet.</p>
-                    <Button onClick={() => setShowAddForm(true)} className="rounded-xl bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#1296D0] text-white"><Plus className="h-4 w-4 mr-2" />Add New Address</Button>
+                    <Button onClick={() => setShowAddForm(true)} className="rounded-xl bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#1296D0] text-white"><Plus className="h-4 w-4 mr-2" />Add New Address</Button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -90,7 +90,7 @@ export default function AddressesPage() {
                         <div key={address.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 relative">
                             {address.isDefault && (
                                 <div className="absolute top-3 right-3">
-                                    <span className="bg-purple-50 text-[#A458A6] text-xs font-semibold px-2 py-1 rounded-full flex items-center"><Check className="h-3 w-3 mr-1" />Default</span>
+                                    <span className="bg-purple-50 text-[#A958A4] text-xs font-semibold px-2 py-1 rounded-full flex items-center"><Check className="h-3 w-3 mr-1" />Default</span>
                                 </div>
                             )}
                             <div className="mb-4">

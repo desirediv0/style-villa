@@ -1,9 +1,19 @@
 import "./globals.css";
+import { Playfair_Display } from "next/font/google";
 import { Navbar } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
+import SiteFX from "@/components/ui/SiteFX";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata = {
   title: "Style Villa | Premium Fashion & Lifestyle",
@@ -21,10 +31,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={playfair.variable}>
       <body className="antialiased">
         <AuthProvider>
           <CartProvider>
+            <SiteFX />
             <Navbar />
             <main className="min-h-screen">
               {children}

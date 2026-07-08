@@ -37,46 +37,68 @@
 
 @layer base {
   :root {
-    /* Style Villa — Premium Fashion & Lifestyle Theme */
-    --background: 0 0% 100%;           /* #FFFFFF */
-    --foreground: 0 0% 10%;            /* #1A1A1A */
+    /* Style Villa — Villa Edition
+       Anchored to the logo: orchid #A858A0 · sky #00B0F0
+       Lavender canvas · aubergine drama · orchid & sky accents */
+    --background: 0 0% 100%;
+    --foreground: 288 23% 12%;           /* #221826 */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 288 23% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 295 37% 50%;            /* #A458A6 Purple */
+    --popover-foreground: 288 23% 12%;
+    --primary: 304 32% 50%;              /* #A958A4 logo orchid */
     --primary-foreground: 0 0% 100%;
-    --secondary: 197 85% 49%;          /* #14A8E6 Blue */
+    --secondary: 196 100% 47%;           /* #00AEEF logo sky */
     --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 98%;                 /* #FAFAFA */
-    --muted-foreground: 0 0% 40%;      /* #666666 */
-    --accent: 295 37% 50%;
+    --muted: 288 45% 98%;                /* #FAF7FC lavender white */
+    --muted-foreground: 273 9% 43%;      /* #6F6478 */
+    --accent: 304 32% 50%;
     --accent-foreground: 0 0% 100%;
-    --chart-1: 295 37% 50%;
-    --chart-2: 197 85% 49%;
-    --chart-3: 295 45% 45%;
-    --chart-4: 197 70% 60%;
-    --chart-5: 295 30% 70%;
-    --destructive: 0 76% 58%;          /* #E53935 */
+    --chart-1: 304 32% 50%;
+    --chart-2: 196 100% 47%;
+    --chart-3: 303 36% 40%;
+    --chart-4: 197 89% 70%;
+    --chart-5: 303 25% 64%;
+    --destructive: 4 51% 51%;            /* #C24B42 */
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 92%;                /* #EAEAEA */
-    --input: 0 0% 92%;
-    --ring: 295 37% 50%;
-    --radius: 0.625rem;
+    --border: 276 36% 92%;               /* #ECE3F2 */
+    --input: 276 36% 92%;
+    --ring: 304 32% 50%;
+    --radius: 0.375rem;
 
-    /* Brand palette as CSS vars for direct use */
-    --brand-purple: #A458A6;
-    --brand-blue: #14A8E6;
-    --brand-dark: #1A1A1A;
+    /* Brand palette as CSS vars for direct use
+       (names preserved; values anchored to the logo) */
+    --brand-purple: #A958A4;
+    --brand-blue: #00AEEF;
+    --brand-dark: #1D1024;
     --brand-white: #FFFFFF;
-    --brand-section: #FAFAFA;
-    --brand-border: #EAEAEA;
-    --brand-heading: #1A1A1A;
-    --brand-paragraph: #666666;
-    --brand-hover-purple: #93469B;
-    --brand-hover-blue: #0E97D0;
-    --brand-success: #2EAF62;
-    --brand-error: #E53935;
+    --brand-section: #FAF7FC;
+    --brand-border: #ECE3F2;
+    --brand-heading: #221826;
+    --brand-paragraph: #6F6478;
+    --brand-hover-purple: #8C4188;
+    --brand-hover-blue: #0887B8;
+    --brand-success: #3D7C4F;
+    --brand-error: #C24B42;
+
+    /* Villa tokens */
+    --noir: #1D1024;
+    --noir-soft: #271631;
+    --ivory: #FAF7FC;
+    --ivory-deep: #F2ECF7;
+    --gold: #B562B0;          /* accent role — logo orchid */
+    --gold-light: #E2AEDF;
+    --gold-dark: #8C4188;
+    --azure: #00AEEF;         /* logo sky blue */
+    --azure-light: #6FD1F8;
+    --azure-dark: #0887B8;
+    --plum: #A958A4;
+    --plum-deep: #8C4188;
+    --stone: #8D8296;
+    --line: #ECE3F2;
+    --grad-brand: linear-gradient(115deg, #A958A4 0%, #00AEEF 100%);
+    --grad-brand-deep: linear-gradient(115deg, #8C4188 0%, #0887B8 100%);
+    --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   }
 }
 
@@ -93,39 +115,56 @@
     letter-spacing: 0.01em;
   }
   ::selection {
-    background: rgba(164, 88, 166, 0.2);
+    background: rgba(169, 88, 164, 0.3);
+    color: #221826;
+  }
+  :focus-visible {
+    outline: 1.5px solid var(--azure);
+    outline-offset: 2px;
   }
 }
 
-/* Premium Typography */
+/* ── Villa Typography ───────────────────────── */
 @layer utilities {
   .font-display {
-    font-family: 'Acumin Pro', sans-serif;
+    font-family: var(--font-display);
   }
   .font-heading {
-    font-family: 'Acumin Pro', sans-serif;
+    font-family: var(--font-display);
   }
   .text-balance {
     text-wrap: balance;
   }
 
-  /* Eyebrow label — tiny, tracked-out, purple */
+  /* Eyebrow label — tiny, tracked-out, orchid */
   .luxe-eyebrow {
     @apply text-[10px] sm:text-[11px] uppercase font-medium;
-    letter-spacing: 0.35em;
-    color: var(--brand-purple);
+    letter-spacing: 0.4em;
+    color: var(--plum);
+  }
+  .luxe-eyebrow-dark {
+    @apply text-[10px] sm:text-[11px] uppercase font-medium;
+    letter-spacing: 0.4em;
+    color: var(--gold-light);
   }
 
-  /* Section heading — modern sans */
+  /* Section heading — editorial serif */
   .luxe-heading {
-    font-family: 'Acumin Pro', sans-serif;
-    @apply font-semibold tracking-tight text-brand-heading;
+    font-family: var(--font-display);
+    @apply font-medium tracking-tight text-brand-heading;
   }
 
-  /* Short purple rule used under headings */
+  /* Serif italic accent inside headings */
+  .luxe-italic {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  /* Short brand rule used under headings — orchid fading to sky */
   .luxe-rule {
-    @apply inline-block h-[2px] w-14 rounded-full;
-    background: linear-gradient(90deg, var(--brand-purple), var(--brand-blue));
+    @apply inline-block h-px w-14;
+    background: linear-gradient(90deg, var(--plum), var(--azure), transparent);
   }
 
   /* Understated link with animated underline */
@@ -138,21 +177,90 @@
     position: absolute;
     left: 0;
     bottom: -4px;
-    height: 2px;
+    height: 1.5px;
     width: 100%;
-    background: linear-gradient(90deg, var(--brand-purple), var(--brand-blue));
-    transform: scaleX(0);
+    background: var(--grad-brand);
+    transform: scaleX(0.35);
     transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    border-radius: 1px;
+    opacity: 0.5;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s;
   }
   .luxe-link:hover::after {
     transform: scaleX(1);
+    opacity: 1;
+  }
+
+  /* Hollow display text (marquee & backdrops) */
+  .text-hollow {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+    color: transparent;
+  }
+  .text-hollow-dark {
+    -webkit-text-stroke: 1px rgba(169, 88, 164, 0.35);
+    color: transparent;
+  }
+  .text-hollow-gold {
+    -webkit-text-stroke: 1px rgba(181, 98, 176, 0.6);
+    color: transparent;
+  }
+  .text-hollow-azure {
+    -webkit-text-stroke: 1px rgba(111, 209, 248, 0.55);
+    color: transparent;
+  }
+
+  /* Brand gradient text — orchid to sky, like the logo */
+  .text-gradient {
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-light {
+    background: linear-gradient(115deg, #E2AEDF 0%, #6FD1F8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 }
 
-/* ── Premium Motion ───────────────────────── */
+/* ── Villa Motion ───────────────────────── */
 @layer utilities {
+  /* Film-grain veil for cinematic sections */
+  .luxe-grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .luxe-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  /* Aurora — soft orchid & sky glows for dark sections */
+  .luxe-aurora::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(640px 320px at 10% -5%, rgba(169, 88, 164, 0.35), transparent 65%),
+      radial-gradient(720px 360px at 92% 105%, rgba(0, 174, 239, 0.28), transparent 65%),
+      radial-gradient(500px 260px at 60% 50%, rgba(140, 65, 136, 0.15), transparent 70%);
+  }
+
+  /* Aurora for light sections — barely-there colour wash */
+  .luxe-aurora-light {
+    background-image:
+      radial-gradient(700px 340px at 8% 0%, rgba(169, 88, 164, 0.07), transparent 60%),
+      radial-gradient(700px 340px at 95% 100%, rgba(0, 174, 239, 0.07), transparent 60%);
+  }
+
   /* Light-sweep across images on hover */
   .img-shine {
     position: relative;
@@ -164,14 +272,14 @@
     bottom: 0;
     left: -75%;
     width: 50%;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.35), transparent);
     transform: skewX(-25deg);
     pointer-events: none;
     z-index: 5;
   }
   .group:hover .img-shine::after,
   .img-shine:hover::after {
-    animation: shineSweep 1s ease;
+    animation: shineSweep 1.1s ease;
   }
   @keyframes shineSweep {
     100% { left: 125%; }
@@ -179,19 +287,11 @@
 
   /* Slow ken-burns drift for hero imagery */
   .hero-kenburns {
-    animation: kenburns 16s ease-in-out infinite alternate;
+    animation: kenburns 18s ease-in-out infinite alternate;
   }
   @keyframes kenburns {
     from { transform: scale(1) translateX(0); }
-    to { transform: scale(1.06) translateX(-1%); }
-  }
-
-  /* Animated gradient text */
-  .text-gradient {
-    background: linear-gradient(135deg, var(--brand-purple) 0%, var(--brand-blue) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    to { transform: scale(1.07) translateX(-1%); }
   }
 
   /* Infinite marquee ribbon */
@@ -201,17 +301,22 @@
   .luxe-marquee-track {
     display: flex;
     width: max-content;
-    animation: marqueeScroll 35s linear infinite;
+    animation: marqueeScroll 40s linear infinite;
   }
   .luxe-marquee:hover .luxe-marquee-track {
     animation-play-state: paused;
+  }
+  .luxe-marquee-track-reverse {
+    display: flex;
+    width: max-content;
+    animation: marqueeScroll 46s linear infinite reverse;
   }
   @keyframes marqueeScroll {
     to { transform: translateX(-50%); }
   }
 
   .animate-marquee {
-    animation: marqueeScroll 20s linear infinite;
+    animation: marqueeScroll 22s linear infinite;
   }
   .animate-marquee:hover {
     animation-play-state: paused;
@@ -222,86 +327,128 @@
     animation: glowPulse 3s ease-in-out infinite;
   }
   @keyframes glowPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(164, 88, 166, 0.3); }
-    50% { box-shadow: 0 0 0 8px rgba(164, 88, 166, 0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 174, 239, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(0, 174, 239, 0); }
+  }
+
+  /* Slow rotating badge (circular text) */
+  .rotate-slow {
+    animation: rotateSlow 16s linear infinite;
+  }
+  @keyframes rotateSlow {
+    to { transform: rotate(360deg); }
   }
 
   /* Respect reduced-motion preferences */
   @media (prefers-reduced-motion: reduce) {
     .luxe-marquee-track,
+    .luxe-marquee-track-reverse,
     .animate-marquee,
     .hero-kenburns,
-    .text-gradient,
     .glow-pulse,
+    .rotate-slow,
     .img-shine::after {
       animation: none !important;
     }
   }
 }
 
-/* Premium Buttons */
+/* ── Villa Buttons ───────────────────────── */
 @layer components {
   .btn-luxe,
   .btn-luxe-outline,
-  .btn-luxe-white {
+  .btn-luxe-white,
+  .btn-luxe-gold {
     position: relative;
     overflow: hidden;
+    isolation: isolate;
   }
-  .btn-luxe::before,
-  .btn-luxe-outline::before,
-  .btn-luxe-white::before {
+
+  /* Fill-up hover core */
+  .btn-luxe::after,
+  .btn-luxe-outline::after,
+  .btn-luxe-white::after,
+  .btn-luxe-gold::after {
     content: "";
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: -80%;
-    width: 45%;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transform: skewX(-25deg);
-    pointer-events: none;
+    inset: 0;
+    z-index: -1;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .btn-luxe:hover::before,
-  .btn-luxe-outline:hover::before,
-  .btn-luxe-white:hover::before {
-    animation: shineSweep 0.8s ease;
+  .btn-luxe:hover::after,
+  .btn-luxe-outline:hover::after,
+  .btn-luxe-white:hover::after,
+  .btn-luxe-gold:hover::after {
+    transform: scaleY(1);
   }
 
+  /* Primary — aubergine rising to the brand gradient */
   .btn-luxe {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3 text-[11px] uppercase font-semibold text-white transition-all duration-300 rounded-full;
-    letter-spacing: 0.2em;
-    background: linear-gradient(135deg, var(--brand-purple), var(--brand-blue));
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 text-[11px] uppercase font-semibold text-white transition-all duration-500;
+    letter-spacing: 0.25em;
+    background: var(--noir);
+    border: 1px solid var(--noir);
+  }
+  .btn-luxe::after {
+    background: var(--grad-brand);
   }
   .btn-luxe:hover {
-    box-shadow: 0 12px 30px -10px rgba(164, 88, 166, 0.5);
-    transform: translateY(-1px);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 18px 40px -16px rgba(169, 88, 164, 0.6);
   }
 
+  /* Outline — hairline, fills with the brand gradient */
   .btn-luxe-outline {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3 text-[11px] uppercase font-semibold transition-all duration-300 border-2 rounded-full;
-    letter-spacing: 0.2em;
-    color: var(--brand-purple);
-    border-color: var(--brand-purple);
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 text-[11px] uppercase font-semibold transition-all duration-500 border;
+    letter-spacing: 0.25em;
+    color: var(--brand-heading);
+    border-color: rgba(169, 88, 164, 0.45);
     background: transparent;
+  }
+  .btn-luxe-outline::after {
+    background: var(--grad-brand);
   }
   .btn-luxe-outline:hover {
-    background: var(--brand-purple);
     color: #fff;
-    box-shadow: 0 12px 30px -10px rgba(164, 88, 166, 0.4);
+    border-color: transparent;
   }
 
+  /* White ghost — for dark imagery */
   .btn-luxe-white {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3 text-[11px] uppercase font-semibold transition-all duration-300 border-2 border-white/80 text-white rounded-full;
-    letter-spacing: 0.2em;
-    background: transparent;
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 text-[11px] uppercase font-semibold transition-all duration-500 border text-white;
+    letter-spacing: 0.25em;
+    border-color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(4px);
+  }
+  .btn-luxe-white::after {
+    background: #fff;
   }
   .btn-luxe-white:hover {
-    background: #fff;
     color: var(--brand-purple);
     border-color: #fff;
   }
+
+  /* Gradient — the signature logo-coloured CTA */
+  .btn-luxe-gold {
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 text-[11px] uppercase font-semibold transition-all duration-500 border text-white;
+    letter-spacing: 0.25em;
+    background: var(--grad-brand);
+    border-color: transparent;
+  }
+  .btn-luxe-gold::after {
+    background: var(--grad-brand-deep);
+  }
+  .btn-luxe-gold:hover {
+    color: #fff;
+    box-shadow: 0 18px 40px -16px rgba(0, 174, 239, 0.55);
+  }
 }
 
-/* Premium Layout */
+/* ── Villa Layout ───────────────────────── */
 @layer components {
   .section-container {
     @apply max-w-7xl mx-auto px-5 sm:px-8 lg:px-12;
@@ -316,38 +463,39 @@
   }
 }
 
-/* Premium Card Styles */
+/* ── Villa Cards ───────────────────────── */
 @layer utilities {
   .card-premium {
-    @apply bg-white transition-all duration-300 rounded-2xl border;
-    border-color: var(--brand-border);
+    @apply bg-white transition-all duration-500 border;
+    border-color: var(--line);
   }
   .card-premium:hover {
-    box-shadow: 0 20px 50px -20px rgba(164, 88, 166, 0.15);
+    box-shadow: 0 24px 60px -28px rgba(140, 65, 136, 0.3);
     transform: translateY(-4px);
+    border-color: rgba(169, 88, 164, 0.5);
   }
 
   .card-shadow {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 3px rgba(34, 24, 38, 0.05);
   }
 
   .card-shadow-lg {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 10px 36px rgba(34, 24, 38, 0.08);
   }
 
   .card-hover {
-    @apply transition-all duration-300;
+    @apply transition-all duration-500;
   }
   .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 50px -20px rgba(164, 88, 166, 0.15);
+    box-shadow: 0 24px 60px -28px rgba(140, 65, 136, 0.3);
   }
 }
 
-/* Premium Image Containers */
+/* ── Villa Image Containers ───────────────────────── */
 @layer utilities {
   .img-zoom {
-    @apply overflow-hidden rounded-2xl;
+    @apply overflow-hidden;
   }
   .img-zoom img {
     @apply transition-transform duration-700;
@@ -357,39 +505,38 @@
   }
 }
 
-/* Premium Animations */
+/* ── Villa Animations & Backgrounds ───────────────────────── */
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.7s ease-out forwards;
+    animation: fadeIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     opacity: 0;
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(14px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   .animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
+    animation: slideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(24px); }
+    from { opacity: 0; transform: translateY(28px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   .animate-fade-in-delayed {
-    animation: fadeIn 0.7s ease-out 0.25s forwards;
+    animation: fadeIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
     opacity: 0;
   }
 
-  /* Premium Background System */
   .bg-page {
     background-color: var(--brand-white);
   }
 
   .bg-section-light {
-    background-color: var(--brand-section);
+    background-color: var(--ivory);
   }
 
   .bg-section-white {
@@ -397,15 +544,21 @@
   }
 
   .bg-hero-gradient {
-    background: linear-gradient(135deg, #FAFAFA 0%, #FFFFFF 100%);
+    background: linear-gradient(160deg, #FAF7FC 0%, #FFFFFF 70%);
   }
 
   .bg-hero-brand {
-    background: linear-gradient(135deg, #A458A6 0%, #14A8E6 100%);
+    background:
+      radial-gradient(1100px 480px at 88% -10%, rgba(0, 174, 239, 0.14), transparent 60%),
+      radial-gradient(1100px 480px at 5% 110%, rgba(169, 88, 164, 0.14), transparent 60%),
+      linear-gradient(160deg, #FAF7FC 0%, #F2ECF7 100%);
   }
 
   .bg-hero-dark {
-    background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+    background:
+      radial-gradient(1100px 480px at 85% -10%, rgba(0, 174, 239, 0.22), transparent 60%),
+      radial-gradient(1100px 480px at 8% 110%, rgba(169, 88, 164, 0.3), transparent 60%),
+      linear-gradient(150deg, #1D1024 0%, #321D3E 100%);
   }
 
   /* Minimal Scrollbar */
@@ -414,22 +567,51 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #FAFAFA;
+    background: #FAF7FC;
   }
   ::-webkit-scrollbar-thumb {
-    background: #D0D0D0;
+    background: #D5C7DE;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #A458A6;
+    background: var(--plum);
   }
 }
 
 /* Hide scrollbar for horizontal scroll */
-.scrollbar-hide {
+.scrollbar-hide,
+.no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.scrollbar-hide::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* ── Site FX: scroll progress, preloader ── */
+.luxe-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  z-index: 120;
+  transform-origin: 0 50%;
+  background: var(--grad-brand);
+  pointer-events: none;
+}
+
+/* Lenis recommended styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }

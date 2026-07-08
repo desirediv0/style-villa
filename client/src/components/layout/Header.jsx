@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { fetchApi, cn, sortCategories } from "@/lib/utils";
 import { ClientOnly } from "@/components/client-only";
+import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast, Toaster } from "sonner";
 import {
@@ -17,18 +18,12 @@ import {
   IconHeart,
   IconMenu2,
   IconX,
-  IconChevronDown,
-  IconChevronRight,
   IconPackage,
   IconLogout,
   IconMapPin,
-  IconMail,
   IconPhone,
   IconBrandInstagram,
-  IconBrandYoutube,
-  IconHome,
-  IconGridDots,
-  IconMenu,
+  IconArrowUpRight,
 } from "@tabler/icons-react";
 
 const CONTACT = {
@@ -45,12 +40,18 @@ const NAV_LINKS = [
   { href: "/contact", label: "CONTACT" },
 ];
 
+const ANNOUNCEMENTS = [
+  "Extra 5% off on prepaid orders",
+  "Complimentary shipping above ₹999",
+  "New arrivals every week",
+  "Premium imported bags & clothing",
+];
+
 function AvatarCircle({ name, size = "sm" }) {
   const dim = size === "lg" ? "w-11 h-11 text-base" : "w-8 h-8 text-sm";
   return (
     <div
-      className={`${dim} rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0`}
-      style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+      className={`${dim} rounded-full flex items-center justify-center text-ivory font-display flex-shrink-0 border border-gold/50 bg-noir`}
     >
       {name?.charAt(0)?.toUpperCase() || "U"}
     </div>
@@ -117,52 +118,86 @@ export function Navbar() {
 
   const cartCount = getCartItemCount();
   const isHomePage = pathname === "/";
+  const overHero = isHomePage && !isScrolled;
+
+  const iconBtn = cn(
+    "p-2 transition-colors duration-300 relative",
+    overHero ? "text-ivory hover:text-gold-light" : "text-noir hover:text-plum"
+  );
 
   return (
     <>
       <header
         ref={navbarRef}
         className={cn(
-          "top-0 left-0 right-0 z-50 w-full transition-all duration-500",
+          "top-0 left-0 right-0 z-50 w-full transition-all duration-700",
           isHomePage
-            ? cn("fixed", isScrolled ? "bg-white shadow-lg" : "bg-transparent")
-            : "sticky bg-white shadow-sm"
+            ? cn("fixed", isScrolled ? "bg-ivory-warm/90 backdrop-blur-xl shadow-[0_1px_0_0_rgba(13,11,12,0.06),0_18px_40px_-30px_rgba(13,11,12,0.35)]" : "bg-transparent")
+            : "sticky bg-ivory-warm/95 backdrop-blur-xl shadow-[0_1px_0_0_rgba(13,11,12,0.06)]"
         )}
       >
-        <Toaster position="top-center" richColors />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              background: "#0D0B0C",
+              color: "#F7F4EE",
+              border: "1px solid rgba(192,160,98,0.4)",
+              borderRadius: "0",
+              fontSize: "13px",
+              letterSpacing: "0.02em",
+            },
+          }}
+        />
 
-        {/* Announcement marquee bar */}
-        <div className={cn(
-          "overflow-hidden transition-all duration-500",
-          isHomePage && isScrolled ? "h-0 opacity-0" : "h-auto opacity-100"
-        )}>
-          <div className="text-white" style={{ background: "linear-gradient(90deg, #A458A6, #14A8E6)" }}>
+        {/* Announcement ribbon */}
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-700",
+            isHomePage && isScrolled ? "h-0 opacity-0" : "h-auto opacity-100"
+          )}
+        >
+          <div className="bg-noir text-ivory border-b border-white/5">
             <div className="py-2 px-4">
-              <div className="max-w-7xl mx-auto flex items-center justify-between">
+              <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
                 <div className="hidden md:flex items-center gap-4">
-                  <a href="https://www.instagram.com/stylevillaofficial" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                  <a
+                    href="https://www.instagram.com/stylevillaofficial"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/50 hover:text-gold-light transition-colors"
+                    aria-label="Instagram"
+                  >
                     <IconBrandInstagram className="h-4 w-4" stroke={1.5} />
                   </a>
-                  <a href="https://www.facebook.com/stylevillafamily" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                  <a
+                    href="https://www.facebook.com/stylevillafamily"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/50 hover:text-gold-light transition-colors"
+                    aria-label="Facebook"
+                  >
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
                   </a>
                 </div>
 
-                <div className="flex-1 mx-4 overflow-hidden">
-                  <div className="animate-marquee whitespace-nowrap text-[11px] tracking-[0.15em] uppercase font-medium">
-                    <span className="mx-6">EXTRA 5% OFF PREPAID ORDERS</span>
-                    <span className="mx-6">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
-                    <span className="mx-6">A TRY-ME SAMPLE FREE WITH EVERY ORDER</span>
-                    <span className="mx-6">EXPLORE OUR NEWEST LAUNCHES</span>
-                    <span className="mx-6">EXTRA 5% OFF PREPAID ORDERS</span>
-                    <span className="mx-6">FREE SHIPPING ON ORDERS ABOVE ₹999</span>
+                <div className="flex-1 mx-2 md:mx-4 overflow-hidden">
+                  <div className="animate-marquee whitespace-nowrap text-[10px] tracking-[0.3em] uppercase font-medium text-ivory/80">
+                    {[...ANNOUNCEMENTS, ...ANNOUNCEMENTS].map((txt, i) => (
+                      <span key={i} className="mx-4">
+                        {txt}
+                        <span className="ml-8 text-azure">✦</span>
+                      </span>
+                    ))}
                   </div>
                 </div>
 
-                <div className="hidden md:flex items-center gap-5 text-[10px] tracking-[0.15em] uppercase font-medium">
-                  <Link href="/track-order" className="hover:text-white/80 transition-colors">Track Order</Link>
+                <div className="hidden md:flex items-center gap-5 text-[9px] tracking-[0.3em] uppercase font-medium">
+                  <Link href="/track-order" className="text-white/60 hover:text-gold-light transition-colors">
+                    Track Order
+                  </Link>
                 </div>
               </div>
             </div>
@@ -170,22 +205,13 @@ export function Navbar() {
         </div>
 
         {/* Main header row */}
-        <div className={cn(
-          "transition-all duration-500",
-          isHomePage
-            ? (isScrolled ? "bg-white/95 backdrop-blur-md" : "bg-transparent")
-            : "bg-white"
-        )}>
+        <div className="transition-all duration-700">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
-            <div className="flex items-center justify-between h-14 md:h-16 gap-4">
-
+            <div className="flex items-center justify-between h-16 md:h-[72px] gap-4">
               {/* Mobile: Search icon left */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className={cn(
-                  "md:hidden p-2 transition-colors rounded-full",
-                  isHomePage && !isScrolled ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"
-                )}
+                className={cn("md:hidden", iconBtn)}
                 aria-label="Search"
               >
                 <IconSearch className="h-5 w-5" stroke={1.5} />
@@ -200,8 +226,8 @@ export function Navbar() {
                     width={100}
                     height={100}
                     className={cn(
-                      "h-10 w-auto object-contain transition-all duration-500",
-                      isHomePage && !isScrolled ? "brightness-0 invert" : ""
+                      "h-11 w-auto object-contain transition-all duration-700",
+                      overHero ? "brightness-0 invert" : ""
                     )}
                   />
                 </Link>
@@ -216,35 +242,34 @@ export function Navbar() {
                     width={80}
                     height={80}
                     className={cn(
-                      "h-8 w-auto object-contain transition-all duration-500",
-                      isHomePage && !isScrolled ? "brightness-0 invert" : ""
+                      "h-9 w-auto object-contain transition-all duration-700",
+                      overHero ? "brightness-0 invert" : ""
                     )}
                   />
                 </Link>
               </div>
 
               {/* Desktop: Search bar center */}
-              <div className="hidden md:flex flex-1 max-w-lg mx-6">
-                <form onSubmit={handleSearch} className="w-full relative">
+              <div className="hidden md:flex flex-1 max-w-md mx-6">
+                <form onSubmit={handleSearch} className="w-full relative group">
                   <input
                     type="text"
-                    placeholder="Search products..."
+                    placeholder="Search the collection…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className={cn(
-                      "w-full h-10 pl-4 pr-11 text-sm rounded-full transition-all duration-300 placeholder:text-gray-400",
-                      isHomePage && !isScrolled
-                        ? "bg-white/15 border border-white/30 text-white placeholder:text-white/60 focus:outline-none focus:bg-white/25 focus:border-white/60"
-                        : "bg-gray-100 border border-gray-200 text-gray-900 focus:outline-none focus:border-[#14A8E6] focus:bg-white focus:shadow-[0_0_0_3px_rgba(20,168,230,0.1)]"
+                      "w-full h-10 pl-5 pr-11 text-[13px] tracking-wide transition-all duration-500 border-b bg-transparent",
+                      overHero
+                        ? "border-white/30 text-ivory placeholder:text-white/50 focus:outline-none focus:border-gold-light"
+                        : "border-noir/15 text-noir placeholder:text-stone focus:outline-none focus:border-gold-dark"
                     )}
                   />
                   <button
                     type="submit"
+                    aria-label="Search"
                     className={cn(
-                      "absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-full transition-all duration-300",
-                      isHomePage && !isScrolled
-                        ? "text-white/80 hover:text-white hover:bg-white/20"
-                        : "text-gray-500 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
+                      "absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center transition-all duration-300",
+                      overHero ? "text-white/70 hover:text-gold-light" : "text-stone hover:text-gold-dark"
                     )}
                   >
                     <IconSearch className="h-4 w-4" stroke={1.5} />
@@ -253,34 +278,16 @@ export function Navbar() {
               </div>
 
               {/* Right: Icons */}
-              <div className="flex items-center gap-0.5 sm:gap-1">
+              <div className="flex items-center gap-0.5 sm:gap-2">
                 {/* Desktop: User icon */}
                 <div className="hidden sm:block">
                   <ClientOnly>
                     {isAuthenticated ? (
-                      <Link
-                        href="/account"
-                        className={cn(
-                          "p-2 transition-colors rounded-full relative",
-                          isHomePage && !isScrolled
-                            ? "text-white hover:bg-white/10"
-                            : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
-                        )}
-                        aria-label="Account"
-                      >
+                      <Link href="/account" className={iconBtn} aria-label="Account">
                         <AvatarCircle name={user?.name} size="sm" />
                       </Link>
                     ) : (
-                      <Link
-                        href="/auth"
-                        className={cn(
-                          "p-2 transition-colors rounded-full",
-                          isHomePage && !isScrolled
-                            ? "text-white hover:bg-white/10"
-                            : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
-                        )}
-                        aria-label="Login"
-                      >
+                      <Link href="/auth" className={iconBtn} aria-label="Login">
                         <IconUser className="h-5 w-5" stroke={1.5} />
                       </Link>
                     )}
@@ -288,34 +295,16 @@ export function Navbar() {
                 </div>
 
                 {/* Wishlist */}
-                <Link
-                  href="/wishlist"
-                  className={cn(
-                    "p-2 transition-colors rounded-full relative",
-                    isHomePage && !isScrolled
-                      ? "text-white hover:bg-white/10"
-                      : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
-                  )}
-                  aria-label="Wishlist"
-                >
+                <Link href="/wishlist" className={iconBtn} aria-label="Wishlist">
                   <IconHeart className="h-5 w-5" stroke={1.5} />
                 </Link>
 
                 {/* Cart */}
                 <ClientOnly>
-                  <Link
-                    href="/cart"
-                    className={cn(
-                      "p-2 transition-colors rounded-full relative",
-                      isHomePage && !isScrolled
-                        ? "text-white hover:bg-white/10"
-                        : "text-gray-700 hover:text-[#14A8E6] hover:bg-[#14A8E6]/10"
-                    )}
-                    aria-label="Cart"
-                  >
+                  <Link href="/cart" className={iconBtn} aria-label="Cart">
                     <IconShoppingBag className="h-5 w-5" stroke={1.5} />
                     {cartCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 text-white text-[9px] font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}>
+                      <span className="absolute -top-0.5 -right-0.5 text-white text-[9px] font-bold rounded-full min-w-[17px] h-[17px] flex items-center justify-center bg-azure">
                         {cartCount}
                       </span>
                     )}
@@ -325,10 +314,7 @@ export function Navbar() {
                 {/* Mobile: Menu */}
                 <button
                   onClick={() => setIsMenuOpen(true)}
-                  className={cn(
-                    "md:hidden p-2 transition-colors rounded-full",
-                    isHomePage && !isScrolled ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"
-                  )}
+                  className={cn("md:hidden", iconBtn)}
                   aria-label="Menu"
                 >
                   <IconMenu2 className="h-5 w-5" stroke={1.5} />
@@ -339,28 +325,42 @@ export function Navbar() {
         </div>
 
         {/* Desktop: Navigation menu below header */}
-        <div className={cn(
-          "hidden md:block transition-all duration-500 border-b",
-          isHomePage
-            ? (isScrolled ? "bg-white border-gray-100" : "bg-transparent border-white/10")
-            : "bg-white border-gray-100"
-        )}>
+        <div
+          className={cn(
+            "hidden md:block transition-all duration-700 border-b",
+            overHero ? "border-white/10" : "border-noir/5"
+          )}
+        >
           <div className="max-w-7xl mx-auto px-4 md:px-6">
-            <nav className="flex items-center justify-center gap-8 h-10">
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={cn(
-                    "text-[11px] tracking-[0.2em] font-medium transition-all duration-300 relative py-2",
-                    isHomePage && !isScrolled
-                      ? cn("hover:text-white", pathname === href ? "text-white" : "text-white/80")
-                      : cn("hover:text-[#14A8E6]", pathname === href ? "text-[#14A8E6]" : "text-gray-700")
-                  )}
-                >
-                  {label}
-                </Link>
-              ))}
+            <nav className="flex items-center justify-center gap-10 h-11">
+              {NAV_LINKS.map(({ href, label }) => {
+                const active = pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={cn(
+                      "relative py-2 text-[10.5px] tracking-[0.28em] font-medium transition-colors duration-300 group",
+                      overHero
+                        ? active
+                          ? "text-gold-light"
+                          : "text-ivory/85 hover:text-ivory"
+                        : active
+                          ? "text-plum"
+                          : "text-noir/70 hover:text-noir"
+                    )}
+                  >
+                    {label}
+                    <span
+                      className={cn(
+                        "absolute left-0 -bottom-[1px] h-px w-full origin-left transition-transform duration-500",
+                        overHero ? "bg-gradient-to-r from-gold-light to-azure-light" : "bg-gradient-to-r from-plum to-azure",
+                        active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                      )}
+                    />
+                  </Link>
+                );
+              })}
             </nav>
           </div>
         </div>
@@ -395,39 +395,40 @@ export function Navbar() {
 function SearchDialog({ open, onOpenChange, searchQuery, setSearchQuery, handleSearch, searchInputRef, categories }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white p-0 overflow-hidden border border-gray-200 rounded-2xl shadow-2xl">
-        <DialogHeader className="px-6 pt-6 pb-4">
+      <DialogContent className="sm:max-w-[540px] bg-ivory-warm p-0 overflow-hidden border border-line rounded-none shadow-2xl">
+        <DialogHeader className="px-8 pt-8 pb-2">
           <DialogTitle className="text-center">
-            <span className="font-semibold text-lg text-gray-900">Search Products</span>
+            <span className="luxe-eyebrow block mb-2">Style Villa</span>
+            <span className="font-display text-2xl font-medium text-noir">Search the Maison</span>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-6 pb-6">
-          <form onSubmit={handleSearch} className="relative">
-            <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#14A8E6]" stroke={1.5} />
+        <div className="px-8 pb-8">
+          <form onSubmit={handleSearch} className="relative mt-4">
+            <IconSearch className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-4 text-gold-dark" stroke={1.5} />
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Search for products..."
+              placeholder="Bags, dresses, accessories…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-11 pr-24 text-sm bg-gray-50 border-2 border-gray-200 rounded-full focus:outline-none focus:border-[#14A8E6] focus:shadow-[0_0_0_3px_rgba(20,168,230,0.1)] transition-all duration-300 placeholder:text-gray-400"
+              className="w-full h-12 pl-8 pr-24 text-sm bg-transparent border-b border-noir/20 focus:outline-none focus:border-gold-dark transition-all duration-300 placeholder:text-stone"
               autoComplete="off"
             />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1">
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="p-1.5 text-gray-400 hover:text-gray-600"
+                  className="p-1.5 text-stone hover:text-noir"
+                  aria-label="Clear"
                 >
                   <IconX className="h-4 w-4" stroke={1.5} />
                 </button>
               )}
               <button
                 type="submit"
-                className="h-8 px-4 text-white text-[10px] uppercase tracking-wider font-semibold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-[#14A8E6]/30"
-                style={{ background: "#14A8E6" }}
+                className="h-9 px-5 bg-noir text-ivory text-[10px] uppercase tracking-[0.25em] font-semibold transition-all duration-300 hover:bg-gold hover:text-white"
               >
                 Search
               </button>
@@ -435,15 +436,17 @@ function SearchDialog({ open, onOpenChange, searchQuery, setSearchQuery, handleS
           </form>
 
           {categories.length > 0 && (
-            <div className="mt-5">
-              <p className="text-[10px] uppercase tracking-[0.2em] mb-3 text-gray-500 font-medium">Categories</p>
+            <div className="mt-8">
+              <p className="text-[9px] uppercase tracking-[0.35em] mb-4 text-stone font-medium">
+                Browse Collections
+              </p>
               <div className="flex flex-wrap gap-2">
                 {categories.slice(0, 10).map((cat) => (
                   <Link
                     key={cat.id}
                     href={`/category/${cat.slug}`}
                     onClick={() => onOpenChange(false)}
-                    className="px-3 py-1.5 text-[11px] tracking-wide border border-gray-200 rounded-full transition-all text-gray-600 hover:bg-[#14A8E6] hover:text-white hover:border-[#14A8E6]"
+                    className="px-4 py-2 text-[11px] tracking-[0.12em] uppercase border border-line transition-all duration-300 text-noir/70 hover:border-gold hover:bg-noir hover:text-gold-light"
                   >
                     {cat.name}
                   </Link>
@@ -458,146 +461,191 @@ function SearchDialog({ open, onOpenChange, searchQuery, setSearchQuery, handleS
 }
 
 function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCount, handleLogout, pathname }) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[60] md:hidden">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[60] md:hidden">
+          <motion.div
+            className="absolute inset-0 bg-noir/70 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={onClose}
+          />
 
-      <div className="absolute left-0 top-0 bottom-0 w-[85%] max-w-[340px] bg-white shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-shrink-0">
-          <Image src="/logo.png" alt="Style Villa" width={100} height={40} className="h-9 w-auto object-contain" />
-          <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700">
-            <IconX className="h-5 w-5" stroke={1.5} />
-          </button>
-        </div>
-
-        {/* User section */}
-        <ClientOnly>
-          <div className="px-4 py-3 border-b border-gray-100 flex-shrink-0 bg-gray-50">
-            {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <AvatarCircle name={user?.name} size="lg" />
-                <div className="min-w-0">
-                  <p className="font-semibold text-gray-900 truncate text-sm">{user?.name || "User"}</p>
-                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Link href="/auth" className="flex-1" onClick={onClose}>
-                  <button className="w-full h-10 text-xs font-semibold text-white rounded-full" style={{ background: "#A458A6" }}>
-                    Sign In
-                  </button>
-                </Link>
-                <Link href="/auth?tab=register" className="flex-1" onClick={onClose}>
-                  <button className="w-full h-10 text-xs font-semibold text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50">
-                    Register
-                  </button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </ClientOnly>
-
-        {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-2">
-          <div className="px-2">
-            {NAV_LINKS.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={onClose}
-                className={cn(
-                  "flex items-center px-4 py-3 text-sm tracking-wide transition-colors",
-                  pathname === href ? "text-[#A458A6] font-medium" : "text-gray-700 hover:text-[#A458A6]"
-                )}
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Categories */}
-          {categories.length > 0 && (
-            <div className="mt-2 pt-2 border-t border-gray-100 px-2">
-              <p className="px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-gray-400 font-medium">Categories</p>
-              {categories.slice(0, 8).map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/category/${cat.slug}`}
-                  onClick={onClose}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:text-[#A458A6] transition-colors"
-                >
-                  <span className="w-1 h-1 rounded-full bg-gray-300" />
-                  {cat.name}
-                </Link>
-              ))}
+          <motion.div
+            className="absolute left-0 top-0 bottom-0 w-[88%] max-w-[360px] bg-noir text-ivory shadow-2xl flex flex-col luxe-grain luxe-aurora"
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-white/10 flex-shrink-0">
+              <Image
+                src="/logo.png"
+                alt="Style Villa"
+                width={100}
+                height={40}
+                className="h-9 w-auto object-contain brightness-0 invert"
+              />
+              <button onClick={onClose} className="p-2 text-white/60 hover:text-gold-light transition-colors" aria-label="Close menu">
+                <IconX className="h-5 w-5" stroke={1.5} />
+              </button>
             </div>
-          )}
 
-          {/* Account links */}
-          <ClientOnly>
-            {isAuthenticated && (
-              <div className="mt-2 pt-2 border-t border-gray-100 px-2">
-                <p className="px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-gray-400 font-medium">Account</p>
+            {/* User section */}
+            <ClientOnly>
+              <div className="relative z-10 px-6 py-5 border-b border-white/10 flex-shrink-0">
+                {isAuthenticated ? (
+                  <div className="flex items-center gap-3">
+                    <AvatarCircle name={user?.name} size="lg" />
+                    <div className="min-w-0">
+                      <p className="font-display text-base text-ivory truncate">{user?.name || "User"}</p>
+                      <p className="text-xs text-white/40 truncate">{user?.email}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-3">
+                    <Link href="/auth" className="flex-1" onClick={onClose}>
+                      <button className="w-full h-11 text-[10px] uppercase tracking-[0.25em] font-semibold text-white bg-gold hover:bg-gold-dark transition-colors">
+                        Sign In
+                      </button>
+                    </Link>
+                    <Link href="/auth?tab=register" className="flex-1" onClick={onClose}>
+                      <button className="w-full h-11 text-[10px] uppercase tracking-[0.25em] font-semibold text-ivory border border-white/25 hover:border-gold-light hover:text-gold-light transition-colors">
+                        Register
+                      </button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </ClientOnly>
+
+            {/* Navigation */}
+            <div className="relative z-10 flex-1 overflow-y-auto py-4" data-lenis-prevent>
+              <div className="px-6">
+                {NAV_LINKS.map(({ href, label }, i) => (
+                  <motion.div
+                    key={href}
+                    initial={{ opacity: 0, x: -24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.15 + i * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Link
+                      href={href}
+                      onClick={onClose}
+                      className={cn(
+                        "flex items-baseline gap-3 py-3 group",
+                        pathname === href ? "text-gold-light" : "text-ivory/90"
+                      )}
+                    >
+                      <span className="text-[9px] tracking-[0.2em] text-white/30 font-medium">
+                        0{i + 1}
+                      </span>
+                      <span className="font-display text-2xl tracking-wide group-hover:text-gold-light transition-colors">
+                        {label.charAt(0) + label.slice(1).toLowerCase()}
+                      </span>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Categories */}
+              {categories.length > 0 && (
+                <div className="mt-6 pt-6 border-t border-white/10 px-6">
+                  <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-gold/80 font-medium">
+                    Collections
+                  </p>
+                  {categories.slice(0, 8).map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={`/category/${cat.slug}`}
+                      onClick={onClose}
+                      className="flex items-center justify-between py-2.5 text-sm text-white/60 hover:text-gold-light transition-colors group"
+                    >
+                      <span className="tracking-wide">{cat.name}</span>
+                      <IconArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity" stroke={1.5} />
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {/* Account links */}
+              <ClientOnly>
+                {isAuthenticated && (
+                  <div className="mt-4 pt-4 border-t border-white/10 px-6">
+                    <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-gold/80 font-medium">
+                      Account
+                    </p>
+                    {[
+                      { href: "/account", icon: IconUser, label: "Profile" },
+                      { href: "/account/orders", icon: IconPackage, label: "My Orders" },
+                      { href: "/account/addresses", icon: IconMapPin, label: "Addresses" },
+                    ].map(({ href, icon: Icon, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={onClose}
+                        className="flex items-center gap-3 py-2.5 text-sm text-white/60 hover:text-gold-light transition-colors"
+                      >
+                        <Icon className="h-4 w-4 text-white/30" stroke={1.5} />
+                        {label}
+                      </Link>
+                    ))}
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        onClose();
+                      }}
+                      className="flex items-center gap-3 w-full py-2.5 text-sm text-red-300/80 hover:text-red-300 transition-colors"
+                    >
+                      <IconLogout className="h-4 w-4" stroke={1.5} />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </ClientOnly>
+
+              {/* Help links */}
+              <div className="mt-4 pt-4 border-t border-white/10 px-6">
+                <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-gold/80 font-medium">
+                  Help
+                </p>
                 {[
-                  { href: "/account", icon: IconUser, label: "Profile" },
-                  { href: "/account/orders", icon: IconPackage, label: "My Orders" },
-                  { href: "/account/addresses", icon: IconMapPin, label: "Addresses" },
-                ].map(({ href, icon: Icon, label }) => (
+                  { href: "/about", label: "About Us" },
+                  { href: "/contact", label: "Contact" },
+                  { href: "/shipping-policy", label: "Shipping Policy" },
+                  { href: "/faqs", label: "FAQs" },
+                ].map(({ href, label }) => (
                   <Link
                     key={href}
                     href={href}
                     onClick={onClose}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:text-[#A458A6] transition-colors"
+                    className="block py-2.5 text-sm text-white/60 hover:text-gold-light transition-colors"
                   >
-                    <Icon className="h-4 w-4 text-gray-400" stroke={1.5} />
                     {label}
                   </Link>
                 ))}
-                <button
-                  onClick={() => { handleLogout(); onClose(); }}
-                  className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
-                >
-                  <IconLogout className="h-4 w-4" stroke={1.5} />
-                  Sign Out
-                </button>
               </div>
-            )}
-          </ClientOnly>
 
-          {/* Help links */}
-          <div className="mt-2 pt-2 border-t border-gray-100 px-2">
-            <p className="px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-gray-400 font-medium">Help</p>
-            {[
-              { href: "/about", label: "About Us" },
-              { href: "/contact", label: "Contact" },
-              { href: "/shipping-policy", label: "Shipping Policy" },
-              { href: "/faqs", label: "FAQs" },
-            ].map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={onClose}
-                className="block px-4 py-2.5 text-sm text-gray-600 hover:text-[#A458A6] transition-colors"
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Contact */}
-          <div className="mx-3 mt-3 p-3 bg-gray-50 border border-gray-100 rounded-xl">
-            <a href={`tel:${CONTACT.phone}`} className="flex items-center gap-2.5 text-xs text-gray-500 hover:text-gray-700 transition-colors">
-              <IconPhone className="h-4 w-4 flex-shrink-0 text-gray-400" stroke={1.5} />
-              {CONTACT.phone}
-            </a>
-          </div>
+              {/* Contact */}
+              <div className="mx-6 mt-6 mb-8 p-4 border border-white/10">
+                <p className="text-[9px] uppercase tracking-[0.35em] text-white/30 mb-2 font-medium">Concierge</p>
+                <a
+                  href={`tel:${CONTACT.phone}`}
+                  className="flex items-center gap-2.5 text-sm text-ivory/80 hover:text-gold-light transition-colors"
+                >
+                  <IconPhone className="h-4 w-4 flex-shrink-0 text-gold/70" stroke={1.5} />
+                  {CONTACT.phone}
+                </a>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
 

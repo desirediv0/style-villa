@@ -1,23 +1,29 @@
 "use client";
 
-const ITEMS = [
-  "Premium Imported Fashion",
-  "Free Shipping Above ₹999",
-  "Curated by Style Villa",
-  "Worldwide Delivery",
-  "New Arrivals Weekly",
-  "Easy Returns & Exchanges",
+const WORDS = [
+  "New Season",
+  "Handbags",
+  "Clothing",
+  "Footwear",
+  "Accessories",
+  "Imported Fashion",
 ];
 
-function MarqueeContent() {
+function MarqueeRow() {
   return (
-    <div className="flex items-center flex-shrink-0">
-      {ITEMS.map((item, i) => (
+    <div className="flex items-center flex-shrink-0" aria-hidden="true">
+      {WORDS.map((item, i) => (
         <span key={i} className="flex items-center">
-          <span className="text-sm md:text-base font-medium text-white/90 whitespace-nowrap px-8 md:px-12 tracking-wide">
+          <span
+            className={
+              i % 2 === 0
+                ? "font-display italic text-3xl md:text-5xl text-gradient-light whitespace-nowrap px-6 md:px-10 tracking-wide"
+                : "font-display text-3xl md:text-5xl text-hollow whitespace-nowrap px-6 md:px-10 tracking-wide uppercase"
+            }
+          >
             {item}
           </span>
-          <span className="text-white/30 text-xs" aria-hidden="true">|</span>
+          <span className={`text-sm md:text-base ${i % 2 === 0 ? "text-azure" : "text-gold"}`}>✦</span>
         </span>
       ))}
     </div>
@@ -27,13 +33,14 @@ function MarqueeContent() {
 export default function LuxuryMarquee() {
   return (
     <section
-      className="luxe-marquee py-4 border-y border-brand-border select-none"
-      style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+      className="relative bg-noir py-7 md:py-9 select-none overflow-hidden luxe-grain luxe-aurora border-y border-gold/25"
       aria-label="Style Villa highlights"
     >
-      <div className="luxe-marquee-track">
-        <MarqueeContent />
-        <MarqueeContent />
+      <div className="luxe-marquee relative z-10">
+        <div className="luxe-marquee-track">
+          <MarqueeRow />
+          <MarqueeRow />
+        </div>
       </div>
     </section>
   );

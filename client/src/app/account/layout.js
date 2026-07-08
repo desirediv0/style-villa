@@ -21,7 +21,7 @@ export default function AccountLayout({ children }) {
     if (loading) {
         return (
             <div className="container mx-auto py-10 flex justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A458A6]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A958A4]"></div>
             </div>
         );
     }
@@ -49,7 +49,7 @@ export default function AccountLayout({ children }) {
                                     <h2 className="text-xl font-semibold mb-4">Account</h2>
                                     <nav className="space-y-1">
                                         {navItems.map((item) => (
-                                            <Link key={item.path} href={item.path} className={`flex items-center p-2 rounded-xl transition-all ${isActive(item.path) ? "bg-purple-50 text-[#A458A6] font-medium" : "hover:bg-gray-50 text-gray-700"}`}>
+                                            <Link key={item.path} href={item.path} className={`flex items-center p-2 rounded-xl transition-all ${isActive(item.path) ? "bg-purple-50 text-[#A958A4] font-medium" : "hover:bg-gray-50 text-gray-700"}`}>
                                                 <DynamicIcon name={item.icon} className="mr-2 h-5 w-5" />
                                                 <span>{item.label}</span>
                                             </Link>

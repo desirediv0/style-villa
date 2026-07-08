@@ -323,18 +323,18 @@ export default function CartPage() {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center py-20 px-4 bg-white">
                 <div className="bg-white p-10 md:p-14 rounded-2xl text-center max-w-xl mx-auto border border-gray-100 shadow-sm">
-                    <div className="inline-flex justify-center items-center p-6 rounded-2xl mb-8 bg-gradient-to-br from-[#A458A6]/10 to-[#14A8E6]/10">
-                        <ShoppingBag className="h-10 w-10 stroke-[1.25] text-[#A458A6]" />
+                    <div className="inline-flex justify-center items-center p-6 rounded-2xl mb-8 bg-gradient-to-br from-[#A958A4]/10 to-[#00AEEF]/10">
+                        <ShoppingBag className="h-10 w-10 stroke-[1.25] text-[#A958A4]" />
                     </div>
                     <h2 className="font-display text-4xl font-medium mb-4 text-neutral-900">
                         Your Bag is Empty
                     </h2>
-                    <span className="block w-12 h-[1px] bg-[#A458A6] mx-auto mb-5" />
+                    <span className="block w-12 h-[1px] bg-[#A958A4] mx-auto mb-5" />
                     <p className="text-neutral-500 mb-8 max-w-sm mx-auto text-sm font-light leading-relaxed tracking-wide">
-                        Explore our gallery of handcrafted, premium luxury jewellery collections to find your perfect style.
+                        Explore our curated collection of premium imported bags, clothing and accessories to find your perfect style.
                     </p>
                     <Link href="/products">
-                        <button className="bg-[#A458A6] text-white text-xs font-semibold uppercase tracking-widest px-8 py-3 rounded-xl hover:bg-[#1A1A1A] transition-all">
+                        <button className="btn-luxe">
                             Browse the Collection
                         </button>
                     </Link>
@@ -347,9 +347,9 @@ export default function CartPage() {
         <div className="min-h-screen pb-24 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
                 <div className="mb-10">
-                    <span className="text-[10px] font-semibold tracking-[0.2em] text-[#A458A6] uppercase block mb-2">Your Shopping Bag</span>
-                    <h1 className="font-display text-4xl sm:text-5xl font-medium tracking-wide text-neutral-900">
-                        Shopping Cart
+                    <span className="luxe-eyebrow block mb-3">Your Selection</span>
+                    <h1 className="font-display text-4xl sm:text-5xl font-medium tracking-tight text-noir">
+                        Shopping <em className="luxe-italic text-gradient">Bag</em>
                     </h1>
                 </div>
 
@@ -366,12 +366,12 @@ export default function CartPage() {
                         </div>
                         <div className="flex gap-3">
                             <Link href="/auth?redirect=cart">
-                                <button className="bg-[#A458A6] text-white text-xs font-semibold uppercase tracking-widest px-5 py-3 rounded-xl hover:bg-[#1A1A1A] transition-all">
+                                <button className="bg-[#A958A4] text-white text-xs font-semibold uppercase tracking-widest px-5 py-3 rounded-xl hover:bg-[#1A1A1A] transition-all">
                                     Sign In
                                 </button>
                             </Link>
                             <Link href="/auth?redirect=cart">
-                                <button className="border border-[#A458A6] text-[#A458A6] text-xs font-semibold uppercase tracking-widest px-5 py-3 rounded-xl hover:bg-[#A458A6] hover:text-white transition-all">
+                                <button className="border border-[#A958A4] text-[#A958A4] text-xs font-semibold uppercase tracking-widest px-5 py-3 rounded-xl hover:bg-[#A958A4] hover:text-white transition-all">
                                     Sign Up
                                 </button>
                             </Link>
@@ -470,12 +470,12 @@ export default function CartPage() {
                                                     onChange={(e) =>
                                                         setCouponCode(e.target.value.toUpperCase())
                                                     }
-                                                    className="flex-1 border border-gray-100 text-xs font-semibold tracking-widest px-3 py-2.5 rounded-xl bg-white focus:outline-none focus:border-[#A458A6]"
+                                                    className="flex-1 border border-gray-100 text-xs font-semibold tracking-widest px-3 py-2.5 rounded-xl bg-white focus:outline-none focus:border-[#A958A4]"
                                                 />
                                                 <button
                                                     type="submit"
                                                     disabled={couponLoading}
-                                                    className="text-white text-xs font-semibold uppercase tracking-widest px-4 py-2.5 rounded-xl bg-[#A458A6] hover:bg-[#1A1A1A] transition-all"
+                                                    className="text-white text-xs font-semibold uppercase tracking-widest px-4 py-2.5 rounded-xl bg-[#A958A4] hover:bg-[#1A1A1A] transition-all"
                                                 >
                                                     Apply
                                                 </button>
@@ -527,7 +527,7 @@ export default function CartPage() {
                                 {/* Free Shipping Progress Alert */}
                                 {totals.shipping > 0 && cart.freeShippingThreshold > 0 && (
                                     <div className="text-[11px] text-neutral-800 bg-neutral-50 p-3 rounded-xl border border-gray-100/50 text-center font-normal">
-                                        Add <strong>{formatCurrency(cart.freeShippingThreshold - totals.subtotal)}</strong> more for <span className="text-[#14A8E6] font-semibold uppercase">FREE shipping!</span>
+                                        Add <strong>{formatCurrency(cart.freeShippingThreshold - totals.subtotal)}</strong> more for <span className="text-[#00AEEF] font-semibold uppercase">FREE shipping!</span>
                                     </div>
                                 )}
                             </div>
@@ -546,14 +546,14 @@ export default function CartPage() {
 
                             {/* Checkout Actions */}
                             <button
-                                className="w-full text-white text-[11px] font-semibold uppercase tracking-[0.25em] py-4.5 rounded-xl transition-all bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:shadow-lg hover:shadow-[#A458A6]/20 hover:-translate-y-0.5 active:scale-[0.99] h-12"
+                                className="w-full text-ivory text-[11px] font-semibold uppercase tracking-[0.25em] transition-all duration-500 bg-noir border border-noir hover:bg-gold hover:border-gold hover:text-white active:scale-[0.99] h-14"
                                 onClick={handleCheckout}
                             >
                                 {!isAuthenticated && hidePricesForGuests ? (
                                     "Login to Checkout"
                                 ) : (
                                     <span className="flex items-center justify-center gap-1">
-                                        Proceed to Checkout • <strong className="ml-1 text-white">{formatCurrency(totals.total)}</strong>
+                                        Proceed to Checkout • <strong className="ml-1">{formatCurrency(totals.total)}</strong>
                                     </span>
                                 )}
                             </button>

@@ -35,21 +35,24 @@ export default function BrandCarousel({ tag, title }) {
   }, [tag]);
 
   if (loading) {
-    return <div className="py-8 text-center text-brand-paragraph">Loading {title}...</div>;
+    return <div className="py-8 text-center text-stone text-xs uppercase tracking-[0.3em]">Loading {title}…</div>;
   }
   if (error) {
-    return <div className="py-8 text-center text-brand-error">{error}</div>;
+    return null;
   }
   if (!brands || brands.length === 0) {
     return null;
   }
 
   return (
-    <section className="py-12 md:py-16 border-b border-brand-border bg-brand-section">
+    <section className="py-14 md:py-20 border-y border-line bg-ivory">
       <div className="max-w-7xl mx-auto px-4">
-        <Reveal className="text-center mb-10">
-          <span className="luxe-eyebrow block mb-3">Curated For You</span>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-brand-heading">{title}</h2>
+        <Reveal className="text-center mb-12">
+          <span className="luxe-eyebrow block mb-4">Curated For You</span>
+          <h2 className="font-display text-3xl md:text-4xl tracking-tight text-noir">
+            {title}
+          </h2>
+          <span className="luxe-rule mt-5 !w-20" style={{ display: "inline-block" }} />
         </Reveal>
         <Carousel opts={{ align: "start", loop: true }}>
           <CarouselContent>
@@ -62,7 +65,7 @@ export default function BrandCarousel({ tag, title }) {
                   href={`/brand/${brand.slug}`}
                   className="block group text-center"
                 >
-                  <div className="relative h-20 md:h-40 w-20 md:w-40 mx-auto mb-3 bg-white border border-brand-border rounded-2xl group-hover:border-brand-purple/50 flex items-center justify-center p-2 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-brand-purple/10">
+                  <div className="relative h-20 md:h-36 w-20 md:w-36 mx-auto mb-4 bg-white border border-line group-hover:border-gold/60 flex items-center justify-center p-3 transition-all duration-500 group-hover:shadow-[0_18px_40px_-24px_rgba(13,11,12,0.25)]">
                     <Image
                       width={120}
                       height={120}
@@ -72,18 +75,18 @@ export default function BrandCarousel({ tag, title }) {
                           : `https://desirediv-storage.blr1.digitaloceanspaces.com/${brand.image}`
                       }
                       alt={brand.name}
-                      className="object-contain h-20 w-20 md:h-40 md:w-40 group-hover:scale-105 transition-transform duration-500"
+                      className="object-contain h-16 w-16 md:h-28 md:w-28 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                     />
                   </div>
-                  <div className="text-sm md:text-base font-semibold mt-2 text-brand-heading group-hover:text-brand-purple transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
+                  <div className="text-[11px] uppercase tracking-[0.18em] font-medium mt-2 text-noir/70 group-hover:text-gold-dark transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
                     {brand.name}
                   </div>
                 </Link>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="-left-3 md:-left-2 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white border-brand-border text-gray-700 shadow-sm hover:bg-brand-purple hover:text-white hover:border-brand-purple" />
-          <CarouselNext className="-right-1 md:right-0 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white border-brand-border text-gray-700 shadow-sm hover:bg-brand-purple hover:text-white hover:border-brand-purple" />
+          <CarouselPrevious className="-left-3 md:-left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-none bg-white border-line text-noir shadow-sm hover:bg-noir hover:text-gold-light hover:border-noir" />
+          <CarouselNext className="-right-1 md:right-0 top-1/2 -translate-y-1/2 h-10 w-10 rounded-none bg-white border-line text-noir shadow-sm hover:bg-noir hover:text-gold-light hover:border-noir" />
         </Carousel>
       </div>
     </section>

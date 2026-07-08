@@ -61,21 +61,22 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
 
-      {/* Hero — dark premium with gradient glow */}
-      <section className="relative py-20 md:py-28 overflow-hidden bg-gray-950">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full blur-[120px] opacity-30" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }} />
-        </div>
+      {/* Hero — noir editorial */}
+      <section className="relative py-20 md:py-28 overflow-hidden bg-noir luxe-grain luxe-aurora">
+        <span
+          className="pointer-events-none select-none absolute -bottom-8 left-1/2 -translate-x-1/2 font-display italic whitespace-nowrap text-[10rem] leading-none text-hollow opacity-40 hidden lg:block"
+          aria-hidden="true"
+        >
+          Maison
+        </span>
         <div className="relative z-10 max-w-7xl mx-auto px-5 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-semibold mb-6 bg-white/10 text-white/80 border border-white/10">
-            <Sparkles className="h-3 w-3" />
-            Since Day One
-          </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-            Our Story
+          <span className="luxe-eyebrow-dark block mb-5">Since Day One</span>
+          <h1 className="font-display text-4xl md:text-6xl text-ivory mb-6 tracking-tight">
+            Our <em className="luxe-italic text-gradient-light">Story</em>
           </h1>
-          <p className="text-white/40 max-w-lg mx-auto text-sm md:text-base">
-            Imported | Premium | Affordable — your trusted destination for fashion, clothing, bags & footwear.
+          <span className="mx-auto block h-px w-24 bg-gradient-to-r from-transparent via-gold to-transparent mb-6" />
+          <p className="text-white/50 max-w-lg mx-auto text-sm md:text-base font-light leading-relaxed">
+            Imported · Premium · Affordable — your trusted destination for fashion, clothing, bags &amp; footwear.
           </p>
         </div>
       </section>
@@ -85,8 +86,8 @@ export default function AboutPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {stats.map((stat, i) => (
             <div key={i} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-lg shadow-gray-100/50 flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #A458A612, #14A8E612)" }}>
-                <span style={{ color: "#A458A6" }}>{stat.icon}</span>
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #A958A412, #00AEEF12)" }}>
+                <span style={{ color: "#A958A4" }}>{stat.icon}</span>
               </div>
               <div>
                 <div className="text-xl font-extrabold text-gray-900">{stat.value}</div>
@@ -103,7 +104,7 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             <div>
-              <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider rounded-full mb-4 font-bold" style={{ background: "#A458A612", color: "#A458A6" }}>
+              <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider rounded-full mb-4 font-bold" style={{ background: "#A958A412", color: "#A958A4" }}>
                 Our Legacy
               </span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
@@ -119,8 +120,8 @@ export default function AboutPage() {
               <div className="space-y-3 pt-6 border-t border-gray-100">
                 {["Premium Imported Products", "Direct-from-source Pricing", "Trusted by 62K+ Customers"].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#A458A612" }}>
-                      <Check className="w-3 h-3" style={{ color: "#A458A6" }} />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#A958A412" }}>
+                      <Check className="w-3 h-3" style={{ color: "#A958A4" }} />
                     </div>
                     <span className="text-sm text-gray-600 font-medium">{item}</span>
                   </div>
@@ -135,8 +136,8 @@ export default function AboutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {CATEGORIES.map((cat, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-purple-200 hover:shadow-sm transition-all">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "#A458A610" }}>
-                      <Gem className="w-3.5 h-3.5" style={{ color: "#A458A6" }} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "#A958A410" }}>
+                      <Gem className="w-3.5 h-3.5" style={{ color: "#A958A4" }} />
                     </div>
                     <span className="text-sm font-medium text-gray-600">{cat}</span>
                   </div>
@@ -152,7 +153,7 @@ export default function AboutPage() {
       <section className="py-16 md:py-20 bg-gray-50 border-y border-gray-100 px-5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider rounded-full mb-4 font-bold" style={{ background: "#A458A612", color: "#A458A6" }}>
+            <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider rounded-full mb-4 font-bold" style={{ background: "#A958A412", color: "#A958A4" }}>
               Why Choose Us
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">
@@ -165,8 +166,8 @@ export default function AboutPage() {
               const Icon = value.icon;
               return (
                 <div key={i} className="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: "#A458A612" }}>
-                    <Icon className="h-5 w-5" style={{ color: "#A458A6" }} />
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: "#A958A412" }}>
+                    <Icon className="h-5 w-5" style={{ color: "#A958A4" }} />
                   </div>
                   <h3 className="text-sm font-bold text-gray-900 mb-2">{value.title}</h3>
                   <p className="text-gray-400 text-xs leading-relaxed">{value.description}</p>
@@ -181,7 +182,7 @@ export default function AboutPage() {
       <section className="py-16 md:py-20 px-5">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider rounded-full mb-4 font-bold" style={{ background: "#A458A612", color: "#A458A6" }}>
+            <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider rounded-full mb-4 font-bold" style={{ background: "#A958A412", color: "#A958A4" }}>
               Our Journey
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
@@ -197,11 +198,11 @@ export default function AboutPage() {
               {milestones.map((m, i) => (
                 <div key={i} className={`relative flex items-start gap-6 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
                   {/* Dot */}
-                  <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-4 border-white shadow-md z-10" style={{ background: i === 0 ? "#A458A6" : i === milestones.length - 1 ? "#14A8E6" : "#A458A6" }} />
+                  <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-4 border-white shadow-md z-10" style={{ background: i === 0 ? "#A958A4" : i === milestones.length - 1 ? "#00AEEF" : "#A958A4" }} />
 
                   {/* Content */}
                   <div className={`ml-14 md:ml-0 md:w-1/2 ${i % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12"}`}>
-                    <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-2" style={{ background: "#A458A612", color: "#A458A6" }}>
+                    <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full mb-2" style={{ background: "#A958A412", color: "#A958A4" }}>
                       {m.year}
                     </span>
                     <h3 className="text-base font-extrabold text-gray-900 mb-1">{m.title}</h3>
@@ -225,8 +226,8 @@ export default function AboutPage() {
               { icon: Gift, label: "Secure Packing", desc: "Gift-ready orders" },
             ].map((b, i) => (
               <div key={i} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#A458A612" }}>
-                  <b.icon className="w-5 h-5" style={{ color: "#A458A6" }} />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#A958A412" }}>
+                  <b.icon className="w-5 h-5" style={{ color: "#A958A4" }} />
                 </div>
                 <div>
                   <div className="text-sm font-bold text-gray-900">{b.label}</div>
@@ -243,7 +244,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto">
           <div className="relative rounded-2xl overflow-hidden bg-gray-950 py-14 px-6 md:px-14 text-center">
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-[100px] opacity-20" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }} />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-[100px] opacity-20" style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }} />
             </div>
 
             <div className="relative z-10 max-w-xl mx-auto">
@@ -257,7 +258,7 @@ export default function AboutPage() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
                 <a href="https://wa.me/918796449692" target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:shadow-lg hover:shadow-purple-500/20 hover:-translate-y-0.5"
-                  style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}>
+                  style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}>
                   <PhoneCall className="h-4 w-4" /> WhatsApp
                 </a>
                 <a href="https://www.instagram.com/stylevillaofficial" target="_blank" rel="noopener noreferrer"

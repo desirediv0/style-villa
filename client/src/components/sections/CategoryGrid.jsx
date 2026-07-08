@@ -5,69 +5,72 @@ import Link from "next/link";
 import Image from "next/image";
 import { fetchApi, sortCategories } from "@/lib/utils";
 import Reveal from "@/components/ui/Reveal";
-import { ArrowRight } from "lucide-react";
-import { getPharmaIcon } from "@/lib/pharma-icons";
-
-const CIRCLE_COLORS = [
-  { bg: "#e0f2fe", icon: "#0284c7" },
-  { bg: "#dcfce7", icon: "#16a34a" },
-  { bg: "#fef3c7", icon: "#d97706" },
-  { bg: "#fce7f3", icon: "#db2777" },
-  { bg: "#ede9fe", icon: "#7c3aed" },
-  { bg: "#ffe4e6", icon: "#e11d48" },
-  { bg: "#f0fdf4", icon: "#15803d" },
-  { bg: "#eff6ff", icon: "#2563eb" },
-];
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 const CategoryCard = ({ category, index }) => {
-  const { Icon } = getPharmaIcon(category.name, category.slug);
   const productCount = category._count?.products || 0;
-  const colors = CIRCLE_COLORS[index % CIRCLE_COLORS.length];
 
   return (
-    <div className="flex flex-col items-center group cursor-pointer shrink-0 w-[100px] sm:w-[120px]">
-      <div
-        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
-        style={{ background: colors.bg }}
-      >
+    <div
+      className="group relative w-[240px] sm:w-[280px] md:w-[320px] shrink-0 overflow-hidden bg-noir"
+      data-cursor="View"
+    >
+      <div className="relative aspect-[3/4] overflow-hidden">
         {category.image ? (
-          <div className="relative w-12 h-12 sm:w-14 sm:h-14">
-            <Image
-              src={category.image}
-              alt={category.name || "Category"}
-              fill
-              sizes="56px"
-              className="object-contain"
-              loading="lazy"
-            />
-          </div>
-        ) : (
-          <Icon
-            size={32}
-            strokeWidth={1.5}
-            style={{ color: colors.icon }}
-            className="transition-transform duration-300 group-hover:scale-110"
+          <Image
+            src={category.image}
+            alt={category.name || "Category"}
+            fill
+            sizes="(max-width: 768px) 60vw, 320px"
+            className="object-cover transition-transform duration-1200 ease-luxe group-hover:scale-110"
+            loading="lazy"
           />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-ivory-deep">
+            <span className="font-display italic text-[7rem] text-noir/10 select-none">
+              {category.name?.charAt(0)?.toUpperCase() || "S"}
+            </span>
+          </div>
         )}
+
+        {/* Noir veil */}
+        <div className="absolute inset-0 bg-gradient-to-t from-noir/85 via-noir/20 to-transparent transition-opacity duration-700" />
+
+        {/* Hairline inset frame on hover */}
+        <div className="absolute inset-3 border border-white/0 group-hover:border-white/25 transition-all duration-700 pointer-events-none" />
+
+        {/* Index */}
+        <span className="absolute top-5 left-5 font-display text-sm text-white/60 tracking-[0.2em]">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+
+        {/* Arrow chip */}
+        <span className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center border border-white/25 text-ivory opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 bg-noir/30 backdrop-blur-sm">
+          <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} />
+        </span>
+
+        {/* Copy */}
+        <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+          <p className="text-[9px] uppercase tracking-[0.35em] text-azure-light mb-2">
+            {productCount > 0 ? `${productCount} pieces` : "Explore"}
+          </p>
+          <h3 className="font-display text-2xl md:text-[1.7rem] text-ivory leading-tight">
+            {category.name}
+          </h3>
+          <span className="mt-4 block h-px w-0 bg-gold group-hover:w-16 transition-all duration-700" />
+        </div>
       </div>
-      <h3 className="mt-3 text-xs sm:text-sm font-medium text-gray-800 text-center leading-tight">
-        {category.name}
-      </h3>
-      <p className="text-[10px] sm:text-xs text-gray-400 mt-0.5">
-        {productCount > 0 ? `${productCount} items` : "Explore"}
-      </p>
     </div>
   );
 };
 
 const SkeletonLoader = () => (
-  <div className="flex gap-6 overflow-hidden">
-    {[...Array(6)].map((_, i) => (
-      <div key={i} className="flex flex-col items-center shrink-0">
-        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-100 animate-pulse" />
-        <div className="mt-3 w-14 h-3 bg-gray-100 animate-pulse rounded" />
-        <div className="mt-1 w-10 h-2 bg-gray-100 animate-pulse rounded" />
-      </div>
+  <div className="flex gap-5 overflow-hidden">
+    {[...Array(4)].map((_, i) => (
+      <div
+        key={i}
+        className="w-[240px] sm:w-[280px] md:w-[320px] shrink-0 aspect-[3/4] bg-ivory-deep animate-pulse"
+      />
     ))}
   </div>
 );
@@ -99,7 +102,7 @@ const CategoryGrid = () => {
 
   if (loading) {
     return (
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-5">
           <SkeletonLoader />
         </div>
@@ -112,30 +115,39 @@ const CategoryGrid = () => {
   }
 
   return (
-    <section className="py-12 md:py-16 bg-white">
+    <section className="py-16 md:py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-5">
         <Reveal>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              Shop by Categories
-            </h2>
+          <div className="flex items-end justify-between gap-6 mb-10 md:mb-14">
+            <div>
+              <span className="luxe-eyebrow block mb-4">The Collections</span>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-noir tracking-tight">
+                Shop by <em className="luxe-italic text-gradient">Category</em>
+              </h2>
+            </div>
             <Link
               href="/categories"
-              className="text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors flex items-center gap-1 shrink-0"
+              className="luxe-link text-noir shrink-0 hidden sm:inline-flex items-center gap-2"
             >
-              View All Categories <ArrowRight className="w-3.5 h-3.5" />
+              View All <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </Reveal>
 
-        <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-5 px-5 sm:mx-0 sm:px-0">
+        <div className="flex gap-5 md:gap-6 overflow-x-auto pb-6 scrollbar-hide -mx-5 px-5 snap-x snap-mandatory">
           {categories.map((category, index) => (
-            <Reveal key={category.id} delay={(index % 6) * 0.05}>
+            <Reveal key={category.id} delay={Math.min(index, 5) * 0.08} className="snap-start">
               <Link href={`/category/${category.slug}`} className="block">
                 <CategoryCard category={category} index={index} />
               </Link>
             </Reveal>
           ))}
+        </div>
+
+        <div className="mt-2 sm:hidden text-center">
+          <Link href="/categories" className="luxe-link text-noir inline-flex items-center gap-2">
+            View All Categories <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
     </section>

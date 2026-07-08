@@ -26,19 +26,19 @@ const SOCIALS = [
 export const SocialMediaSection = () => {
   return (
     <section className="relative bg-gray-50 py-20 overflow-hidden">
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" style={{ background: "rgba(164,88,166,0.05)" }} />
-      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" style={{ background: "rgba(20,168,230,0.05)" }} />
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" style={{ background: "rgba(169,88,164,0.05)" }} />
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" style={{ background: "rgba(0,174,239,0.05)" }} />
 
       <div className="max-w-6xl mx-auto px-5 relative z-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
           <div className="max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] uppercase tracking-wider mb-5 font-semibold" style={{ background: "#A458A612", color: "#A458A6" }}>
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#A458A6" }} />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] uppercase tracking-wider mb-5 font-semibold" style={{ background: "#A958A412", color: "#A958A4" }}>
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#A958A4" }} />
               Join Our Community
             </div>
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-[1.1] tracking-tight">
               We&apos;re active online. <br />
-              <span style={{ color: "#A458A6" }}>Connect with us.</span>
+              <span style={{ color: "#A958A4" }}>Connect with us.</span>
             </h2>
           </div>
           <p className="text-gray-500 max-w-xs md:text-right text-base leading-relaxed">

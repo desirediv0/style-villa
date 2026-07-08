@@ -21,12 +21,12 @@ export default function Home() {
       <main>
         <HeroSection />
         <LuxuryMarquee />
-        <TrustBadgesSection />
         <CategoryGrid />
         <HomePageContent />
         <WatchAndBuySection />
-        <JournalSection />
         <ColdChainBanner />
+        <TrustBadgesSection />
+        <JournalSection />
         <WhyBuySection />
         {/* <SocialMediaSection /> */}
       </main>

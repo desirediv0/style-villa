@@ -413,7 +413,7 @@ export default function CheckoutPage() {
                         }
                     },
                     theme: {
-                        color: "#A458A6",
+                        color: "#A958A4",
                     },
                     modal: {
                         ondismiss: function () {
@@ -440,7 +440,7 @@ export default function CheckoutPage() {
     if (!isAuthenticated || loadingAddresses) {
         return (
             <div className="min-h-screen bg-white py-24 flex flex-col items-center justify-center gap-4">
-                <div className="w-10 h-10 border-2 border-neutral-300 border-t-[#A458A6] rounded-full animate-spin" />
+                <div className="w-10 h-10 border-2 border-neutral-300 border-t-[#A958A4] rounded-full animate-spin" />
                 <p className="text-xs tracking-widest uppercase font-semibold text-neutral-400">Loading Checkout…</p>
             </div>
         );
@@ -455,16 +455,16 @@ export default function CheckoutPage() {
 
                     <div className="relative z-10 space-y-6">
                         <div className="relative flex justify-center">
-                            <div className="h-28 w-28 bg-gradient-to-br from-[#A458A6]/10 to-[#14A8E6]/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                                <PartyPopper className="h-14 w-14 text-[#A458A6]" />
+                            <div className="h-28 w-28 bg-gradient-to-br from-[#A958A4]/10 to-[#00AEEF]/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                                <PartyPopper className="h-14 w-14 text-[#A958A4]" />
                             </div>
                         </div>
 
                         <div>
                             <h1 className="text-3xl font-semibold tracking-wide text-neutral-900 mb-2">Order Confirmed</h1>
                             {orderNumber && (
-                                <div className="bg-gradient-to-r from-[#A458A6]/10 to-[#14A8E6]/10 border border-purple-200/50 py-1.5 px-4 rounded-full inline-block mb-3">
-                                    <p className="text-xs uppercase tracking-widest text-[#A458A6]">
+                                <div className="bg-gradient-to-r from-[#A958A4]/10 to-[#00AEEF]/10 border border-purple-200/50 py-1.5 px-4 rounded-full inline-block mb-3">
+                                    <p className="text-xs uppercase tracking-widest text-[#A958A4]">
                                         Order #{orderNumber}
                                     </p>
                                 </div>
@@ -482,22 +482,22 @@ export default function CheckoutPage() {
 
                         <div className="p-4 bg-neutral-50 rounded-xl border border-neutral-100 text-xs text-neutral-600 max-w-sm mx-auto">
                             <div className="flex items-center justify-center gap-2 mb-2 font-semibold">
-                                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#A458A6]" />
+                                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#A958A4]" />
                                 <span>Redirecting in {redirectCountdown} seconds…</span>
                             </div>
-                            <Link href="/account/orders" className="underline hover:text-[#A458A6]">
+                            <Link href="/account/orders" className="underline hover:text-[#A958A4]">
                                 Go to orders page now
                             </Link>
                         </div>
 
                         <div className="flex justify-center gap-3 pt-4 border-t border-neutral-100">
                             <Link href="/account/orders">
-                                <button className="bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#0E8FC4] text-white text-[10px] uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg">
+                                <button className="bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#0887B8] text-white text-[10px] uppercase tracking-widest px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg">
                                     My Orders
                                 </button>
                             </Link>
                             <Link href="/products">
-                                <button className="border border-neutral-300 hover:border-[#A458A6] text-neutral-800 text-[10px] uppercase tracking-widest px-6 py-3 rounded-xl transition-all bg-white hover:bg-purple-50/50">
+                                <button className="border border-neutral-300 hover:border-[#A958A4] text-neutral-800 text-[10px] uppercase tracking-widest px-6 py-3 rounded-xl transition-all bg-white hover:bg-purple-50/50">
                                     Continue Shopping
                                 </button>
                             </Link>
@@ -514,8 +514,8 @@ export default function CheckoutPage() {
             {processing && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
                     <div className="bg-white rounded-3xl p-8 max-w-sm mx-4 text-center shadow-2xl space-y-4 border border-purple-100/30">
-                        <div className="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-[#A458A6]/10 to-[#14A8E6]/10 flex items-center justify-center">
-                            <Loader2 className="h-8 w-8 text-[#A458A6] animate-spin" />
+                        <div className="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-[#A958A4]/10 to-[#00AEEF]/10 flex items-center justify-center">
+                            <Loader2 className="h-8 w-8 text-[#A958A4] animate-spin" />
                         </div>
                         <h3 className="text-lg uppercase tracking-wider text-neutral-900 font-semibold">
                             Processing Payment
@@ -529,9 +529,9 @@ export default function CheckoutPage() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
                 <div className="mb-8">
-                    <span className="text-[10px] tracking-[0.3em] text-[#A458A6] uppercase block mb-1">SECURE CHECKOUT</span>
-                    <h1 className="text-3xl sm:text-4xl font-semibold tracking-wide text-neutral-900 uppercase">
-                        Checkout
+                    <span className="luxe-eyebrow block mb-3">Secure Checkout</span>
+                    <h1 className="font-display text-4xl sm:text-5xl font-medium tracking-tight text-noir">
+                        Almost <em className="luxe-italic text-gradient">yours</em>
                     </h1>
                 </div>
 
@@ -554,12 +554,12 @@ export default function CheckoutPage() {
                         <div className="bg-white rounded-2xl border border-neutral-100 p-6 md:p-8 shadow-sm">
                             <div className="flex items-center justify-between border-b border-neutral-100 pb-4 mb-6">
                                 <h2 className="text-lg uppercase tracking-wider text-neutral-900 flex items-center gap-2 font-semibold">
-                                    <MapPin className="h-5 w-5 text-[#A458A6]" />
+                                    <MapPin className="h-5 w-5 text-[#A958A4]" />
                                     Shipping Address
                                 </h2>
                                 <button
                                     onClick={() => setShowAddressForm(!showAddressForm)}
-                                    className="text-xs uppercase tracking-widest text-[#A458A6] hover:text-[#8E4A90] transition-colors flex items-center gap-1 font-medium"
+                                    className="text-xs uppercase tracking-widest text-[#A958A4] hover:text-[#8C4188] transition-colors flex items-center gap-1 font-medium"
                                 >
                                     <Plus className="h-3.5 w-3.5" />
                                     Add New Address
@@ -589,14 +589,14 @@ export default function CheckoutPage() {
                                                 key={address.id}
                                                 onClick={() => handleAddressSelect(address.id)}
                                                 className={`border rounded-2xl p-5 cursor-pointer transition-all duration-300 relative ${selected
-                                                    ? "border-[#A458A6] bg-[#A458A6]/5 shadow-sm shadow-purple-100/50"
+                                                    ? "border-[#A958A4] bg-[#A958A4]/5 shadow-sm shadow-purple-100/50"
                                                     : "border-neutral-200 hover:border-neutral-400 bg-white"
                                                     }`}
                                             >
                                                 <div className="flex justify-between items-center mb-3">
                                                     <span className="text-xs text-neutral-800 uppercase tracking-wide font-medium">{address.name}</span>
                                                     {address.isDefault && (
-                                                        <span className="text-[9px] uppercase tracking-widest bg-gradient-to-r from-[#A458A6] to-[#14A8E6] text-white px-2 py-0.5 rounded-full">
+                                                        <span className="text-[9px] uppercase tracking-widest bg-gradient-to-r from-[#A958A4] to-[#00AEEF] text-white px-2 py-0.5 rounded-full">
                                                             Default
                                                         </span>
                                                     )}
@@ -613,7 +613,7 @@ export default function CheckoutPage() {
                                                         name="addressSelection"
                                                         checked={selected}
                                                         onChange={() => handleAddressSelect(address.id)}
-                                                        className="h-4 w-4 text-[#A458A6] border-neutral-300 focus:ring-[#A458A6] cursor-pointer"
+                                                        className="h-4 w-4 text-[#A958A4] border-neutral-300 focus:ring-[#A958A4] cursor-pointer"
                                                     />
                                                     <span className="text-xs font-semibold text-neutral-700">Ship to this address</span>
                                                 </div>
@@ -634,7 +634,7 @@ export default function CheckoutPage() {
                                     <div
                                         onClick={() => handlePaymentMethodSelect("RAZORPAY")}
                                         className={`border rounded-2xl p-5 cursor-pointer transition-all duration-300 flex items-start gap-4 ${paymentMethod === "RAZORPAY"
-                                            ? "border-[#A458A6] bg-[#A458A6]/5 shadow-sm shadow-purple-100/50"
+                                            ? "border-[#A958A4] bg-[#A958A4]/5 shadow-sm shadow-purple-100/50"
                                             : "border-neutral-200 hover:border-neutral-400 bg-white"
                                             }`}
                                     >
@@ -643,7 +643,7 @@ export default function CheckoutPage() {
                                             name="paymentMethod"
                                             checked={paymentMethod === "RAZORPAY"}
                                             onChange={() => handlePaymentMethodSelect("RAZORPAY")}
-                                            className="h-4 w-4 text-[#A458A6] border-neutral-300 focus:ring-[#A458A6] cursor-pointer mt-1"
+                                            className="h-4 w-4 text-[#A958A4] border-neutral-300 focus:ring-[#A958A4] cursor-pointer mt-1"
                                         />
                                         <div className="space-y-1">
                                             <h3 className="text-xs uppercase tracking-wider text-neutral-800 font-semibold">
@@ -660,7 +660,7 @@ export default function CheckoutPage() {
                                     <div
                                         onClick={() => handlePaymentMethodSelect("CASH")}
                                         className={`border rounded-2xl p-5 cursor-pointer transition-all duration-300 flex items-start gap-4 ${paymentMethod === "CASH"
-                                            ? "border-[#A458A6] bg-[#A458A6]/5 shadow-sm shadow-purple-100/50"
+                                            ? "border-[#A958A4] bg-[#A958A4]/5 shadow-sm shadow-purple-100/50"
                                             : "border-neutral-200 hover:border-neutral-400 bg-white"
                                             }`}
                                     >
@@ -669,7 +669,7 @@ export default function CheckoutPage() {
                                             name="paymentMethod"
                                             checked={paymentMethod === "CASH"}
                                             onChange={() => handlePaymentMethodSelect("CASH")}
-                                            className="h-4 w-4 text-[#A458A6] border-neutral-300 focus:ring-[#A458A6] cursor-pointer mt-1"
+                                            className="h-4 w-4 text-[#A958A4] border-neutral-300 focus:ring-[#A958A4] cursor-pointer mt-1"
                                         />
                                         <div className="space-y-1">
                                             <h3 className="text-xs uppercase tracking-wider text-neutral-800 font-semibold">
@@ -756,8 +756,7 @@ export default function CheckoutPage() {
                             <button
                                 onClick={handleCheckout}
                                 disabled={processing || !selectedAddressId}
-                                className="w-full text-white text-xs font-semibold uppercase tracking-widest py-4.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-md h-12"
-                                style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+                                className="w-full bg-noir border border-noir text-ivory text-xs font-semibold uppercase tracking-[0.25em] transition-all duration-500 hover:bg-gold hover:border-gold hover:text-white disabled:opacity-40 h-14"
                             >
                                 {processing ? "Processing…" : `Pay Now • ${formatCurrency(totals.total)}`}
                             </button>

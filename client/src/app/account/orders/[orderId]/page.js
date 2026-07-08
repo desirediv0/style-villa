@@ -112,7 +112,7 @@ export default function OrderDetailPage() {
     if (loading || authLoading) {
         return (
             <div className="flex flex-col items-center justify-center py-16">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A458A6] mb-4"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A958A4] mb-4"></div>
                 <p className="text-gray-500">Loading order details...</p>
             </div>
         );
@@ -196,7 +196,7 @@ export default function OrderDetailPage() {
                                         <div className="flex-1 min-w-0">
                                             <Link
                                                 href={`/products/${item.product?.slug || "#"}`}
-                                                className="font-medium text-gray-900 hover:text-[#A458A6] transition-colors line-clamp-2"
+                                                className="font-medium text-gray-900 hover:text-[#A958A4] transition-colors line-clamp-2"
                                             >
                                                 {item.productName || item.product?.name}
                                             </Link>
@@ -243,7 +243,7 @@ export default function OrderDetailPage() {
                             </div>
                             <div className="p-6">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <DynamicIcon name="Truck" className="h-8 w-8 text-[#14A8E6]" />
+                                    <DynamicIcon name="Truck" className="h-8 w-8 text-[#00AEEF]" />
                                     <div>
                                         <p className="font-medium">{order.tracking.carrier || "Carrier"}</p>
                                         <p className="text-sm text-gray-500">Tracking #: {order.tracking.trackingNumber}</p>
@@ -260,7 +260,7 @@ export default function OrderDetailPage() {
                                         <div className="space-y-3">
                                             {order.tracking.updates.map((update, idx) => (
                                                 <div key={idx} className="flex gap-3">
-                                                    <div className="w-2 h-2 mt-2 rounded-full bg-[#14A8E6] flex-shrink-0"></div>
+                                                    <div className="w-2 h-2 mt-2 rounded-full bg-[#00AEEF] flex-shrink-0"></div>
                                                     <div>
                                                         <p className="text-sm font-medium">{update.status}</p>
                                                         <p className="text-xs text-gray-500">{formatDate(update.createdAt)}</p>
@@ -310,7 +310,7 @@ export default function OrderDetailPage() {
                             )}
                             <div className="border-t border-gray-100 pt-3 mt-3 flex justify-between font-semibold text-lg">
                                  <span>Total</span>
-                                 <span className="text-[#A458A6]">{formatCurrency(order.total)}</span>
+                                 <span className="text-[#A958A4]">{formatCurrency(order.total)}</span>
                              </div>
                         </div>
                     </div>
@@ -371,7 +371,7 @@ export default function OrderDetailPage() {
                             </Button>
                         </Link>
                         <Link href="/products">
-                            <Button className="w-full rounded-xl bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#1296D0] text-white">
+                            <Button className="w-full rounded-xl bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#1296D0] text-white">
                                 <DynamicIcon name="ShoppingBag" className="mr-2 h-4 w-4 text-white" /> Continue Shopping
                             </Button>
                         </Link>

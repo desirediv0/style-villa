@@ -26,10 +26,10 @@ function getProductImageUrl(product) {
 
 const ReelSkeleton = () => (
   <div className="flex-shrink-0 w-[160px] sm:w-[180px] animate-pulse">
-    <div className="aspect-[9/14] bg-gray-100 rounded-2xl" />
+    <div className="aspect-[9/14] bg-white/5" />
     <div className="mt-3 space-y-2">
-      <div className="h-3 w-3/4 bg-gray-100 rounded" />
-      <div className="h-3 w-1/2 bg-gray-100 rounded" />
+      <div className="h-3 w-3/4 bg-white/5" />
+      <div className="h-3 w-1/2 bg-white/5" />
     </div>
   </div>
 );
@@ -66,8 +66,9 @@ function ReelCard({ reel, onClick }) {
       ref={cardRef}
       className="flex-shrink-0 w-[160px] sm:w-[180px] cursor-pointer group/card"
       onClick={() => onClick(reel)}
+      data-cursor="Play"
     >
-      <div className="relative aspect-[9/14] overflow-hidden rounded-2xl bg-gray-900">
+      <div className="relative aspect-[9/14] overflow-hidden bg-noir-soft border border-white/10 group-hover/card:border-gold/50 transition-colors duration-500">
         {reel.videoUrl ? (
           <video
             ref={videoRef}
@@ -89,23 +90,23 @@ function ReelCard({ reel, onClick }) {
         {/* Play indicator */}
         {!isPlaying && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover/card:scale-110">
-              <Play className="h-6 w-6 text-gray-900 ml-0.5" fill="currentColor" />
+            <div className="w-14 h-14 rounded-full border border-gold/70 bg-noir/50 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover/card:scale-110">
+              <Play className="h-5 w-5 text-gold-light ml-0.5" fill="currentColor" />
             </div>
           </div>
         )}
 
         {/* Mute indicator */}
         <div className="absolute top-3 right-3">
-          <div className="w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center">
-            <VolumeX className="h-3.5 w-3.5 text-white" />
+          <div className="w-7 h-7 rounded-full bg-noir/40 backdrop-blur-sm flex items-center justify-center">
+            <VolumeX className="h-3.5 w-3.5 text-white/80" />
           </div>
         </div>
 
         {/* Reel badge */}
         <div className="absolute top-3 left-3">
-          <div className="px-2 py-1 rounded-full bg-white/20 backdrop-blur-sm">
-            <span className="text-[9px] uppercase tracking-wider text-white font-medium">Reel</span>
+          <div className="px-2.5 py-1 bg-noir/40 backdrop-blur-sm border border-gold/40">
+            <span className="text-[8px] uppercase tracking-[0.25em] text-gold-light font-medium">Reel</span>
           </div>
         </div>
       </div>
@@ -114,7 +115,7 @@ function ReelCard({ reel, onClick }) {
         <div className="mt-3 px-1">
           <div className="flex gap-2.5 items-start">
             {getProductImageUrl(product) && (
-              <div className="w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm">
+              <div className="w-11 h-11 overflow-hidden flex-shrink-0 border border-white/15">
                 <img
                   src={getProductImageUrl(product)}
                   alt={product.name}
@@ -123,21 +124,21 @@ function ReelCard({ reel, onClick }) {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <h3 className="text-[12px] font-semibold text-gray-900 truncate leading-tight">
+              <h3 className="text-[12px] font-medium text-ivory/90 truncate leading-tight">
                 {product.name}
               </h3>
               <div className="flex items-center gap-1.5 mt-1">
                 {product.salePrice ? (
                   <>
-                    <span className="text-[12px] font-bold text-gray-900">
+                    <span className="text-[12px] font-semibold text-gold-light">
                       ₹{Number(product.salePrice).toLocaleString("en-IN")}
                     </span>
-                    <span className="text-[10px] line-through text-gray-400">
+                    <span className="text-[10px] line-through text-white/35">
                       ₹{Number(product.price).toLocaleString("en-IN")}
                     </span>
                   </>
                 ) : (
-                  <span className="text-[12px] font-bold text-gray-900">
+                  <span className="text-[12px] font-semibold text-gold-light">
                     ₹{Number(product.price).toLocaleString("en-IN")}
                   </span>
                 )}
@@ -368,11 +369,11 @@ export default function WatchAndBuySection() {
 
   if (isLoading) {
     return (
-      <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <section className="py-16 md:py-24 bg-noir luxe-grain luxe-aurora">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-10">
-            <span className="text-[10px] uppercase tracking-[0.3em] font-medium block mb-2" style={{ color: "#A458A6" }}>VIDEO REELS</span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">Watch and Buy</h2>
+            <span className="luxe-eyebrow-dark block mb-3">Le Cinéma</span>
+            <h2 className="font-display text-3xl md:text-4xl tracking-tight text-ivory">Watch &amp; Buy</h2>
           </div>
           <div className="flex gap-4 overflow-hidden">
             {[...Array(6)].map((_, i) => <ReelSkeleton key={i} />)}
@@ -386,34 +387,40 @@ export default function WatchAndBuySection() {
 
   return (
     <>
-      <section className="py-16 md:py-20 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <section className="py-16 md:py-24 bg-noir overflow-hidden luxe-grain luxe-aurora">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
           {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
             <div>
-              <span className="text-[10px] uppercase tracking-[0.3em] font-medium block mb-2" style={{ color: "#A458A6" }}>VIDEO REELS</span>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
-                Watch <span className="font-light text-gray-400">and Buy</span>
+              <span className="luxe-eyebrow-dark block mb-3">Le Cinéma</span>
+              <h2 className="font-display text-3xl md:text-5xl tracking-tight text-ivory">
+                Watch <em className="luxe-italic text-gradient-light">&amp; Buy</em>
               </h2>
-              <p className="text-sm text-gray-500 mt-2">Tap to watch, shop directly from reels</p>
+              <p className="text-sm text-white/45 mt-3 font-light tracking-wide">Tap to watch — shop the look straight from the reel</p>
             </div>
-            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-medium text-gray-500">
+            <a
+              href="https://www.instagram.com/stylevillaofficial"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-medium text-white/50 hover:text-gold-light transition-colors"
+            >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
               </svg>
               <span>@stylevillaofficial</span>
-            </div>
+            </a>
           </div>
 
           {/* Reels Carousel */}
           <div className="relative group" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <button
               onClick={() => scroll("left")}
-              className="absolute left-0 top-[30%] -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-gray-400"
+              aria-label="Scroll reels left"
+              className="absolute left-0 top-[30%] -translate-y-1/2 z-10 w-11 h-11 bg-noir/80 border border-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-gold hover:text-gold-light text-ivory"
             >
-              <ChevronLeft className="h-5 w-5 text-gray-600" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
 
             <div
@@ -430,9 +437,10 @@ export default function WatchAndBuySection() {
 
             <button
               onClick={() => scroll("right")}
-              className="absolute right-0 top-[30%] -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-gray-400"
+              aria-label="Scroll reels right"
+              className="absolute right-0 top-[30%] -translate-y-1/2 z-10 w-11 h-11 bg-noir/80 border border-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-gold hover:text-gold-light text-ivory"
             >
-              <ChevronRight className="h-5 w-5 text-gray-600" />
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>

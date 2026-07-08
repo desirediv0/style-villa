@@ -99,7 +99,7 @@ export default function AccountPage() {
                                         <div><label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label><Input id="name" name="name" type="text" value={formData.name} onChange={handleChange} /></div>
                                         <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label><Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} /></div>
                                         <div className="lg:col-span-2 flex gap-2 justify-end mt-4">
-                                            <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#1296D0] text-white font-semibold">{isSubmitting ? "Saving..." : "Save Changes"}</Button>
+                                            <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#1296D0] text-white font-semibold">{isSubmitting ? "Saving..." : "Save Changes"}</Button>
                                             <Button type="button" variant="outline" className="rounded-xl" onClick={() => { setIsEditing(false); setPreview(null); setFormData({ name: user?.name || "", phone: user?.phone || "", profileImage: null }); }}>Cancel</Button>
                                         </div>
                                     </div>
@@ -130,7 +130,7 @@ export default function AccountPage() {
                                     {addresses.slice(0, 2).map((address) => (
                                         <div key={address.id} className="border border-gray-100 rounded-xl p-3 flex justify-between items-start">
                                             <div>
-                                                {address.isDefault && <span className="inline-block text-xs bg-purple-50 text-[#A458A6] px-2 py-0.5 rounded-full mb-2">Default</span>}
+                                                {address.isDefault && <span className="inline-block text-xs bg-purple-50 text-[#A958A4] px-2 py-0.5 rounded-full mb-2">Default</span>}
                                                 <p className="font-medium">{address.name || user?.name}</p>
                                                 <p className="text-sm text-gray-600">{address.street}, {address.city}, {address.state} {address.postalCode}</p>
                                                 <p className="text-sm text-gray-600">{address.country}</p>
@@ -152,18 +152,18 @@ export default function AccountPage() {
                     {/* Referral Program */}
                     <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl border border-purple-100 shadow-sm mb-8">
                         <div className="p-4 lg:p-6">
-                            <div className="flex items-center gap-2 mb-4"><DynamicIcon name="Users" className="h-6 w-6 text-[#A458A6]" /><h2 className="text-xl font-semibold">Referral Program</h2></div>
+                            <div className="flex items-center gap-2 mb-4"><DynamicIcon name="Users" className="h-6 w-6 text-[#A958A4]" /><h2 className="text-xl font-semibold">Referral Program</h2></div>
                             <p className="text-gray-600 mb-6">Share your referral code with friends and earn rewards when they make their first order!</p>
 
                             {isLoadingReferral ? (
-                                <div className="flex items-center justify-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A458A6]"></div></div>
+                                <div className="flex items-center justify-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A958A4]"></div></div>
                             ) : (
                                 <>
                                     <div className="bg-white rounded-xl p-4 mb-6 border-2 border-purple-200">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Your Referral Code</label>
                                         <div className="flex items-center gap-2">
                                             <Input value={referralCode} readOnly className="font-mono text-lg bg-gray-50 rounded-xl" />
-                                            <Button onClick={() => { navigator.clipboard.writeText(referralCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="min-w-[100px] rounded-xl bg-gradient-to-r from-[#A458A6] to-[#14A8E6] hover:from-[#8E4A90] hover:to-[#1296D0] text-white">
+                                            <Button onClick={() => { navigator.clipboard.writeText(referralCode); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="min-w-[100px] rounded-xl bg-gradient-to-r from-[#A958A4] to-[#00AEEF] hover:from-[#8C4188] hover:to-[#1296D0] text-white">
                                                 {copied ? <><DynamicIcon name="Check" className="h-4 w-4 mr-2" />Copied!</> : <><DynamicIcon name="Copy" className="h-4 w-4 mr-2" />Copy</>}
                                             </Button>
                                         </div>
@@ -171,10 +171,10 @@ export default function AccountPage() {
 
                                     {referralStats && (
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            <div className="bg-white rounded-xl p-4 text-center border border-gray-100"><p className="text-2xl font-bold text-[#A458A6]">{referralStats.totalReferrals || 0}</p><p className="text-sm text-gray-600 mt-1">Total Referrals</p></div>
-                                            <div className="bg-white rounded-xl p-4 text-center border border-gray-100"><p className="text-2xl font-bold text-[#14A8E6]">{referralStats.completedReferrals || 0}</p><p className="text-sm text-gray-600 mt-1">Completed</p></div>
+                                            <div className="bg-white rounded-xl p-4 text-center border border-gray-100"><p className="text-2xl font-bold text-[#A958A4]">{referralStats.totalReferrals || 0}</p><p className="text-sm text-gray-600 mt-1">Total Referrals</p></div>
+                                            <div className="bg-white rounded-xl p-4 text-center border border-gray-100"><p className="text-2xl font-bold text-[#00AEEF]">{referralStats.completedReferrals || 0}</p><p className="text-sm text-gray-600 mt-1">Completed</p></div>
                                             <div className="bg-white rounded-xl p-4 text-center border border-gray-100"><p className="text-2xl font-bold text-amber-500">{referralStats.pendingReferrals || 0}</p><p className="text-sm text-gray-600 mt-1">Pending</p></div>
-                                            <div className="bg-white rounded-xl p-4 text-center border border-gray-100"><p className="text-2xl font-bold text-[#A458A6]">₹{parseFloat(referralStats.totalEarnings || 0).toFixed(2)}</p><p className="text-sm text-gray-600 mt-1">Total Earnings</p></div>
+                                            <div className="bg-white rounded-xl p-4 text-center border border-gray-100"><p className="text-2xl font-bold text-[#A958A4]">₹{parseFloat(referralStats.totalEarnings || 0).toFixed(2)}</p><p className="text-sm text-gray-600 mt-1">Total Earnings</p></div>
                                         </div>
                                     )}
                                 </>

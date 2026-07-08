@@ -68,7 +68,7 @@ function VerifyOtpContent() {
             <div className="w-full max-w-md">
 
                 <div className="text-center mb-10">
-                    <div className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}>
+                    <div className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}>
                         <KeyRound className="h-7 w-7 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-gray-900">Verify OTP</h1>
@@ -85,7 +85,7 @@ function VerifyOtpContent() {
                                 <input
                                     type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
                                     placeholder="you@example.com"
-                                    className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all placeholder:text-gray-400"
+                                    className="w-full h-12 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all placeholder:text-gray-400"
                                 />
                             </div>
                         </div>
@@ -114,7 +114,7 @@ function VerifyOtpContent() {
                                                 e.target.previousElementSibling.focus();
                                             }
                                         }}
-                                        className="w-full h-14 text-center text-xl font-bold bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#A458A6] focus:ring-2 focus:ring-[#A458A6]/10 transition-all text-gray-900"
+                                        className="w-full h-14 text-center text-xl font-bold bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#A958A4] focus:ring-2 focus:ring-[#A958A4]/10 transition-all text-gray-900"
                                     />
                                 ))}
                             </div>
@@ -124,7 +124,7 @@ function VerifyOtpContent() {
                                     type="button"
                                     onClick={handleResend}
                                     disabled={resendCooldown > 0}
-                                    className={`font-semibold transition-colors ${resendCooldown > 0 ? "text-gray-400 cursor-not-allowed" : "text-[#A458A6] hover:underline"}`}
+                                    className={`font-semibold transition-colors ${resendCooldown > 0 ? "text-gray-400 cursor-not-allowed" : "text-[#A958A4] hover:underline"}`}
                                 >
                                     {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
                                 </button>
@@ -134,7 +134,7 @@ function VerifyOtpContent() {
                         <button
                             type="submit" disabled={isSubmitting || otp.length < 6}
                             className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50 hover:shadow-lg hover:shadow-purple-500/20"
-                            style={{ background: "linear-gradient(135deg, #A458A6, #14A8E6)" }}
+                            style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}
                         >
                             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Verify <ArrowRight className="h-4 w-4" /></>}
                         </button>
@@ -142,7 +142,7 @@ function VerifyOtpContent() {
                 </div>
 
                 <p className="text-center text-sm text-gray-500 mt-6">
-                    <Link href="/auth?tab=login" className="font-semibold text-[#A458A6] hover:underline">Back to Sign In</Link>
+                    <Link href="/auth?tab=login" className="font-semibold text-[#A958A4] hover:underline">Back to Sign In</Link>
                 </p>
             </div>
         </div>
@@ -153,7 +153,7 @@ export default function VerifyOtpPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-white">
-                <Loader2 className="h-6 w-6 animate-spin" style={{ color: "#A458A6" }} />
+                <Loader2 className="h-6 w-6 animate-spin" style={{ color: "#A958A4" }} />
             </div>
         }>
             <VerifyOtpContent />
