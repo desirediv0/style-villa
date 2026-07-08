@@ -1,4 +1,5 @@
 import express from "express";
+import { prisma } from "../config/db.js";
 import {
   getAllCategories,
   getProductsByCategory,
@@ -61,5 +62,23 @@ router.get("/price-visibility-settings", getPriceVisibilitySettings);
 
 // Video Reels (Watch and Buy)
 router.get("/video-reels", getActiveVideoReels);
+
+// Debug endpoint to check DB contents
+router.get("/debug-products", async (req, res) => {
+  try {
+    const { prisma } = await import("../config/db.js");
+    const products = await prisma.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        productType: true,
+        isActive: true,
+      }
+    });
+    res.json({ products });
+  } catch (err) {
+    res.json({ error: err.message, stack: err.stack });
+  }
+});
 
 export default router;

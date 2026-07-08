@@ -1,6 +1,7 @@
 {
   "name": "ecom-dashboard-server",
   "version": "1.0.0",
+  "triggerRestart": 1,
   "description": "Backend server for ecommerce dashboard",
   "main": "index.js",
   "type": "module",

@@ -1011,64 +1011,231 @@ export const getProductsByType = asyncHandler(async (req, res) => {
         },
       },
     });
-  } else {
-    // Fallback: Query by productType array field directly
-    const filterConditions = {
-      isActive: true,
-      productType: {
-        array_contains: [productType],
-      },
-    };
 
-    totalProducts = await prisma.product.count({
-      where: filterConditions,
-    });
+    // Fallback: If no products are explicitly ordered/saved in this section yet,
+    // query by productType array field directly.
+    if (products.length === 0) {
+      let filterConditions = {
+        isActive: true,
+      };
 
-    products = await prisma.product.findMany({
-      where: filterConditions,
-      include: {
-        categories: {
+      if (productType.toLowerCase() === "latest") {
+        totalProducts = await prisma.product.count({
+          where: filterConditions,
+        });
+
+        products = await prisma.product.findMany({
+          where: filterConditions,
           include: {
-            category: true,
-          },
-        },
-        images: {
-          where: { isPrimary: true },
-          take: 1,
-        },
-        variants: {
-          where: { isActive: true },
-          include: {
-            attributes: {
+            categories: {
               include: {
-                attributeValue: {
-                  include: {
-                    attribute: true,
-                  },
-                },
+                category: true,
               },
             },
             images: {
-              orderBy: { order: "asc" },
+              where: { isPrimary: true },
+              take: 1,
             },
-          },
-          orderBy: { price: "asc" },
-        },
-        _count: {
-          select: {
-            reviews: {
-              where: {
-                status: "APPROVED",
+            variants: {
+              where: { isActive: true },
+              include: {
+                attributes: {
+                  include: {
+                    attributeValue: {
+                      include: {
+                        attribute: true,
+                      },
+                    },
+                  },
+                },
+                images: {
+                  orderBy: { order: "asc" },
+                },
+              },
+              orderBy: { price: "asc" },
+            },
+            _count: {
+              select: {
+                reviews: {
+                  where: {
+                    status: "APPROVED",
+                  },
+                },
+                variants: true,
               },
             },
-            variants: true,
+          },
+          orderBy: [{ createdAt: "desc" }],
+          skip,
+          take: parseInt(limit),
+        });
+      } else {
+        filterConditions.productType = {
+          array_contains: [productType],
+        };
+
+        totalProducts = await prisma.product.count({
+          where: filterConditions,
+        });
+
+        products = await prisma.product.findMany({
+          where: filterConditions,
+          include: {
+            categories: {
+              include: {
+                category: true,
+              },
+            },
+            images: {
+              where: { isPrimary: true },
+              take: 1,
+            },
+            variants: {
+              where: { isActive: true },
+              include: {
+                attributes: {
+                  include: {
+                    attributeValue: {
+                      include: {
+                        attribute: true,
+                      },
+                    },
+                  },
+                },
+                images: {
+                  orderBy: { order: "asc" },
+                },
+              },
+              orderBy: { price: "asc" },
+            },
+            _count: {
+              select: {
+                reviews: {
+                  where: {
+                    status: "APPROVED",
+                  },
+                },
+                variants: true,
+              },
+            },
+          },
+          orderBy: [{ createdAt: "desc" }],
+          skip,
+          take: parseInt(limit),
+        });
+      }
+    }
+  } else {
+    // Fallback: Query by productType array field directly
+    let filterConditions = {
+      isActive: true,
+    };
+
+    if (productType.toLowerCase() === "latest") {
+      totalProducts = await prisma.product.count({
+        where: filterConditions,
+      });
+
+      products = await prisma.product.findMany({
+        where: filterConditions,
+        include: {
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+          images: {
+            where: { isPrimary: true },
+            take: 1,
+          },
+          variants: {
+            where: { isActive: true },
+            include: {
+              attributes: {
+                include: {
+                  attributeValue: {
+                    include: {
+                      attribute: true,
+                    },
+                  },
+                },
+              },
+              images: {
+                orderBy: { order: "asc" },
+              },
+            },
+            orderBy: { price: "asc" },
+          },
+          _count: {
+            select: {
+              reviews: {
+                where: {
+                  status: "APPROVED",
+                },
+              },
+              variants: true,
+            },
           },
         },
-      },
-      orderBy: [{ createdAt: "desc" }],
-      skip,
-      take: parseInt(limit),
-    });
+        orderBy: [{ createdAt: "desc" }],
+        skip,
+        take: parseInt(limit),
+      });
+    } else {
+      filterConditions.productType = {
+        array_contains: [productType],
+      };
+
+      totalProducts = await prisma.product.count({
+        where: filterConditions,
+      });
+
+      products = await prisma.product.findMany({
+        where: filterConditions,
+        include: {
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+          images: {
+            where: { isPrimary: true },
+            take: 1,
+          },
+          variants: {
+            where: { isActive: true },
+            include: {
+              attributes: {
+                include: {
+                  attributeValue: {
+                    include: {
+                      attribute: true,
+                    },
+                  },
+                },
+              },
+              images: {
+                orderBy: { order: "asc" },
+              },
+            },
+            orderBy: { price: "asc" },
+          },
+          _count: {
+            select: {
+              reviews: {
+                where: {
+                  status: "APPROVED",
+                },
+              },
+              variants: true,
+            },
+          },
+        },
+        orderBy: [{ createdAt: "desc" }],
+        skip,
+        take: parseInt(limit),
+      });
+    }
   }
 
   // Batch fetch active flash sales for these products
