@@ -20,7 +20,7 @@ const SECTION_METADATA = {
     tag: "Curated Style",
     title: "FEATURED",
     subtitle: "COLLECTIONS",
-    dateText: "Signature pieces, handpicked by our stylists for the season",
+    dateText: "Signature handbags and premium clothing, handpicked for your unique style",
     linkUrl: "/products?search=featured"
   },
   latest: {
@@ -28,7 +28,7 @@ const SECTION_METADATA = {
     tag: "Just Landed",
     title: "LATEST",
     subtitle: "ADDITIONS",
-    dateText: "Freshly imported bags and clothing, new to the maison",
+    dateText: "Freshly imported designer bags and seasonal clothing new to the maison",
     linkUrl: "/products?search=latest"
   },
   bestseller: {
@@ -36,7 +36,7 @@ const SECTION_METADATA = {
     tag: "Best Loved",
     title: "BEST",
     subtitle: "SELLERS",
-    dateText: "The pieces our clients across India keep coming back for",
+    dateText: "Most popular luxury handbags and outfits loved by clients across India",
     linkUrl: "/products?search=bestseller"
   },
   trending: {
@@ -44,7 +44,7 @@ const SECTION_METADATA = {
     tag: "Must Have",
     title: "TRENDING",
     subtitle: "NOW",
-    dateText: "The most wanted silhouettes and styles of the week",
+    dateText: "The most wanted silhouettes, designer bags, and statement clothing of the week",
     linkUrl: "/products?search=trending"
   },
   new: {
@@ -52,7 +52,7 @@ const SECTION_METADATA = {
     tag: "Just In",
     title: "NEW",
     subtitle: "ARRIVALS",
-    dateText: "Fresh creations added to our curated collection",
+    dateText: "Newly launched bags and premium apparel added to our curated catalog",
     linkUrl: "/products?search=new"
   }
 };
@@ -210,8 +210,8 @@ export default function HomePageContent() {
 
     const dbSection = dbSections.find(
       (s) =>
-        s.slug?.toLowerCase() === key.toLowerCase() ||
-        s.slug?.toLowerCase().replace(/-/g, "") === key.toLowerCase()
+          s.slug?.toLowerCase() === key.toLowerCase() ||
+          s.slug?.toLowerCase().replace(/-/g, "") === key.toLowerCase()
     );
 
     const defaultBanner = SECTION_METADATA[key] || {
@@ -223,15 +223,13 @@ export default function HomePageContent() {
       linkUrl: `/products?search=${key}`
     };
 
-    let titleParts = dbSection?.name ? dbSection.name.split(" ") : [];
-
     const banner = {
       ...defaultBanner,
       bannerImage: dbSection?.image || defaultBanner.bannerImage,
       tag: defaultBanner.tag,
-      title: titleParts.length > 0 ? titleParts[0].toUpperCase() : defaultBanner.title,
-      subtitle: titleParts.length > 1 ? titleParts.slice(1).join(" ").toUpperCase() : defaultBanner.subtitle,
-      dateText: dbSection?.description || defaultBanner.dateText,
+      title: defaultBanner.title,
+      subtitle: defaultBanner.subtitle,
+      dateText: defaultBanner.dateText,
     };
 
     const isEven = ["featured", "bestseller", "new"].includes(key.toLowerCase());
