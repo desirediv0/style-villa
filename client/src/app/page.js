@@ -1,5 +1,7 @@
 
 import HeroSection from "@/components/sections/HeroSection";
+import HeroSection3D from "@/components/sections/HeroSection3D";
+import HeroSectionStore from "@/components/sections/HeroSectionStore";
 import LuxuryMarquee from "@/components/sections/LuxuryMarquee";
 import TrustBadgesSection from "@/components/sections/TrustBadgesSection";
 import HomePageContent from "@/components/sections/HomePageContent";
@@ -19,11 +21,13 @@ export default function Home() {
   return (
     <>
       <main>
-        <HeroSection />
+        {/* <HeroSection /> */}
+        {/* <HeroSection3D /> */}
+        <HeroSectionStore />
         <LuxuryMarquee />
-        <CategoryGrid />
         <HomePageContent />
         <WatchAndBuySection />
+        <CategoryGrid />
         <ColdChainBanner />
         <TrustBadgesSection />
         <JournalSection />
