@@ -27,7 +27,7 @@ export const getStoreConfig = () => {
       "stylevilla@gmail.com",
 
     // Website Information
-    websiteUrl: process.env.WEBSITE_URL || "https://stylevilla.com",
+    websiteUrl: process.env.WEBSITE_URL || "https://stylevillaofficial.com",
     supportEmail:
       process.env.SUPPORT_EMAIL ||
       process.env.STORE_EMAIL ||

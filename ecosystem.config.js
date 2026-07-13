@@ -6,7 +6,7 @@ module.exports = {
       script: 'npm',
       args: 'start',
       env: {
-        PORT: 3005,
+        PORT: 3006,
         NODE_ENV: 'production'
       },
       error_file: "/root/.pm2/logs/style-villa-client-error.log",
@@ -20,7 +20,7 @@ module.exports = {
       script: 'npm',
       args: 'run preview',
       env: {
-        PORT: 4177,
+        PORT: 4178,
         NODE_ENV: 'production',
         HOST: '0.0.0.0'
       },
@@ -35,7 +35,7 @@ module.exports = {
       script: 'npm',
       args: 'start',
       env: {
-        PORT: 4006,
+        PORT: 4007,
         NODE_ENV: 'production'
       },
       error_file: "/root/.pm2/logs/style-villa-server-error.log",

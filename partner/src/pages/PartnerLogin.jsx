@@ -247,7 +247,7 @@ const PartnerLogin = () => {
                         <div className="mt-4 text-center text-sm">
                             <span className="text-gray-500">{t('become_partner')} </span>
                             <a
-                                href="https://stylevilla.com/become-partner"
+                                href="https://stylevillaofficial.com/become-partner"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-[#DE7A3E] hover:text-[#7596DB] underline-offset-2 hover:underline font-medium"
