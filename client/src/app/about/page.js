@@ -273,9 +273,9 @@ export default function AboutPage() {
 
               <div className="flex items-center justify-center gap-2 mt-6 text-xs text-white/30">
                 <MapPin className="h-3 w-3" />
-                <a href="https://maps.app.goo.gl/MTy3mYLeAXTr7jxP" target="_blank" rel="noopener noreferrer" className="hover:text-white/60 transition-colors underline">
-                  View on Google Maps
-                </a>
+<a href="https://maps.app.goo.gl/K61B31xzQXyZCdMT6" target="_blank" rel="noopener noreferrer" className="hover:text-white/60 transition-colors underline">
+  View on Google Maps
+</a>
               </div>
             </div>
           </div>
