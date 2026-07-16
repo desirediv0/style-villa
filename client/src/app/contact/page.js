@@ -8,6 +8,11 @@ import { FaWhatsapp } from "react-icons/fa";
 import { fetchApi } from "@/lib/utils";
 import { toast } from "sonner";
 
+const WHATSAPP_NUMBER = "919991111861";
+const PHONE_NUMBER = "+91 99911 11861";
+const EMAIL_ADDRESS = "stylevilla.ktl@gmail.com";
+const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/K61B31xzQXyZCdMT6";
+
 export default function ContactPage() {
   const [formLoading, setFormLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -75,7 +80,7 @@ export default function ContactPage() {
 
             {/* WhatsApp */}
             <a
-              href="https://wa.me/918796449692"
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-green-200 hover:shadow-lg hover:shadow-green-50 transition-all duration-300"
@@ -85,14 +90,14 @@ export default function ContactPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">WhatsApp</h4>
-                <p className="text-sm text-gray-400 mt-0.5">+91 87964 49692</p>
+                <p className="text-sm text-gray-400 mt-0.5">{PHONE_NUMBER}</p>
               </div>
               <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-green-500 group-hover:translate-x-1 transition-all" />
             </a>
 
             {/* Call */}
             <a
-              href="tel:+918796449692"
+              href={`tel:${PHONE_NUMBER.replace(/\s/g, '')}`}
               className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-purple-200 hover:shadow-lg hover:shadow-purple-50 transition-all duration-300"
             >
               <div className="w-12 h-12 bg-purple-50 text-[#A958A4] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#A958A4] group-hover:text-white transition-all duration-300">
@@ -100,14 +105,14 @@ export default function ContactPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Call Us</h4>
-                <p className="text-sm text-gray-400 mt-0.5">+91 87964 49692</p>
+                <p className="text-sm text-gray-400 mt-0.5">{PHONE_NUMBER}</p>
               </div>
               <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-[#A958A4] group-hover:translate-x-1 transition-all" />
             </a>
 
             {/* Email */}
             <a
-              href="mailto:stylevilla@gmail.com"
+              href={`mailto:${EMAIL_ADDRESS}`}
               className="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300"
             >
               <div className="w-12 h-12 bg-blue-50 text-[#00AEEF] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#00AEEF] group-hover:text-white transition-all duration-300">
@@ -115,7 +120,7 @@ export default function ContactPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Email</h4>
-                <p className="text-xs text-gray-400 mt-0.5 break-all">stylevilla@gmail.com</p>
+                <p className="text-xs text-gray-400 mt-0.5 break-all">{EMAIL_ADDRESS}</p>
               </div>
               <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-[#00AEEF] group-hover:translate-x-1 transition-all" />
             </a>
@@ -129,7 +134,7 @@ export default function ContactPage() {
               <p className="text-sm text-gray-400 mb-3">10:30 AM – 7:00 PM (Daily)</p>
               <div className="flex items-center gap-3">
                 <MapPin className="h-4 w-4 text-[#00AEEF]" />
-                <a href="https://maps.app.goo.gl/MTy3mYLeAXTr7jxP" target="_blank" rel="noopener noreferrer" className="text-sm text-[#A958A4] font-semibold hover:underline">
+                <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="text-sm text-[#A958A4] font-semibold hover:underline">
                   View on Google Maps
                 </a>
               </div>
@@ -158,7 +163,7 @@ export default function ContactPage() {
                     <label className="block text-[11px] text-gray-500 mb-1.5 uppercase tracking-wider font-semibold">Phone</label>
                     <input
                       type="text" name="phone" value={formData.phone} onChange={handleInputChange} required
-                      placeholder="+91 87964 49692"
+                      placeholder={PHONE_NUMBER}
                       className="w-full h-12 px-4 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-[#A958A4]/10 focus:border-[#A958A4] focus:outline-none transition-all text-sm placeholder:text-gray-300"
                     />
                   </div>

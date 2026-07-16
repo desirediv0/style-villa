@@ -7,38 +7,38 @@
 export const getStoreConfig = () => {
   return {
     // Store Information
-    storeName: process.env.STORE_NAME || "stylevilla",
-    storeEmail: process.env.STORE_EMAIL || "stylevilla@gmail.com",
-    storePhone: process.env.STORE_PHONE || "+91 95602 47619",
+    storeName: process.env.STORE_NAME || "Style Villa",
+    storeEmail: process.env.STORE_EMAIL || "stylevilla.ktl@gmail.com",
+    storePhone: process.env.STORE_PHONE || "+91 99911 11861",
     storeAddress: process.env.STORE_ADDRESS || "India",
 
     // Store Description/Tagline
-    storeTagline: process.env.STORE_TAGLINE || "Handcrafted Premium Jewellery",
+    storeTagline: process.env.STORE_TAGLINE || "Premium Fashion & Lifestyle",
     storeDescription:
       process.env.STORE_DESCRIPTION ||
-      "Exquisite handcrafted jewellery designed to make you stand out. Browse our custom and handmade collections.",
+      "Discover Style Villa — your destination for premium imported fashion, clothing, handbags, footwear and accessories. Luxury styles for Women, Men & Youth.",
 
     // Email Configuration
-    fromName: process.env.FROM_NAME || process.env.STORE_NAME || "stylevilla",
+    fromName: process.env.FROM_NAME || process.env.STORE_NAME || "Style Villa",
     fromEmail:
       process.env.FROM_EMAIL ||
       process.env.STORE_EMAIL ||
       process.env.SMTP_USER ||
-      "stylevilla@gmail.com",
+      "stylevilla.ktl@gmail.com",
 
     // Website Information
     websiteUrl: process.env.WEBSITE_URL || "https://stylevillaofficial.com",
     supportEmail:
       process.env.SUPPORT_EMAIL ||
       process.env.STORE_EMAIL ||
-      "stylevilla@gmail.com",
+      "stylevilla.ktl@gmail.com",
 
     // Social Media (optional)
     socialFacebook: process.env.SOCIAL_FACEBOOK || "",
     socialTwitter: process.env.SOCIAL_TWITTER || "",
-    socialInstagram: process.env.SOCIAL_INSTAGRAM || "https://www.instagram.com/all_about_hair_accesories?igsh=MTJ6bXA2YnZ5M2k3Ng%3D%3D",
+    socialInstagram: process.env.SOCIAL_INSTAGRAM || "https://www.instagram.com/stylevillaofficial",
     socialYoutube: process.env.SOCIAL_YOUTUBE || "https://www.youtube.com/@stylevillabypoojakhan",
-    socialWhatsapp: process.env.SOCIAL_WHATSAPP || "919560247619",
+    socialWhatsapp: process.env.SOCIAL_WHATSAPP || "919991111861",
   };
 };
 

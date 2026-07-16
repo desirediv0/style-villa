@@ -134,12 +134,12 @@ export default function TermsPage() {
                                 <p className="text-sm   text-slate-800">Have questions about our terms?</p>
                                 <p className="text-xs text-slate-500 mt-0.5">Our support desk is active daily to resolve your queries.</p>
                             </div>
-                            <a
-                                href="mailto:stylevilla@gmail.com"
-                                className="text-xs   text-[#003E29] bg-green-50 px-4 py-2.5 rounded-xl border border-green-100 hover:bg-green-100 transition-colors"
-                            >
-                                stylevilla@gmail.com
-                            </a>
+<a
+  href="mailto:stylevilla.ktl@gmail.com"
+  className="text-xs   text-[#003E29] bg-green-50 px-4 py-2.5 rounded-xl border border-green-100 hover:bg-green-100 transition-colors"
+>
+  stylevilla.ktl@gmail.com
+</a>
                         </div>
 
                     </div>

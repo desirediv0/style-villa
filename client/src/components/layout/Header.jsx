@@ -27,9 +27,9 @@ import {
 } from "@tabler/icons-react";
 
 const CONTACT = {
-  email: "stylevilla@gmail.com",
-  phone: "+91 87964 49692",
-  whatsapp: "918796449692",
+  email: "stylevilla.ktl@gmail.com",
+  phone: "+91 99911 11861",
+  whatsapp: "919991111861",
 };
 
 const NAV_LINKS = [
@@ -633,13 +633,16 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
               {/* Contact */}
               <div className="mx-6 mt-6 mb-8 p-4 border border-white/10">
                 <p className="text-[9px] uppercase tracking-[0.35em] text-white/30 mb-2 font-medium">Concierge</p>
-                <a
-                  href={`tel:${CONTACT.phone}`}
-                  className="flex items-center gap-2.5 text-sm text-ivory/80 hover:text-gold-light transition-colors"
-                >
-                  <IconPhone className="h-4 w-4 flex-shrink-0 text-gold/70" stroke={1.5} />
-                  {CONTACT.phone}
-                </a>
+<a
+  href={`https://wa.me/${CONTACT.whatsapp}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center gap-2.5 text-sm text-white/60 hover:text-gold-light transition-colors"
+  aria-label="WhatsApp"
+>
+  <IconPhone className="h-4 w-4 text-gold/70" stroke={1.5} />
+  {CONTACT.phone}
+</a>
               </div>
             </div>
           </motion.div>

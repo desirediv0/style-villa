@@ -6,7 +6,7 @@ import Image from "next/image";
 import { MapPin, Phone, Mail, ArrowRight, ArrowUpRight } from "lucide-react";
 import { fetchApi } from "@/lib/utils";
 
-const WHATSAPP_NUMBER = "918796449692";
+const WHATSAPP_NUMBER = "919991111861";
 
 export const Footer = () => {
   const [categories, setCategories] = useState([]);
@@ -191,25 +191,25 @@ export const Footer = () => {
           <div>
             <h4 className="text-[10px] uppercase tracking-[0.35em] mb-5 text-gold font-medium">Concierge</h4>
             <div className="space-y-4">
-              <a href="tel:+918796449692" className="flex items-center gap-3 text-sm text-white/50 hover:text-gold-light transition-colors group">
-                <Phone className="h-4 w-4 text-gold/60 flex-shrink-0" strokeWidth={1.5} />
-                <span>+91 87964 49692</span>
-              </a>
-              <a href="mailto:stylevilla@gmail.com" className="flex items-center gap-3 text-sm text-white/50 hover:text-gold-light transition-colors group">
-                <Mail className="h-4 w-4 text-gold/60 flex-shrink-0" strokeWidth={1.5} />
-                <span className="break-all text-xs">stylevilla@gmail.com</span>
-              </a>
-              <a
-                href="https://maps.app.goo.gl/MTy3mYLeAXTr7jxP"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 text-sm text-white/50 hover:text-gold-light transition-colors group"
-              >
-                <MapPin className="h-4 w-4 text-gold/60 flex-shrink-0" strokeWidth={1.5} />
-                <span className="flex items-center gap-1">
-                  View on Maps <ArrowUpRight className="h-3 w-3" />
-                </span>
-              </a>
+<a href="tel:+919991111861" className="flex items-center gap-3 text-sm text-white/50 hover:text-gold-light transition-colors group">
+  <Phone className="h-4 w-4 text-gold/60 flex-shrink-0" strokeWidth={1.5} />
+  <span>+91 99911 11861</span>
+</a>
+<a href="mailto:stylevilla.ktl@gmail.com" className="flex items-center gap-3 text-sm text-white/50 hover:text-gold-light transition-colors group">
+  <Mail className="h-4 w-4 text-gold/60 flex-shrink-0" strokeWidth={1.5} />
+  <span className="break-all text-xs">stylevilla.ktl@gmail.com</span>
+</a>
+<a
+  href="https://maps.app.goo.gl/K61B31xzQXyZCdMT6"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center gap-3 text-sm text-white/50 hover:text-gold-light transition-colors group"
+>
+  <MapPin className="h-4 w-4 text-gold/60 flex-shrink-0" strokeWidth={1.5} />
+  <span className="flex items-center gap-1">
+    View on Maps <ArrowUpRight className="h-3 w-3" />
+  </span>
+</a>
             </div>
           </div>
         </div>

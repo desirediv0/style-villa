@@ -124,12 +124,12 @@ export default function PrivacyPolicyPage() {
                                 <p className="text-sm font-semibold text-slate-800">Have privacy concerns or data requests?</p>
                                 <p className="text-xs text-slate-500 mt-0.5">Contact our support desk for direct assistance.</p>
                             </div>
-                            <a
-                                href="mailto:stylevilla@gmail.com"
-                                className="text-xs text-[#003E29] bg-green-50 px-4 py-2.5 rounded-xl border border-green-100 hover:bg-green-100 transition-colors"
-                            >
-                                stylevilla@gmail.com
-                            </a>
+<a
+  href="mailto:stylevilla.ktl@gmail.com"
+  className="text-xs text-[#003E29] bg-green-50 px-4 py-2.5 rounded-xl border border-green-100 hover:bg-green-100 transition-colors"
+>
+  stylevilla.ktl@gmail.com
+</a>
                         </div>
 
                     </div>
