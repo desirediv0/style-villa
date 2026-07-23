@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { fetchApi } from "@/lib/utils";
+import Ambient3D from "@/components/ui/Ambient3D";
 import {
   VolumeX,
   Volume2,
@@ -26,10 +27,10 @@ function getProductImageUrl(product) {
 
 const ReelSkeleton = () => (
   <div className="flex-shrink-0 w-[160px] sm:w-[180px] animate-pulse">
-    <div className="aspect-[9/14] bg-white/5" />
+    <div className="aspect-[9/14] bg-ivory-deep" />
     <div className="mt-3 space-y-2">
-      <div className="h-3 w-3/4 bg-white/5" />
-      <div className="h-3 w-1/2 bg-white/5" />
+      <div className="h-3 w-3/4 bg-ivory-deep" />
+      <div className="h-3 w-1/2 bg-ivory-deep" />
     </div>
   </div>
 );
@@ -115,7 +116,7 @@ function ReelCard({ reel, onClick }) {
         <div className="mt-3 px-1">
           <div className="flex gap-2.5 items-start">
             {getProductImageUrl(product) && (
-              <div className="w-11 h-11 overflow-hidden flex-shrink-0 border border-white/15">
+              <div className="w-11 h-11 overflow-hidden flex-shrink-0 border border-line">
                 <img
                   src={getProductImageUrl(product)}
                   alt={product.name}
@@ -124,21 +125,21 @@ function ReelCard({ reel, onClick }) {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <h3 className="text-[12px] font-medium text-ivory/90 truncate leading-tight">
+              <h3 className="text-[12px] font-medium text-noir truncate leading-tight">
                 {product.name}
               </h3>
               <div className="flex items-center gap-1.5 mt-1">
                 {product.salePrice ? (
                   <>
-                    <span className="text-[12px] font-semibold text-gold-light">
+                    <span className="text-[12px] font-semibold text-plum">
                       ₹{Number(product.salePrice).toLocaleString("en-IN")}
                     </span>
-                    <span className="text-[10px] line-through text-white/35">
+                    <span className="text-[10px] line-through text-stone">
                       ₹{Number(product.price).toLocaleString("en-IN")}
                     </span>
                   </>
                 ) : (
-                  <span className="text-[12px] font-semibold text-gold-light">
+                  <span className="text-[12px] font-semibold text-plum">
                     ₹{Number(product.price).toLocaleString("en-IN")}
                   </span>
                 )}
@@ -369,11 +370,11 @@ export default function WatchAndBuySection() {
 
   if (isLoading) {
     return (
-      <section className="py-16 md:py-24 bg-noir luxe-grain luxe-aurora">
+      <section className="py-16 md:py-24 bg-ivory luxe-aurora-light border-y border-line">
         <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-10">
-            <span className="luxe-eyebrow-dark block mb-3">Le Cinéma</span>
-            <h2 className="font-display text-3xl md:text-4xl tracking-tight text-ivory">Watch &amp; Buy</h2>
+            <span className="luxe-eyebrow block mb-3">Le Cinéma</span>
+            <h2 className="font-display text-3xl md:text-4xl tracking-tight text-noir">Watch &amp; Buy</h2>
           </div>
           <div className="flex gap-4 overflow-hidden">
             {[...Array(6)].map((_, i) => <ReelSkeleton key={i} />)}
@@ -387,22 +388,24 @@ export default function WatchAndBuySection() {
 
   return (
     <>
-      <section className="py-16 md:py-24 bg-noir overflow-hidden luxe-grain luxe-aurora">
+      <section className="relative py-16 md:py-24 bg-ivory overflow-hidden luxe-aurora-light border-y border-line">
+        {/* floating 3D accents drifting behind the reels */}
+        <Ambient3D />
         <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
           {/* Section Header */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
             <div>
-              <span className="luxe-eyebrow-dark block mb-3">Le Cinéma</span>
-              <h2 className="font-display text-3xl md:text-5xl tracking-tight text-ivory">
-                Watch <em className="luxe-italic text-gradient-light">&amp; Buy</em>
+              <span className="luxe-eyebrow block mb-3">Le Cinéma</span>
+              <h2 className="font-display text-3xl md:text-5xl tracking-tight text-noir">
+                Watch <em className="luxe-italic text-gradient">&amp; Buy</em>
               </h2>
-              <p className="text-sm text-white/45 mt-3 font-light tracking-wide">Tap to watch — shop the look straight from the reel</p>
+              <p className="text-sm text-stone-dark mt-3 font-light tracking-wide">Tap to watch — shop the look straight from the reel</p>
             </div>
             <a
               href="https://www.instagram.com/stylevillaofficial"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-medium text-white/50 hover:text-gold-light transition-colors"
+              className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-medium text-stone-dark hover:text-plum transition-colors"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -418,7 +421,7 @@ export default function WatchAndBuySection() {
             <button
               onClick={() => scroll("left")}
               aria-label="Scroll reels left"
-              className="absolute left-0 top-[30%] -translate-y-1/2 z-10 w-11 h-11 bg-noir/80 border border-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-gold hover:text-gold-light text-ivory"
+              className="absolute left-0 top-[30%] -translate-y-1/2 z-10 w-11 h-11 bg-white border border-line shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-plum hover:text-plum text-noir"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -438,7 +441,7 @@ export default function WatchAndBuySection() {
             <button
               onClick={() => scroll("right")}
               aria-label="Scroll reels right"
-              className="absolute right-0 top-[30%] -translate-y-1/2 z-10 w-11 h-11 bg-noir/80 border border-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-gold hover:text-gold-light text-ivory"
+              className="absolute right-0 top-[30%] -translate-y-1/2 z-10 w-11 h-11 bg-white border border-line shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:border-plum hover:text-plum text-noir"
             >
               <ChevronRight className="h-5 w-5" />
             </button>

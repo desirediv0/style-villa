@@ -62,20 +62,20 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — noir editorial */}
-      <section className="relative py-20 md:py-28 overflow-hidden bg-noir luxe-grain luxe-aurora">
+      <section className="relative py-20 md:py-28 overflow-hidden bg-ivory luxe-aurora-light border-b border-line">
         <span
-          className="pointer-events-none select-none absolute -bottom-8 left-1/2 -translate-x-1/2 font-display italic whitespace-nowrap text-[10rem] leading-none text-hollow opacity-40 hidden lg:block"
+          className="pointer-events-none select-none absolute -bottom-8 left-1/2 -translate-x-1/2 font-display italic whitespace-nowrap text-[10rem] leading-none text-hollow-dark opacity-25 hidden lg:block"
           aria-hidden="true"
         >
           Maison
         </span>
         <div className="relative z-10 max-w-7xl mx-auto px-5 text-center">
-          <span className="luxe-eyebrow-dark block mb-5">Since Day One</span>
-          <h1 className="font-display text-4xl md:text-6xl text-ivory mb-6 tracking-tight">
-            Our <em className="luxe-italic text-gradient-light">Story</em>
+          <span className="luxe-eyebrow block mb-5">Since Day One</span>
+          <h1 className="font-display text-4xl md:text-6xl text-noir mb-6 tracking-tight">
+            Our <em className="luxe-italic text-gradient">Story</em>
           </h1>
-          <span className="mx-auto block h-px w-24 bg-gradient-to-r from-transparent via-gold to-transparent mb-6" />
-          <p className="text-white/50 max-w-lg mx-auto text-sm md:text-base font-light leading-relaxed">
+          <span className="mx-auto block h-px w-24 bg-gradient-to-r from-transparent via-plum to-transparent mb-6" />
+          <p className="text-stone-dark max-w-lg mx-auto text-sm md:text-base font-light leading-relaxed">
             Imported · Premium · Affordable — your trusted destination for fashion, clothing, bags &amp; footwear.
           </p>
         </div>
@@ -256,7 +256,7 @@ export default function AboutPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <a href="https://wa.me/918796449692" target="_blank" rel="noopener noreferrer"
+                <a href="https://wa.me/919991111861" target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:shadow-lg hover:shadow-purple-500/20 hover:-translate-y-0.5"
                   style={{ background: "linear-gradient(135deg, #A958A4, #00AEEF)" }}>
                   <PhoneCall className="h-4 w-4" /> WhatsApp

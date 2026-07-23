@@ -41,7 +41,7 @@
        Anchored to the logo: orchid #A858A0 · sky #00B0F0
        Lavender canvas · aubergine drama · orchid & sky accents */
     --background: 0 0% 100%;
-    --foreground: 288 23% 12%;           /* #221826 */
+    --foreground: 0 0% 11%;              /* #1C1C1C neutral */
     --card: 0 0% 100%;
     --card-foreground: 288 23% 12%;
     --popover: 0 0% 100%;
@@ -70,7 +70,7 @@
        (names preserved; values anchored to the logo) */
     --brand-purple: #A958A4;
     --brand-blue: #00AEEF;
-    --brand-dark: #1D1024;
+    --brand-dark: #1A1A1A;
     --brand-white: #FFFFFF;
     --brand-section: #FAF7FC;
     --brand-border: #ECE3F2;
@@ -82,8 +82,8 @@
     --brand-error: #C24B42;
 
     /* Villa tokens */
-    --noir: #1D1024;
-    --noir-soft: #271631;
+    --noir: #1A1A1A;
+    --noir-soft: #242424;
     --ivory: #FAF7FC;
     --ivory-deep: #F2ECF7;
     --gold: #B562B0;          /* accent role — logo orchid */

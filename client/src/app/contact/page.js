@@ -49,23 +49,23 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — noir editorial */}
-      <section className="relative py-20 md:py-28 overflow-hidden bg-noir luxe-grain luxe-aurora">
+      <section className="relative py-20 md:py-28 overflow-hidden bg-ivory luxe-aurora-light border-b border-line">
         <span
-          className="pointer-events-none select-none absolute -bottom-8 left-1/2 -translate-x-1/2 font-display italic whitespace-nowrap text-[10rem] leading-none text-hollow opacity-40 hidden lg:block"
+          className="pointer-events-none select-none absolute -bottom-8 left-1/2 -translate-x-1/2 font-display italic whitespace-nowrap text-[10rem] leading-none text-hollow-dark opacity-25 hidden lg:block"
           aria-hidden="true"
         >
           Bonjour
         </span>
         <div className="relative z-10 max-w-7xl mx-auto px-5 text-center">
-          <div className="inline-flex items-center gap-2.5 mb-6 text-[10px] uppercase tracking-[0.35em] text-gold-light font-medium">
+          <div className="inline-flex items-center gap-2.5 mb-6 text-[10px] uppercase tracking-[0.35em] text-plum font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             We&apos;re Online
           </div>
-          <h1 className="font-display text-4xl md:text-6xl text-ivory mb-6 tracking-tight">
-            Let&apos;s <em className="luxe-italic text-gradient-light">Talk</em>
+          <h1 className="font-display text-4xl md:text-6xl text-noir mb-6 tracking-tight">
+            Let&apos;s <em className="luxe-italic text-gradient">Talk</em>
           </h1>
-          <span className="mx-auto block h-px w-24 bg-gradient-to-r from-transparent via-gold to-transparent mb-6" />
-          <p className="text-white/50 max-w-md mx-auto text-sm md:text-base font-light leading-relaxed">
+          <span className="mx-auto block h-px w-24 bg-gradient-to-r from-transparent via-plum to-transparent mb-6" />
+          <p className="text-stone-dark max-w-md mx-auto text-sm md:text-base font-light leading-relaxed">
             Questions, orders, collaborations — we&apos;re just a message away.
           </p>
         </div>

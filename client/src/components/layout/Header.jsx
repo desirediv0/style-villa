@@ -469,7 +469,7 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
       {isOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
           <motion.div
-            className="absolute inset-0 bg-noir/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-noir/45 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -478,35 +478,35 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
           />
 
           <motion.div
-            className="absolute left-0 top-0 bottom-0 w-[88%] max-w-[360px] bg-noir text-ivory shadow-2xl flex flex-col luxe-grain luxe-aurora"
+            className="absolute left-0 top-0 bottom-0 w-[88%] max-w-[360px] bg-ivory-warm text-noir shadow-2xl flex flex-col luxe-aurora-light"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Header */}
-            <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-white/10 flex-shrink-0">
+            <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-line flex-shrink-0">
               <Image
                 src="/logo.png"
                 alt="Style Villa"
                 width={100}
                 height={40}
-                className="h-9 w-auto object-contain brightness-0 invert"
+                className="h-9 w-auto object-contain"
               />
-              <button onClick={onClose} className="p-2 text-white/60 hover:text-gold-light transition-colors" aria-label="Close menu">
+              <button onClick={onClose} className="p-2 text-stone hover:text-plum transition-colors" aria-label="Close menu">
                 <IconX className="h-5 w-5" stroke={1.5} />
               </button>
             </div>
 
             {/* User section */}
             <ClientOnly>
-              <div className="relative z-10 px-6 py-5 border-b border-white/10 flex-shrink-0">
+              <div className="relative z-10 px-6 py-5 border-b border-line flex-shrink-0">
                 {isAuthenticated ? (
                   <div className="flex items-center gap-3">
                     <AvatarCircle name={user?.name} size="lg" />
                     <div className="min-w-0">
-                      <p className="font-display text-base text-ivory truncate">{user?.name || "User"}</p>
-                      <p className="text-xs text-white/40 truncate">{user?.email}</p>
+                      <p className="font-display text-base text-noir truncate">{user?.name || "User"}</p>
+                      <p className="text-xs text-stone truncate">{user?.email}</p>
                     </div>
                   </div>
                 ) : (
@@ -517,7 +517,7 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
                       </button>
                     </Link>
                     <Link href="/auth?tab=register" className="flex-1" onClick={onClose}>
-                      <button className="w-full h-11 text-[10px] uppercase tracking-[0.25em] font-semibold text-ivory border border-white/25 hover:border-gold-light hover:text-gold-light transition-colors">
+                      <button className="w-full h-11 text-[10px] uppercase tracking-[0.25em] font-semibold text-noir border border-line hover:border-plum hover:text-plum transition-colors">
                         Register
                       </button>
                     </Link>
@@ -541,13 +541,13 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
                       onClick={onClose}
                       className={cn(
                         "flex items-baseline gap-3 py-3 group",
-                        pathname === href ? "text-gold-light" : "text-ivory/90"
+                        pathname === href ? "text-plum" : "text-noir"
                       )}
                     >
-                      <span className="text-[9px] tracking-[0.2em] text-white/30 font-medium">
+                      <span className="text-[9px] tracking-[0.2em] text-stone font-medium">
                         0{i + 1}
                       </span>
-                      <span className="font-display text-2xl tracking-wide group-hover:text-gold-light transition-colors">
+                      <span className="font-display text-2xl tracking-wide group-hover:text-plum transition-colors">
                         {label.charAt(0) + label.slice(1).toLowerCase()}
                       </span>
                     </Link>
@@ -557,8 +557,8 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
 
               {/* Categories */}
               {categories.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-white/10 px-6">
-                  <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-gold/80 font-medium">
+                <div className="mt-6 pt-6 border-t border-line px-6">
+                  <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-plum font-medium">
                     Collections
                   </p>
                   {categories.slice(0, 8).map((cat) => (
@@ -566,7 +566,7 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
                       key={cat.id}
                       href={`/category/${cat.slug}`}
                       onClick={onClose}
-                      className="flex items-center justify-between py-2.5 text-sm text-white/60 hover:text-gold-light transition-colors group"
+                      className="flex items-center justify-between py-2.5 text-sm text-stone-dark hover:text-plum transition-colors group"
                     >
                       <span className="tracking-wide">{cat.name}</span>
                       <IconArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity" stroke={1.5} />
@@ -578,8 +578,8 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
               {/* Account links */}
               <ClientOnly>
                 {isAuthenticated && (
-                  <div className="mt-4 pt-4 border-t border-white/10 px-6">
-                    <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-gold/80 font-medium">
+                  <div className="mt-4 pt-4 border-t border-line px-6">
+                    <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-plum font-medium">
                       Account
                     </p>
                     {[
@@ -591,9 +591,9 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
                         key={href}
                         href={href}
                         onClick={onClose}
-                        className="flex items-center gap-3 py-2.5 text-sm text-white/60 hover:text-gold-light transition-colors"
+                        className="flex items-center gap-3 py-2.5 text-sm text-stone-dark hover:text-plum transition-colors"
                       >
-                        <Icon className="h-4 w-4 text-white/30" stroke={1.5} />
+                        <Icon className="h-4 w-4 text-stone" stroke={1.5} />
                         {label}
                       </Link>
                     ))}
@@ -602,7 +602,7 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
                         handleLogout();
                         onClose();
                       }}
-                      className="flex items-center gap-3 w-full py-2.5 text-sm text-red-300/80 hover:text-red-300 transition-colors"
+                      className="flex items-center gap-3 w-full py-2.5 text-sm text-brand-error hover:text-red-700 transition-colors"
                     >
                       <IconLogout className="h-4 w-4" stroke={1.5} />
                       Sign Out
@@ -612,8 +612,8 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
               </ClientOnly>
 
               {/* Help links */}
-              <div className="mt-4 pt-4 border-t border-white/10 px-6">
-                <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-gold/80 font-medium">
+              <div className="mt-4 pt-4 border-t border-line px-6">
+                <p className="pb-3 text-[9px] uppercase tracking-[0.35em] text-plum font-medium">
                   Help
                 </p>
                 {[
@@ -626,7 +626,7 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
                     key={href}
                     href={href}
                     onClick={onClose}
-                    className="block py-2.5 text-sm text-white/60 hover:text-gold-light transition-colors"
+                    className="block py-2.5 text-sm text-stone-dark hover:text-plum transition-colors"
                   >
                     {label}
                   </Link>
@@ -634,13 +634,13 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
               </div>
 
               {/* Contact */}
-              <div className="mx-6 mt-6 mb-8 p-4 border border-white/10">
-                <p className="text-[9px] uppercase tracking-[0.35em] text-white/30 mb-2 font-medium">Concierge</p>
+              <div className="mx-6 mt-6 mb-8 p-4 border border-line">
+                <p className="text-[9px] uppercase tracking-[0.35em] text-stone mb-2 font-medium">Concierge</p>
 <a
   href={`https://wa.me/${CONTACT.whatsapp}`}
   target="_blank"
   rel="noopener noreferrer"
-  className="flex items-center gap-2.5 text-sm text-white/60 hover:text-gold-light transition-colors"
+  className="flex items-center gap-2.5 text-sm text-stone-dark hover:text-plum transition-colors"
   aria-label="WhatsApp"
 >
   <IconPhone className="h-4 w-4 text-gold/70" stroke={1.5} />

@@ -68,11 +68,12 @@ module.exports = {
 					success: '#3D7C4F',
 					error: '#C24B42',
 				},
-				/* First-class luxury tokens (names kept — values re-anchored to the logo) */
+				/* Dark tokens — deliberately NEUTRAL (no purple tint) so buttons,
+				   badges and overlays never read as "dark purple". */
 				noir: {
-					DEFAULT: '#1D1024',
-					soft: '#271631',
-					mist: '#321D3E',
+					DEFAULT: '#1A1A1A',
+					soft: '#242424',
+					mist: '#2E2E2E',
 				},
 				ivory: {
 					DEFAULT: '#FAF7FC',

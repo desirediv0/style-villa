@@ -10,7 +10,7 @@ import Reveal from "@/components/ui/Reveal";
 import Magnetic from "@/components/ui/Magnetic";
 import FloatingElements from "@/components/ui/FloatingElements";
 
-const WHATSAPP_NUMBER = "918796449692";
+const WHATSAPP_NUMBER = "919991111861";
 
 const FALLBACK_CATEGORIES = [
   { name: "Clothing", slug: "clothing" },
