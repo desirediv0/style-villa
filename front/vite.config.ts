@@ -13,20 +13,20 @@ export default defineConfig({
   },
   // Add the preview configuration for production builds
   preview: {
-    port: 4177,
+    port: 4178,
     host: "0.0.0.0",
     allowedHosts: [
-      "admin.stylevilla.com",
-      "www.admin.stylevilla.com",
+      "admin.stylevillaofficial.com",
+      "www.admin.stylevillaofficial.com",
     ],
   },
   // Add server configuration for development
   server: {
-    port: 4177,
+    port: 4178,
     host: "0.0.0.0",
     allowedHosts: [
-      "admin.stylevilla.com",
-      "www.admin.stylevilla.com",
+      "admin.stylevillaofficial.com",
+      "www.admin.stylevillaofficial.com",
     ],
   },
 });

@@ -381,7 +381,7 @@ const getContactInfo = asyncHandler(async (req, res) => {
     const contactInfo = {
       address: "Gurugram, Haryana",
       phone: "+91 95602 47619",
-      email: "stylevilla@gmail.com",
+      email: "stylevilla.ktl@gmail.com",
       hours: "Monday - Saturday: 9:00 AM - 9:00 PM",
       mapCoordinates: {
         lat: 28.4595,

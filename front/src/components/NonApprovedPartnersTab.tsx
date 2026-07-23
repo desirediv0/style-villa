@@ -467,7 +467,7 @@ export default function NonApprovedPartnersTab() {
                             </Button>
                         </div>
                         <div className="text-xs text-green-700 space-y-0.5">
-                            <p>Partner dashboard: <strong>partner.stylevilla.com</strong></p>
+                            <p>Partner dashboard: <strong>partner.stylevillaofficial.com</strong></p>
                             <p>The partner can change this password after their first login.</p>
                         </div>
                     </div>

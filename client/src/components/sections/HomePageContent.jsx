@@ -17,42 +17,42 @@ import { IconArrowRight, IconArrowLeft } from "@tabler/icons-react";
 const SECTION_METADATA = {
   featured: {
     bannerImage: "/featured_banner.png",
-    tag: "Curated Style",
-    title: "FEATURED",
-    subtitle: "COLLECTIONS",
-    dateText: "Signature handbags and premium clothing, handpicked for your unique style",
+    tag: "Curated Luxury",
+    title: "COLORFUL",
+    subtitle: "HAND BAG",
+    dateText: "Exquisite colorful handbags handcrafted for statement styling",
     linkUrl: "/products?search=featured"
   },
   latest: {
     bannerImage: "/latest_banner.png",
     tag: "Just Landed",
-    title: "LATEST",
-    subtitle: "ADDITIONS",
-    dateText: "Freshly imported designer bags and seasonal clothing new to the maison",
+    title: "CHIC",
+    subtitle: "HAND BAG",
+    dateText: "Minimalist canvas and leather everyday handbags",
     linkUrl: "/products?search=latest"
   },
   bestseller: {
     bannerImage: "/bestseller_banner.png",
     tag: "Best Loved",
-    title: "BEST",
-    subtitle: "SELLERS",
-    dateText: "Most popular luxury handbags and outfits loved by clients across India",
+    title: "BLACK LEATHER",
+    subtitle: "BAG",
+    dateText: "Timeless classic black leather handbags with gold accents",
     linkUrl: "/products?search=bestseller"
   },
   trending: {
     bannerImage: "/trending_banner.png",
     tag: "Must Have",
-    title: "TRENDING",
-    subtitle: "NOW",
-    dateText: "The most wanted silhouettes, designer bags, and statement clothing of the week",
+    title: "RED LEATHER",
+    subtitle: "BAG",
+    dateText: "Bold red leather silhouettes to elevate your look",
     linkUrl: "/products?search=trending"
   },
   new: {
     bannerImage: "/new_banner.png",
     tag: "Just In",
-    title: "NEW",
-    subtitle: "ARRIVALS",
-    dateText: "Newly launched bags and premium apparel added to our curated catalog",
+    title: "LEATHER LUXURY",
+    subtitle: "BAG",
+    dateText: "Ultra-luxury designer collections with exquisite craftsmanship",
     linkUrl: "/products?search=new"
   }
 };

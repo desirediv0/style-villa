@@ -145,22 +145,22 @@ export default function ShippingPolicyPage() {
                 <p className="text-xs text-gray-500 mt-0.5">Contact our support team for customized dispatch timelines.</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <a
-                  href="mailto:stylevilla@gmail.com"
-                  className="text-xs px-4 py-2.5 rounded-xl border transition-colors hover:opacity-90 text-center"
-                  style={{ color: "#003E29", background: "rgba(0,62,41,0.06)", borderColor: "#E5E7EB" }}
-                >
-                  stylevilla@gmail.com
-                </a>
-                <a
-                  href="https://wa.me/918796449692"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs px-4 py-2.5 rounded-xl transition-colors hover:opacity-90 text-center text-white"
-                  style={{ background: "#25D366" }}
-                >
-                  Message on WhatsApp
-                </a>
+<a
+  href="mailto:stylevilla.ktl@gmail.com"
+  className="text-xs px-4 py-2.5 rounded-xl border transition-colors hover:opacity-90 text-center"
+  style={{ color: "#003E29", background: "rgba(0,62,41,0.06)", borderColor: "#E5E7EB" }}
+>
+  stylevilla.ktl@gmail.com
+</a>
+<a
+  href="https://wa.me/919991111861"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-xs px-4 py-2.5 rounded-xl transition-colors hover:opacity-90 text-center text-white"
+  style={{ background: "#25D366" }}
+>
+  Message on WhatsApp
+</a>
               </div>
             </div>
           </div>

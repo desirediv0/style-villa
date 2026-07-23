@@ -17,8 +17,8 @@ export default defineConfig({
     port: 5001,
     host: "0.0.0.0",
     allowedHosts: [
-      "partner.stylevilla.com",
-      "www.partner.stylevilla.com",
+      "partner.stylevillaofficial.com",
+      "www.partner.stylevillaofficial.com",
     ],
   },
   // Add server configuration for development
@@ -26,8 +26,8 @@ export default defineConfig({
     port: 5173,
     host: "0.0.0.0",
     allowedHosts: [
-      "partner.stylevilla.com",
-      "www.partner.stylevilla.com",
+      "partner.stylevillaofficial.com",
+      "www.partner.stylevillaofficial.com",
     ],
   },
 })

@@ -11,7 +11,7 @@ export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   (process.env.NODE_ENV === "development"
     ? "http://localhost:4000/api"
-    : "https://api.stylevilla.com/api");
+    : "https://api.stylevillaofficial.com/api");
 
 // Track in-flight requests to prevent duplicates
 const pendingRequests = {};
