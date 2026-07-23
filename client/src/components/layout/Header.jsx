@@ -118,7 +118,10 @@ export function Navbar() {
 
   const cartCount = getCartItemCount();
   const isHomePage = pathname === "/";
-  const overHero = isHomePage && !isScrolled;
+  /* Light theme: the header is always solid ivory with dark type.
+     (Set this back to `isHomePage && !isScrolled` to restore the
+     transparent white-on-dark overlay used by the dark heroes.) */
+  const overHero = false;
 
   const iconBtn = cn(
     "p-2 transition-colors duration-300 relative",
@@ -130,10 +133,10 @@ export function Navbar() {
       <header
         ref={navbarRef}
         className={cn(
-          "top-0 left-0 right-0 z-50 w-full transition-all duration-700",
-          isHomePage
-            ? cn("fixed", isScrolled ? "bg-ivory-warm/90 backdrop-blur-xl shadow-[0_1px_0_0_rgba(13,11,12,0.06),0_18px_40px_-30px_rgba(13,11,12,0.35)]" : "bg-transparent")
-            : "sticky bg-ivory-warm/95 backdrop-blur-xl shadow-[0_1px_0_0_rgba(13,11,12,0.06)]"
+          "sticky top-0 left-0 right-0 z-50 w-full bg-ivory-warm/95 backdrop-blur-xl transition-shadow duration-500",
+          isScrolled
+            ? "shadow-[0_1px_0_0_rgba(13,11,12,0.06),0_18px_40px_-30px_rgba(13,11,12,0.25)]"
+            : "shadow-[0_1px_0_0_rgba(13,11,12,0.06)]"
         )}
       >
         <Toaster
@@ -157,7 +160,7 @@ export function Navbar() {
             isHomePage && isScrolled ? "h-0 opacity-0" : "h-auto opacity-100"
           )}
         >
-          <div className="bg-noir text-ivory border-b border-white/5">
+          <div className="bg-gradient-to-r from-plum via-plum-deep to-azure text-white">
             <div className="py-2 px-4">
               <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
                 <div className="hidden md:flex items-center gap-4">
@@ -165,7 +168,7 @@ export function Navbar() {
                     href="https://www.instagram.com/stylevillaofficial"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white/50 hover:text-gold-light transition-colors"
+                    className="text-white/70 hover:text-white transition-colors"
                     aria-label="Instagram"
                   >
                     <IconBrandInstagram className="h-4 w-4" stroke={1.5} />
@@ -174,7 +177,7 @@ export function Navbar() {
                     href="https://www.facebook.com/stylevillafamily"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white/50 hover:text-gold-light transition-colors"
+                    className="text-white/70 hover:text-white transition-colors"
                     aria-label="Facebook"
                   >
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -184,18 +187,18 @@ export function Navbar() {
                 </div>
 
                 <div className="flex-1 mx-2 md:mx-4 overflow-hidden">
-                  <div className="animate-marquee whitespace-nowrap text-[10px] tracking-[0.3em] uppercase font-medium text-ivory/80">
+                  <div className="animate-marquee whitespace-nowrap text-[10px] tracking-[0.3em] uppercase font-medium text-white/90">
                     {[...ANNOUNCEMENTS, ...ANNOUNCEMENTS].map((txt, i) => (
                       <span key={i} className="mx-4">
                         {txt}
-                        <span className="ml-8 text-azure">✦</span>
+                        <span className="ml-8 text-white/70">✦</span>
                       </span>
                     ))}
                   </div>
                 </div>
 
                 <div className="hidden md:flex items-center gap-5 text-[9px] tracking-[0.3em] uppercase font-medium">
-                  <Link href="/track-order" className="text-white/60 hover:text-gold-light transition-colors">
+                  <Link href="/track-order" className="text-white/70 hover:text-white transition-colors">
                     Track Order
                   </Link>
                 </div>

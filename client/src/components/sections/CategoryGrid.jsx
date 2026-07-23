@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { fetchApi, sortCategories } from "@/lib/utils";
 import Reveal from "@/components/ui/Reveal";
+import AuroraField from "@/components/ui/AuroraField";
+import FloatingElements from "@/components/ui/FloatingElements";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 const CategoryCard = ({ category, index }) => {
@@ -115,8 +117,10 @@ const CategoryGrid = () => {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-5">
+    <section className="relative py-16 md:py-24 bg-white overflow-hidden">
+      <AuroraField variant="light" />
+      <FloatingElements tone="light" density="low" />
+      <div className="relative z-10 max-w-7xl mx-auto px-5">
         <Reveal>
           <div className="flex items-end justify-between gap-6 mb-10 md:mb-14">
             <div>
@@ -127,9 +131,10 @@ const CategoryGrid = () => {
             </div>
             <Link
               href="/categories"
-              className="luxe-link text-noir shrink-0 hidden sm:inline-flex items-center gap-2"
+              className="luxe-link text-noir shrink-0 hidden sm:inline-flex items-center gap-2 group"
             >
-              View All <ArrowRight className="w-3.5 h-3.5" />
+              View All
+              <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
         </Reveal>

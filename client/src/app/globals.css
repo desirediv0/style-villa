@@ -285,6 +285,83 @@
     100% { left: 125%; }
   }
 
+  /* Auto light-sweep — a diagonal glint that crosses on a timer (no hover) */
+  .shine-auto {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .shine-auto::after {
+    content: "";
+    position: absolute;
+    top: -20%;
+    bottom: -20%;
+    left: -80%;
+    width: 45%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.28), transparent);
+    transform: skewX(-22deg);
+    pointer-events: none;
+    z-index: 6;
+    animation: shineAuto 6.5s ease-in-out infinite;
+  }
+  @keyframes shineAuto {
+    0% { left: -80%; }
+    22% { left: 130%; }
+    100% { left: 130%; }
+  }
+
+  /* Drifting ambient orbs (used by AuroraField) */
+  @keyframes orbDrift1 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33% { transform: translate3d(6%, -8%, 0) scale(1.12); }
+    66% { transform: translate3d(-5%, 5%, 0) scale(0.94); }
+  }
+  @keyframes orbDrift2 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    40% { transform: translate3d(-8%, 6%, 0) scale(1.1); }
+    75% { transform: translate3d(5%, -6%, 0) scale(0.9); }
+  }
+  @keyframes orbDrift3 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(7%, 7%, 0) scale(1.15); }
+  }
+  .orb-1 { animation: orbDrift1 18s ease-in-out infinite; }
+  .orb-2 { animation: orbDrift2 22s ease-in-out infinite; }
+  .orb-3 { animation: orbDrift3 26s ease-in-out infinite; }
+
+  /* Soft vertical bob for icons / accents */
+  @keyframes bobY {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .bob-y { animation: bobY 4.5s ease-in-out infinite; }
+
+  /* Floating decorative marks (sparkles / rings / dots) */
+  @keyframes floatMark {
+    0%, 100% { transform: translateY(0) translateX(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-22px) translateX(8px) rotate(calc(var(--r, 0deg) + 12deg)); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--o1, 0.2); }
+    50% { opacity: var(--o2, 0.75); }
+  }
+  .float-mark {
+    animation:
+      floatMark var(--d, 9s) ease-in-out infinite,
+      twinkle var(--t, 5s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s), var(--delay, 0s);
+    will-change: transform, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shine-auto::after,
+    .orb-1, .orb-2, .orb-3,
+    .bob-y,
+    .float-mark {
+      animation: none !important;
+    }
+  }
+
   /* Slow ken-burns drift for hero imagery */
   .hero-kenburns {
     animation: kenburns 18s ease-in-out infinite alternate;

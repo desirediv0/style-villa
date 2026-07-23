@@ -2,6 +2,7 @@
 import HeroSection from "@/components/sections/HeroSection";
 import HeroSection3D from "@/components/sections/HeroSection3D";
 import HeroSectionStore from "@/components/sections/HeroSectionStore";
+import HeroSectionLight from "@/components/sections/HeroSectionLight";
 import LuxuryMarquee from "@/components/sections/LuxuryMarquee";
 import TrustBadgesSection from "@/components/sections/TrustBadgesSection";
 import HomePageContent from "@/components/sections/HomePageContent";
@@ -23,7 +24,8 @@ export default function Home() {
       <main>
         {/* <HeroSection /> */}
         {/* <HeroSection3D /> */}
-        <HeroSectionStore />
+        {/* <HeroSectionStore /> */}
+        <HeroSectionLight />
         <LuxuryMarquee />
         <HomePageContent />
         <WatchAndBuySection />

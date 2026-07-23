@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Phone, Mail, ArrowRight, ArrowUpRight } from "lucide-react";
 import { fetchApi } from "@/lib/utils";
+import FloatingElements from "@/components/ui/FloatingElements";
 
 const WHATSAPP_NUMBER = "918796449692";
 
@@ -37,6 +38,7 @@ export const Footer = () => {
 
   return (
     <footer className="relative bg-noir text-ivory overflow-hidden luxe-grain luxe-aurora">
+      <FloatingElements tone="dark" />
       {/* Concierge band */}
       <div className="relative z-10 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-5 py-14 md:py-16">

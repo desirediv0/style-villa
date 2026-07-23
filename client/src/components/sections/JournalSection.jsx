@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchApi } from "@/lib/utils";
 import Reveal from "@/components/ui/Reveal";
+import FloatingElements from "@/components/ui/FloatingElements";
 import { ArrowRight } from "lucide-react";
 
 const FALLBACK_POSTS = [
@@ -46,8 +47,9 @@ export default function JournalSection() {
   }, []);
 
   return (
-    <section className="py-16 md:py-24 bg-ivory overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <section className="relative py-16 md:py-24 bg-ivory overflow-hidden">
+      <FloatingElements tone="light" density="low" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
           {/* Left: Text Content */}
@@ -87,7 +89,7 @@ export default function JournalSection() {
 
               {/* Front image — rectangular with overlap */}
               <div className="absolute left-0 bottom-0 w-[60%] h-[70%] z-20">
-                <div className="relative w-full h-full overflow-hidden shadow-[0_40px_80px_-40px_rgba(13,11,12,0.5)] group">
+                <div className="relative w-full h-full overflow-hidden shadow-[0_40px_80px_-40px_rgba(13,11,12,0.5)] group shine-auto">
                   <Image
                     src={posts[1]?.coverImage || "/shop-banner.png"}
                     alt={posts[1]?.title || "Journal"}

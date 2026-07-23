@@ -123,14 +123,14 @@ function Preloader() {
       {phase !== "done" && (
         <motion.div
           key="curtain"
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-noir luxe-grain luxe-aurora"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-ivory-warm luxe-aurora-light"
           exit={{ y: "-100%" }}
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
           aria-hidden="true"
         >
           <div className="relative z-10 flex flex-col items-center">
             <motion.span
-              className="luxe-eyebrow-dark mb-6"
+              className="luxe-eyebrow mb-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: phase === "play" ? 1 : 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
@@ -143,7 +143,7 @@ function Preloader() {
                 <motion.span
                   key={i}
                   className={`font-display text-4xl sm:text-6xl md:text-7xl tracking-[0.12em] ${
-                    i < 5 ? "text-gold-light" : "text-azure-light"
+                    i < 5 ? "text-plum" : "text-azure-dark"
                   }`}
                   initial={{ y: "110%" }}
                   animate={{ y: phase === "play" ? "0%" : "110%" }}
@@ -159,14 +159,14 @@ function Preloader() {
             </div>
 
             <motion.span
-              className="mt-8 block h-[1.5px] bg-gradient-to-r from-gold via-gold-light to-azure"
+              className="mt-8 block h-[1.5px] bg-gradient-to-r from-plum via-gold to-azure"
               initial={{ width: 0, opacity: 0 }}
               animate={{ width: phase === "play" ? 220 : 0, opacity: 1 }}
               transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
             />
 
             <motion.span
-              className="mt-5 text-[9px] uppercase tracking-[0.5em] text-white/40"
+              className="mt-5 text-[9px] uppercase tracking-[0.5em] text-stone"
               initial={{ opacity: 0 }}
               animate={{ opacity: phase === "play" ? 1 : 0 }}
               transition={{ duration: 0.6, delay: 0.75 }}
@@ -203,7 +203,7 @@ function RouteVeil() {
       {veil && (
         <motion.div
           key={pathname}
-          className="pointer-events-none fixed inset-0 z-[150] bg-noir"
+          className="pointer-events-none fixed inset-0 z-[150] bg-ivory-warm"
           initial={{ opacity: 0.65 }}
           animate={{ opacity: 0 }}
           exit={{ opacity: 0 }}

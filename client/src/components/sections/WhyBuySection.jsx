@@ -4,15 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { Truck, RotateCcw, CreditCard, ArrowRight } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
+import AuroraField from "@/components/ui/AuroraField";
+import Magnetic from "@/components/ui/Magnetic";
 
 export const WhyBuySection = () => {
   return (
-    <section className="py-16 md:py-24 bg-ivory">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <section className="relative py-16 md:py-24 bg-ivory overflow-hidden">
+      <AuroraField variant="light" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
 
         {/* Full Width Cinematic Banner */}
         <Reveal>
-          <div className="relative overflow-hidden group luxe-grain" data-cursor="Shop">
+          <div className="relative overflow-hidden group luxe-grain shine-auto" data-cursor="Shop">
             <div className="relative h-[380px] md:h-[460px]">
               <Image
                 src="/deals-hero.png"
@@ -37,9 +40,11 @@ export const WhyBuySection = () => {
                   collection that balances comfort with quiet luxury.
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <Link href="/products" className="btn-luxe-gold">
-                    Shop the Collection <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <Magnetic>
+                    <Link href="/products" className="btn-luxe-gold">
+                      Shop the Collection <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </Magnetic>
                   <Link href="/products?search=new" className="btn-luxe-white">
                     New Arrivals
                   </Link>
@@ -58,7 +63,7 @@ export const WhyBuySection = () => {
           ].map(({ icon: Icon, title, desc }, idx) => (
             <Reveal key={title} delay={idx * 0.08}>
               <div className={`p-8 flex items-start gap-5 h-full group border-line ${idx !== 0 ? "sm:border-l" : ""} ${idx !== 0 ? "max-sm:border-t" : ""}`}>
-                <Icon className="w-6 h-6 text-gold-dark flex-shrink-0 transition-transform duration-500 group-hover:-translate-y-1" strokeWidth={1.2} />
+                <Icon className="w-6 h-6 text-gold-dark flex-shrink-0 bob-y group-hover:text-plum transition-colors duration-500" strokeWidth={1.2} style={{ animationDelay: `${idx * 0.6}s` }} />
                 <div>
                   <h4 className="font-display text-lg text-noir mb-1.5">{title}</h4>
                   <p className="text-xs text-stone-dark leading-relaxed tracking-wide">{desc}</p>

@@ -17,13 +17,13 @@ function MarqueeRow() {
           <span
             className={
               i % 2 === 0
-                ? "font-display italic text-3xl md:text-5xl text-gradient-light whitespace-nowrap px-6 md:px-10 tracking-wide"
-                : "font-display text-3xl md:text-5xl text-hollow whitespace-nowrap px-6 md:px-10 tracking-wide uppercase"
+                ? "font-display italic text-3xl md:text-5xl text-gradient whitespace-nowrap px-6 md:px-10 tracking-wide"
+                : "font-display text-3xl md:text-5xl text-hollow-dark whitespace-nowrap px-6 md:px-10 tracking-wide uppercase"
             }
           >
             {item}
           </span>
-          <span className={`text-sm md:text-base ${i % 2 === 0 ? "text-azure" : "text-gold"}`}>✦</span>
+          <span className={`text-sm md:text-base ${i % 2 === 0 ? "text-azure" : "text-plum"}`}>✦</span>
         </span>
       ))}
     </div>
@@ -33,7 +33,7 @@ function MarqueeRow() {
 export default function LuxuryMarquee() {
   return (
     <section
-      className="relative bg-noir py-7 md:py-9 select-none overflow-hidden luxe-grain luxe-aurora border-y border-gold/25"
+      className="relative bg-ivory py-7 md:py-9 select-none overflow-hidden luxe-aurora-light border-y border-line"
       aria-label="Style Villa highlights"
     >
       <div className="luxe-marquee relative z-10">

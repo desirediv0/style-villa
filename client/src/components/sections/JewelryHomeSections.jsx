@@ -7,6 +7,8 @@ import { fetchApi } from "@/lib/utils";
 import { Sparkles, ArrowRight, Check } from "lucide-react";
 import { motion, useInView, useSpring, useTransform } from "framer-motion";
 import Reveal from "@/components/ui/Reveal";
+import Magnetic from "@/components/ui/Magnetic";
+import FloatingElements from "@/components/ui/FloatingElements";
 
 const WHATSAPP_NUMBER = "918796449692";
 
@@ -118,14 +120,15 @@ export function ColdChainBanner() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <section className="relative py-16 md:py-24 bg-white overflow-hidden">
+      <FloatingElements tone="light" density="low" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
           {/* Left: Image */}
           <Reveal>
             <div className="relative" data-cursor="Our Story">
-              <div className="relative overflow-hidden aspect-[4/5] group">
+              <div className="relative overflow-hidden aspect-[4/5] group shine-auto">
                 <Image
                   src="/founder-craft.png"
                   alt="Style Villa Craftsmanship"
@@ -136,8 +139,12 @@ export function ColdChainBanner() {
                 <div className="absolute inset-4 border border-white/25 pointer-events-none" />
               </div>
 
-              {/* Floating rating badge */}
-              <div className="absolute -bottom-7 -right-3 md:right-8 bg-noir text-ivory p-6 shadow-[0_30px_60px_-30px_rgba(13,11,12,0.7)] border border-gold/30">
+              {/* Floating rating badge — gently drifts with a live pulse */}
+              <div className="absolute -bottom-7 -right-3 md:right-8 bg-noir text-ivory p-6 shadow-[0_30px_60px_-30px_rgba(13,11,12,0.7)] border border-gold/30 bob-y">
+                <span className="absolute top-3 right-3 flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-brand-success opacity-70 animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-success" />
+                </span>
                 <span className="font-display text-3xl block leading-tight text-gold-light">4.9<span className="text-lg text-white/50">/5</span></span>
                 <span className="text-[9px] uppercase tracking-[0.3em] text-white/50">Client Rating</span>
               </div>
@@ -184,9 +191,11 @@ export function ColdChainBanner() {
 
               {/* CTA */}
               <div className="flex flex-wrap gap-4">
-                <Link href="/products" className="btn-luxe">
-                  Explore Collection <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                <Magnetic>
+                  <Link href="/products" className="btn-luxe">
+                    Explore Collection <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </Magnetic>
                 <Link href="/about" className="btn-luxe-outline">
                   Our Story
                 </Link>
