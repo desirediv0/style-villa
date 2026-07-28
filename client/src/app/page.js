@@ -27,8 +27,8 @@ export default function Home() {
         {/* <HeroSectionStore /> */}
         <HeroSectionLight />
         <LuxuryMarquee />
-        <HomePageContent />
         <WatchAndBuySection />
+        <HomePageContent />
         <CategoryGrid />
         <ColdChainBanner />
         <TrustBadgesSection />
