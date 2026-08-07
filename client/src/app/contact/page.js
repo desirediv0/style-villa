@@ -8,8 +8,9 @@ import { FaWhatsapp } from "react-icons/fa";
 import { fetchApi } from "@/lib/utils";
 import { toast } from "sonner";
 
-const WHATSAPP_NUMBER = "919991111861";
-const PHONE_NUMBER = "+91 99911 11861";
+const WHATSAPP_NUMBER = "919896400453";
+const PHONE_NUMBER = "+91 98964 00453";
+const SECONDARY_PHONE = "+91 99911 11861";
 const EMAIL_ADDRESS = "stylevilla.ktl@gmail.com";
 const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/K61B31xzQXyZCdMT6";
 
