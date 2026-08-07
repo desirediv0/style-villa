@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import Lenis from "lenis";
 import {
   motion,
@@ -129,13 +130,29 @@ function Preloader() {
           aria-hidden="true"
         >
           <div className="relative z-10 flex flex-col items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: phase === "play" ? 1 : 0, y: phase === "play" ? 0 : 10 }}
+              transition={{ duration: 0.6, delay: 0.05 }}
+              className="mb-5"
+            >
+              <Image
+                src="/logo.png"
+                alt="Style Villa"
+                width={150}
+                height={60}
+                priority
+                className="h-12 sm:h-16 w-auto object-contain"
+              />
+            </motion.div>
+
             <motion.span
               className="luxe-eyebrow mb-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: phase === "play" ? 1 : 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
             >
-              Maison de Mode
+              House Of Fashion
             </motion.span>
 
             <div className="flex overflow-hidden">
@@ -171,7 +188,7 @@ function Preloader() {
               animate={{ opacity: phase === "play" ? 1 : 0 }}
               transition={{ duration: 0.6, delay: 0.75 }}
             >
-              Bags &amp; Clothing
+              Bags, Clothing, Footwear &amp; Accessories
             </motion.span>
           </div>
         </motion.div>

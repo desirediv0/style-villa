@@ -131,7 +131,7 @@ export default function ContactPage() {
                 <Clock className="h-4 w-4 text-[#A958A4]" />
                 <span className="text-xs font-bold text-gray-900 uppercase tracking-wider">Business Hours</span>
               </div>
-              <p className="text-sm text-gray-400 mb-3">10:30 AM – 7:00 PM (Daily)</p>
+              <p className="text-sm text-gray-400 mb-3">10:30 AM – 08:30 PM (Daily)</p>
               <div className="flex items-center gap-3">
                 <MapPin className="h-4 w-4 text-[#00AEEF]" />
                 <a href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer" className="text-sm text-[#A958A4] font-semibold hover:underline">

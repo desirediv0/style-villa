@@ -41,10 +41,10 @@ const NAV_LINKS = [
 ];
 
 const ANNOUNCEMENTS = [
-  "Extra 5% off on prepaid orders",
-  "Complimentary shipping above ₹999",
+  "Free Shipping Above 499/-",
+  "राधे-राधे",
   "New arrivals every week",
-  "Premium imported bags & clothing",
+  "Premium bags, clothing, footwear & accessories",
 ];
 
 function AvatarCircle({ name, size = "sm" }) {

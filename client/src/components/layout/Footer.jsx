@@ -59,7 +59,7 @@ export const Footer = () => {
                 First to know. <span className="luxe-italic text-gradient">Always.</span>
               </h3>
               <p className="text-sm text-stone-dark mt-3 max-w-md leading-relaxed">
-                New drops, private offers and styling notes from the maison — straight to you, before anyone else.
+                New drops, special offers and live notification from the store - straight to you, before anyone else. Join community on whatsapp
               </p>
             </div>
             <form onSubmit={handleConcierge} className="flex flex-col sm:flex-row gap-4 lg:justify-end">
@@ -201,7 +201,7 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="text-[10px] uppercase tracking-[0.35em] mb-5 text-plum font-medium">Concierge</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.35em] mb-5 text-plum font-medium">Let's know each other more!</h4>
             <div className="space-y-4">
 <a href="tel:+919991111861" className="flex items-center gap-3 text-sm text-stone-dark hover:text-plum transition-colors group">
   <Phone className="h-4 w-4 text-plum flex-shrink-0" strokeWidth={1.5} />
