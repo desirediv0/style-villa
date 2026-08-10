@@ -24,6 +24,7 @@ import {
 import { getPublishedBanners } from "../controllers/admin.banner.controller.js";
 import { getActiveFlashSales, getActiveProductSections } from "../controllers/public.controller.js";
 import { getActiveVideoReels } from "../controllers/admin.video-reel.controller.js";
+import { getPublishedTestimonials } from "../controllers/admin.testimonial.controller.js";
 
 const router = express.Router();
 
@@ -47,6 +48,9 @@ router.get("/brand/:slug", getBrandBySlug);
 
 // Banners
 router.get("/banners", getPublishedBanners);
+
+// Testimonials
+router.get("/testimonials", getPublishedTestimonials);
 
 // Flash Sales
 router.get("/flash-sales", getActiveFlashSales);

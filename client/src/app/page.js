@@ -12,6 +12,7 @@ import { ColdChainBanner } from "@/components/sections/JewelryHomeSections";
 import CategoryGrid from "@/components/sections/CategoryGrid";
 // import SocialMediaSection from "@/components/sections/SocialMediaSection";
 import JournalSection from "@/components/sections/JournalSection";
+import TestimonialSection from "@/components/sections/TestimonialSection";
 
 export const metadata = {
   title: "Style Villa | Premium Fashion & Lifestyle",
@@ -22,16 +23,17 @@ export default function Home() {
   return (
     <>
       <main>
-        {/* <HeroSection /> */}
+        <HeroSection />
         {/* <HeroSection3D /> */}
         {/* <HeroSectionStore /> */}
-        <HeroSectionLight />
+        {/* <HeroSectionLight /> */}
         <LuxuryMarquee />
         <WatchAndBuySection />
         <HomePageContent />
         <CategoryGrid />
         <ColdChainBanner />
         <TrustBadgesSection />
+        <TestimonialSection />
         <JournalSection />
         <WhyBuySection />
         {/* <SocialMediaSection /> */}

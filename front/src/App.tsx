@@ -35,6 +35,7 @@ import AnalyticsDashboard from "@/pages/AnalyticsDashboard";
 import BrandsPage from "./pages/BrandsPage";
 import ProductSectionsPage from "./pages/ProductSections";
 import BannersPage from "./pages/BannersPage";
+import TestimonialsPage from "./pages/TestimonialsPage";
 import VideoReelsPage from "./pages/VideoReelsPage";
 import PaymentSettingsPage from "./pages/PaymentSettingsPage";
 import PriceVisibilitySettingsPage from "./pages/PriceVisibilitySettingsPage";
@@ -639,6 +640,39 @@ const App = () => {
               element={
                 <ProtectedRoute resource={Resource.BANNERS} action={Action.READ}>
                   <BannersPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="testimonials/new"
+              element={
+                <ProtectedRoute
+                  resource={Resource.TESTIMONIALS}
+                  action={Action.CREATE}
+                >
+                  <TestimonialsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="testimonials/:id"
+              element={
+                <ProtectedRoute
+                  resource={Resource.TESTIMONIALS}
+                  action={Action.UPDATE}
+                >
+                  <TestimonialsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="testimonials"
+              element={
+                <ProtectedRoute resource={Resource.TESTIMONIALS} action={Action.READ}>
+                  <TestimonialsPage />
                 </ProtectedRoute>
               }
             />

@@ -26,6 +26,7 @@ import {
   Eye,
   Truck,
   Video,
+  Quote,
   // Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -360,6 +361,18 @@ export default function DashboardLayout() {
                 hasPermission={hasPermissionFor(
                   admin,
                   Resource.BANNERS,
+                  Action.READ
+                )}
+              />
+
+              {/* Testimonials */}
+              <NavItem
+                href="/testimonials"
+                icon={<Quote className="h-[1.125rem] w-[1.125rem]" />}
+                title="Testimonials"
+                hasPermission={hasPermissionFor(
+                  admin,
+                  Resource.TESTIMONIALS,
                   Action.READ
                 )}
               />
@@ -751,6 +764,19 @@ export default function DashboardLayout() {
                 hasPermission={hasPermissionFor(
                   admin,
                   Resource.BANNERS,
+                  Action.READ
+                )}
+              />
+
+              {/* Testimonials */}
+              <NavItem
+                href="/testimonials"
+                icon={<Quote className="h-[1.125rem] w-[1.125rem]" />}
+                title="Testimonials"
+                onClick={toggleMobileMenu}
+                hasPermission={hasPermissionFor(
+                  admin,
+                  Resource.TESTIMONIALS,
                   Action.READ
                 )}
               />

@@ -896,6 +896,22 @@ model Banner {
   @@index([isPublished, isActive, position])
 }
 
+model Testimonial {
+  id          String   @id @default(uuid())
+  name        String
+  role        String?
+  city        String?
+  text        String?
+  rating      Int      @default(5) @db.SmallInt
+  image       String?
+  isPublished Boolean  @default(true)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, position])
+}
+
 // Flash Sale model
 
 model FlashSale {

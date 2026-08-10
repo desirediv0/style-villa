@@ -121,7 +121,9 @@ export default function HeroSectionLight() {
           setSlides(arr.map(bannerToSlide));
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.warn("Banners API failed, using defaults:", err?.message);
+      });
     return () => {
       alive = false;
     };
