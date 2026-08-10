@@ -201,7 +201,7 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="text-[10px] uppercase tracking-[0.35em] mb-5 text-plum font-medium">Let's know each other more!</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.35em] mb-5 text-plum font-medium">Let&apos;s know each other more!</h4>
             <div className="space-y-4">
 <a href="tel:+919991111861" className="flex items-center gap-3 text-sm text-stone-dark hover:text-plum transition-colors group">
   <Phone className="h-4 w-4 text-plum flex-shrink-0" strokeWidth={1.5} />

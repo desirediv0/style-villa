@@ -105,7 +105,7 @@ export default function AboutPage() {
 
             <div>
               <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider rounded-full mb-4 font-bold" style={{ background: "#A958A412", color: "#A958A4" }}>
-                Founders' Story
+                Founders&apos; Story
               </span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
                 From Corporate Excellence to Fashion Entrepreneurship
