@@ -50,64 +50,69 @@ const FALLBACK_TESTIMONIALS = [
 
 function TestimonialCard({ t }) {
   return (
-    <div className="group relative bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col">
-      <div className="absolute top-6 right-8 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity duration-500">
-        <Quote className="w-12 h-12 text-[#D4AF37]" />
-      </div>
-
-      {/* Rating */}
-      <div className="flex gap-1 mb-4 relative z-10">
-        {[1, 2, 3, 4, 5].map((s) => (
-          <Star
-            key={s}
-            className={`h-4 w-4 ${
-              s <= t.rating
-                ? "fill-amber-400 text-amber-400"
-                : "fill-gray-100 text-gray-100"
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Text */}
-      {t.text && (
-        <p className="text-gray-600 leading-relaxed italic mb-6 relative z-10 flex-1">
-          &quot;{t.text}&quot;
-        </p>
-      )}
-
-      {/* Screenshot image (WhatsApp chat etc.) */}
+    <div className="group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 h-full flex flex-col overflow-hidden">
+      {/* Screenshot image (WhatsApp chat etc.) — top of card */}
       {t.image && (
-        <div className="relative mb-4 rounded-xl overflow-hidden border border-gray-100 z-10">
+        <div className="relative w-full aspect-[4/3] bg-gray-50 overflow-hidden">
           <Image
             src={t.image}
-            alt={`${t.name} review screenshot`}
-            width={400}
-            height={300}
-            className="w-full h-auto object-cover max-h-[200px]"
+            alt={`${t.name || "Customer"} review screenshot`}
+            fill
+            className="object-contain group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         </div>
       )}
 
-      {/* Author */}
-      <div className="flex items-center gap-3 pt-4 border-t border-gray-50 relative z-10">
-        <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
-          <span className="text-sm font-semibold text-[#D4AF37]">
-            {t.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)}
-          </span>
+      {/* Content */}
+      <div className="p-5 md:p-6 flex flex-col flex-1">
+        {/* Rating */}
+        <div className="flex gap-0.5 mb-3">
+          {[1, 2, 3, 4, 5].map((s) => (
+            <Star
+              key={s}
+              className={`h-4 w-4 ${
+                s <= (t.rating || 5)
+                  ? "fill-amber-400 text-amber-400"
+                  : "fill-gray-200 text-gray-200"
+              }`}
+            />
+          ))}
         </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <p className="font-semibold text-gray-900 leading-none text-sm">{t.name}</p>
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]/10" />
-          </div>
-          <p className="text-xs text-gray-400 font-medium mt-0.5">
-            {[t.role, t.city].filter(Boolean).join(" · ")}
+
+        {/* Text */}
+        {t.text && (
+          <p className="text-gray-600 text-sm leading-relaxed italic mb-4 flex-1">
+            &quot;{t.text}&quot;
           </p>
+        )}
+
+        {/* Author */}
+        <div className="flex items-center gap-3 pt-3 border-t border-gray-100 mt-auto">
+          <div className="w-9 h-9 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-semibold text-[#D4AF37]">
+              {t.name
+                ? t.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .slice(0, 2)
+                : "★"}
+            </span>
+          </div>
+          <div className="min-w-0">
+            {t.name && (
+              <div className="flex items-center gap-1.5">
+                <p className="font-semibold text-gray-900 leading-none text-sm">{t.name}</p>
+                <CheckCircle2 className="w-3 h-3 text-[#D4AF37] fill-[#D4AF37]/10" />
+              </div>
+            )}
+            {[t.role, t.city].filter(Boolean).length > 0 && (
+              <p className="text-xs text-gray-400 font-medium mt-0.5">
+                {[t.role, t.city].filter(Boolean).join(" · ")}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -119,6 +124,7 @@ export default function TestimonialSection() {
   const [visibleCount, setVisibleCount] = useState(3);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [trackIndex, setTrackIndex] = useState(0);
   const autoScrollRef = useRef(null);
 
   useEffect(() => {
@@ -142,13 +148,12 @@ export default function TestimonialSection() {
   }, []);
 
   const total = testimonials.length;
-  const cloned = [
-    ...testimonials.slice(-visibleCount),
-    ...testimonials,
-    ...testimonials.slice(0, visibleCount),
-  ];
-  const offset = visibleCount;
-  const [trackIndex, setTrackIndex] = useState(offset);
+  const useCarousel = total > visibleCount;
+
+  const cloned = useCarousel
+    ? [...testimonials.slice(-visibleCount), ...testimonials, ...testimonials.slice(0, visibleCount)]
+    : testimonials;
+  const offset = useCarousel ? visibleCount : 0;
 
   const goTo = useCallback(
     (direction) => {
@@ -161,6 +166,7 @@ export default function TestimonialSection() {
 
   const handleTransitionEnd = () => {
     setIsTransitioning(false);
+    if (!useCarousel) return;
     setTrackIndex((prev) => {
       if (prev <= offset - 1) return offset + total - 1;
       if (prev >= offset + total) return offset;
@@ -169,12 +175,14 @@ export default function TestimonialSection() {
   };
 
   useEffect(() => {
-    if (isPaused || total < 2) return;
+    if (isPaused || total < 2 || !useCarousel) return;
     autoScrollRef.current = setInterval(() => goTo(1), 4500);
     return () => clearInterval(autoScrollRef.current);
-  }, [isPaused, goTo, total]);
+  }, [isPaused, goTo, total, useCarousel]);
 
-  const dotIndex = ((trackIndex - offset) % total + total) % total;
+  const dotIndex = useCarousel
+    ? ((trackIndex - offset) % total + total) % total
+    : trackIndex;
 
   if (total === 0) return null;
 
@@ -197,38 +205,46 @@ export default function TestimonialSection() {
           </p>
         </div>
 
-        {/* Carousel */}
+        {/* Carousel / Grid */}
         <div
           className="relative"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          <div className="overflow-hidden py-2">
-            <div
-              className="flex transition-transform duration-500"
-              style={{
-                transform: `translateX(-${(trackIndex * 100) / cloned.length}%)`,
-                transition: isTransitioning
-                  ? "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)"
-                  : "none",
-                width: `${(cloned.length / visibleCount) * 100}%`,
-              }}
-              onTransitionEnd={handleTransitionEnd}
-            >
-              {cloned.map((t, i) => (
-                <div
-                  key={`${t.id || t.name}-${i}`}
-                  style={{ width: `${100 / cloned.length}%` }}
-                  className="px-2 md:px-3"
-                >
-                  <TestimonialCard t={t} />
-                </div>
+          {useCarousel ? (
+            <div className="overflow-hidden py-2">
+              <div
+                className="flex transition-transform duration-500"
+                style={{
+                  transform: `translateX(-${(trackIndex * 100) / cloned.length}%)`,
+                  transition: isTransitioning
+                    ? "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)"
+                    : "none",
+                  width: `${(cloned.length / visibleCount) * 100}%`,
+                }}
+                onTransitionEnd={handleTransitionEnd}
+              >
+                {cloned.map((t, i) => (
+                  <div
+                    key={`${t.id || t.name || i}-${i}`}
+                    style={{ width: `${100 / cloned.length}%` }}
+                    className="px-2 md:px-3"
+                  >
+                    <TestimonialCard t={t} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className={`grid gap-4 md:gap-6 ${total === 1 ? "max-w-md mx-auto" : total === 2 ? "grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`}>
+              {testimonials.map((t, i) => (
+                <TestimonialCard key={t.id || t.name || i} t={t} />
               ))}
             </div>
-          </div>
+          )}
 
           {/* Dots + Arrows */}
-          {total > 1 && (
+          {useCarousel && total > 1 && (
             <div className="flex items-center justify-between mt-8">
               <div className="flex gap-2">
                 {testimonials.map((_, i) => (
