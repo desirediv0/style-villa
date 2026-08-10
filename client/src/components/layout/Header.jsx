@@ -197,11 +197,11 @@ export function Navbar() {
                   </div>
                 </div>
 
-                <div className="hidden md:flex items-center gap-5 text-[9px] tracking-[0.3em] uppercase font-medium">
+                {/* <div className="hidden md:flex items-center gap-5 text-[9px] tracking-[0.3em] uppercase font-medium">
                   <Link href="/track-order" className="text-white/70 hover:text-white transition-colors">
                     Track Order
                   </Link>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -229,7 +229,7 @@ export function Navbar() {
                     width={100}
                     height={100}
                     className={cn(
-                      "h-11 w-auto object-contain transition-all duration-700",
+                      "h-14 w-auto object-contain transition-all duration-700",
                       overHero ? "brightness-0 invert" : ""
                     )}
                   />
@@ -252,36 +252,49 @@ export function Navbar() {
                 </Link>
               </div>
 
-              {/* Desktop: Search bar center */}
-              <div className="hidden md:flex flex-1 max-w-md mx-6">
-                <form onSubmit={handleSearch} className="w-full relative group">
-                  <input
-                    type="text"
-                    placeholder="Search the collection…"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className={cn(
-                      "w-full h-10 pl-5 pr-11 text-[13px] tracking-wide transition-all duration-500 border-b bg-transparent",
-                      overHero
-                        ? "border-white/30 text-ivory placeholder:text-white/50 focus:outline-none focus:border-gold-light"
-                        : "border-noir/15 text-noir placeholder:text-stone focus:outline-none focus:border-gold-dark"
-                    )}
-                  />
-                  <button
-                    type="submit"
-                    aria-label="Search"
-                    className={cn(
-                      "absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center transition-all duration-300",
-                      overHero ? "text-white/70 hover:text-gold-light" : "text-stone hover:text-gold-dark"
-                    )}
-                  >
-                    <IconSearch className="h-4 w-4" stroke={1.5} />
-                  </button>
-                </form>
-              </div>
+              {/* Desktop: Navigation links center */}
+              <nav className="hidden md:flex flex-1 items-center justify-center gap-8 lg:gap-10 mx-6">
+                {NAV_LINKS.map(({ href, label }) => {
+                  const active = pathname === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={cn(
+                        "relative py-2 text-[10.5px] tracking-[0.28em] font-medium transition-colors duration-300 group whitespace-nowrap",
+                        overHero
+                          ? active
+                            ? "text-gold-light"
+                            : "text-ivory/85 hover:text-ivory"
+                          : active
+                            ? "text-plum"
+                            : "text-noir/70 hover:text-noir"
+                      )}
+                    >
+                      {label}
+                      <span
+                        className={cn(
+                          "absolute left-0 -bottom-[1px] h-px w-full origin-left transition-transform duration-500",
+                          overHero ? "bg-gradient-to-r from-gold-light to-azure-light" : "bg-gradient-to-r from-plum to-azure",
+                          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                        )}
+                      />
+                    </Link>
+                  );
+                })}
+              </nav>
 
               {/* Right: Icons */}
               <div className="flex items-center gap-0.5 sm:gap-2">
+                {/* Desktop: Search icon */}
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className={cn("hidden md:block", iconBtn)}
+                  aria-label="Search"
+                >
+                  <IconSearch className="h-5 w-5" stroke={1.5} />
+                </button>
+
                 {/* Desktop: User icon */}
                 <div className="hidden sm:block">
                   <ClientOnly>
@@ -327,46 +340,6 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Desktop: Navigation menu below header */}
-        <div
-          className={cn(
-            "hidden md:block transition-all duration-700 border-b",
-            overHero ? "border-white/10" : "border-noir/5"
-          )}
-        >
-          <div className="max-w-7xl mx-auto px-4 md:px-6">
-            <nav className="flex items-center justify-center gap-10 h-11">
-              {NAV_LINKS.map(({ href, label }) => {
-                const active = pathname === href;
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={cn(
-                      "relative py-2 text-[10.5px] tracking-[0.28em] font-medium transition-colors duration-300 group",
-                      overHero
-                        ? active
-                          ? "text-gold-light"
-                          : "text-ivory/85 hover:text-ivory"
-                        : active
-                          ? "text-plum"
-                          : "text-noir/70 hover:text-noir"
-                    )}
-                  >
-                    {label}
-                    <span
-                      className={cn(
-                        "absolute left-0 -bottom-[1px] h-px w-full origin-left transition-transform duration-500",
-                        overHero ? "bg-gradient-to-r from-gold-light to-azure-light" : "bg-gradient-to-r from-plum to-azure",
-                        active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                      )}
-                    />
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
       </header>
 
       {/* Search Dialog */}
