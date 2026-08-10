@@ -99,11 +99,6 @@ function TestimonialForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
-      toast.error("Name is required");
-      return;
-    }
-
     setIsLoading(true);
     try {
       const payload: any = { ...formData };
@@ -151,13 +146,12 @@ function TestimonialForm({
       <div className="grid gap-6">
         {/* Name */}
         <div className="space-y-2">
-          <Label htmlFor="name">Customer Name *</Label>
+          <Label htmlFor="name">Customer Name</Label>
           <Input
             id="name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="e.g. Priya Sharma"
-            required
           />
         </div>
 
