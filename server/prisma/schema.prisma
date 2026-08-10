@@ -898,7 +898,7 @@ model Banner {
 
 model Testimonial {
   id          String   @id @default(uuid())
-  name        String
+  name        String?
   role        String?
   city        String?
   text        String?
