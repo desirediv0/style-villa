@@ -84,10 +84,6 @@ export const getTestimonialById = asyncHandler(async (req, res) => {
 export const createTestimonial = asyncHandler(async (req, res) => {
   const { name, role, city, text, rating, isPublished, position } = req.body;
 
-  if (!name) {
-    throw new ApiError(400, "Name is required");
-  }
-
   // Upload image if provided
   let imageUrl = null;
   if (req.file) {
