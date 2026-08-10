@@ -16,7 +16,12 @@ export const verifyJWTToken = asyncHandler(async (req, res, next) => {
       throw new ApiError(401, "Authentication required");
     }
 
-    const decoded = jwt.verify(token, process.env.ACCESS_JWT_SECRET);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.ACCESS_JWT_SECRET);
+    } catch (e) {
+      throw new ApiError(401, "Invalid token");
+    }
 
     if (!decoded || !decoded.id) {
       throw new ApiError(401, "Invalid token payload");
@@ -42,22 +47,12 @@ export const verifyJWTToken = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    // Only log unexpected errors, not standard auth failures
-    if (error.statusCode !== 401) {
-      console.error("JWT Verification Error:", error);
-    }
-
-    if (error.name === "JsonWebTokenError") {
-      throw new ApiError(401, "Invalid token");
-    } else if (error.name === "TokenExpiredError") {
-      throw new ApiError(401, "Token expired");
-    }
-
-    // If it's already an ApiError (like our 401s), just re-throw it
     if (error instanceof ApiError) {
       throw error;
     }
-
+    if (error.name === "TokenExpiredError") {
+      throw new ApiError(401, "Token expired");
+    }
     throw new ApiError(500, "Authentication error", [error.message]);
   }
 });
