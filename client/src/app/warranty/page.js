@@ -62,11 +62,11 @@ export default function WarrantyPage() {
                             Our 1-year manufacturer warranty covers:
                         </p>
                         <ul className="space-y-2 mb-8">
-                            <li>Manufacturing defects in materials and workmanship</li>
-                            <li>Electronics component failures under normal use</li>
-                            <li>Speaker driver defects and failures</li>
-                            <li>Amplifier circuit issues</li>
-                            <li>Power supply failures</li>
+                            <li>Manufacturing defects in materials and craftsmanship</li>
+                            <li>Defective zippers, buckles, or hardware on bags and accessories</li>
+                            <li>Stitching or seam defects on clothing and footwear</li>
+                            <li>Colour fading or material defects under normal use</li>
+                            <li>Structural defects in footwear soles and uppers</li>
                         </ul>
 
                         <h2 className="font-display text-2xl   mb-4">What&apos;s Not Covered</h2>
@@ -75,10 +75,10 @@ export default function WarrantyPage() {
                         </p>
                         <ul className="space-y-2 mb-8">
                             <li>Physical damage from mishandling, accidents, or drops</li>
-                            <li>Damage from improper installation or incorrect voltage</li>
-                            <li>Water damage or exposure to extreme conditions</li>
-                            <li>Damage from unauthorized repairs or modifications</li>
-                            <li>Normal wear and tear (cosmetic scratches, fading)</li>
+                            <li>Damage from improper care or washing</li>
+                            <li>Damage from exposure to extreme conditions</li>
+                            <li>Damage from unauthorized alterations or modifications</li>
+                            <li>Normal wear and tear (cosmetic scratches, fading, sole wear)</li>
                             <li>Damage from commercial rental use</li>
                         </ul>
 

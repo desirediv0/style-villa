@@ -10,7 +10,7 @@ const provisions = [
     {
         icon: Gavel,
         title: "Craftsmanship Guidelines",
-        description: "All products are handcrafted, designed with unique variations that represent the true nature of handmade artisan crafts."
+        description: "All products are carefully curated and quality-inspected, representing premium fashion with unique style."
     },
     {
         icon: ShieldCheck,
@@ -29,7 +29,7 @@ export default function TermsPage() {
         <div className="bg-slate-50 min-h-screen font-sans">
             <PageHero
                 title="Terms & Conditions"
-                description="Custom design policies, user agreements, Razorpay payment processing terms, and craftsmanship disclaimers"
+                description="Order policies, user agreements, Razorpay payment processing terms, and quality disclaimers"
                 breadcrumbs={[{ label: "Terms & Conditions" }]}
                 variant="default"
                 size="sm"
@@ -67,13 +67,13 @@ export default function TermsPage() {
                         <div>
                             <h2 className="font-display text-xl   text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
                                 <span className="w-1.5 h-5 bg-[#D4AF37] rounded-full" />
-                                Customised Jewelry Sourcing & Crafting
+                                Customised Fashion Orders
                             </h2>
                             <p className="text-slate-600 text-sm leading-relaxed mb-3">
                                 For all custom orders (including specialised products and bespoke items):
                             </p>
                             <ul className="space-y-2 pl-5 list-disc text-xs md:text-sm text-slate-600">
-                                <li>Custom orders require active styling parameters (color, sizing, bead selection) confirmed by the buyer.</li>
+                                <li>Custom orders require active styling parameters (color, sizing, design preferences) confirmed by the buyer.</li>
                                 <li>Once customized creation begins at our studio, orders cannot be changed or cancelled.</li>
                                 <li>We reserve the right to cancel and refund any order if required materials are unavailable.</li>
                             </ul>
@@ -115,7 +115,7 @@ export default function TermsPage() {
                                 Craftsmanship Disclaimer
                             </h2>
                             <p className="text-slate-600 text-sm leading-relaxed">
-                                The informational content, styling advice, and dimensions presented on stylevilla are for reference. All items are handcrafted, meaning minor variations in colour, bead alignment, finish, and stone texture are natural and part of the unique handmade charm. Handcrafted items should be handled with care to prevent wear and tear.
+                                The informational content, styling advice, and dimensions presented on stylevilla are for reference. All items are carefully curated and quality-inspected, meaning minor variations in colour, texture, and finish may occur due to the nature of premium fashion materials. Fashion items should be handled with care as per care instructions to prevent wear and tear.
                             </p>
                         </div>
 

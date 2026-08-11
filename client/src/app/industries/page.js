@@ -11,45 +11,45 @@ export const metadata = {
 const industries = [
     {
         icon: PartyPopper,
-        name: "Events & Weddings",
-        description: "Make every celebration memorable with powerful, crystal-clear sound systems.",
-        features: ["High-output speakers", "Portable solutions", "Professional amplifiers"],
-        link: "/products?category=dj-speakers",
+        name: "Weddings & Celebrations",
+        description: "Make every celebration memorable with stunning fashion for every occasion.",
+        features: ["Ethnic Wear", "Party Collection", "Festive Accessories"],
+        link: "/products",
     },
     {
         icon: Music2,
-        name: "DJs & Performers",
-        description: "Professional-grade equipment trusted by top performers across India.",
-        features: ["NEO Series", "Challenger Series", "Trolley Speakers"],
-        link: "/products?category=neo-series",
+        name: "Party & Nightlife",
+        description: "Trendy and bold fashion picks for nights out and social events.",
+        features: ["Western Wear", "Statement Bags", "Trendy Footwear"],
+        link: "/products",
     },
     {
         icon: Building2,
-        name: "Venues & Clubs",
-        description: "Permanent installations built to perform night after night.",
-        features: ["PA Systems", "Driver Units", "Power Amplifiers"],
-        link: "/products?category=pa-series",
+        name: "Corporate & Workwear",
+        description: "Professional and polished fashion for the modern workplace.",
+        features: ["Formal Wear", "Structured Bags", "Classic Accessories"],
+        link: "/products",
     },
     {
         icon: Church,
-        name: "Houses of Worship",
-        description: "Clear speech and music systems designed for religious venues.",
-        features: ["PA Series", "PD Series", "Column Speakers"],
-        link: "/products?category=pd-series",
+        name: "Traditional & Cultural",
+        description: "Ethnic and cultural fashion for festivals, poojas, and ceremonies.",
+        features: ["Ethnic Collections", "Traditional Accessories", "Festive Wear"],
+        link: "/products",
     },
     {
         icon: School,
-        name: "Schools & Colleges",
-        description: "Auditorium and PA systems for educational institutions.",
-        features: ["Megaphones", "PA Systems", "Ceiling Speakers"],
-        link: "/products?category=megaphones",
+        name: "College & Campus",
+        description: "Youthful and trendy fashion for students and young professionals.",
+        features: ["Casual Wear", "Backpacks", "Street Style"],
+        link: "/products",
     },
     {
         icon: Truck,
-        name: "Mobile Sound",
-        description: "Portable battery-powered solutions for DJs on the go.",
-        features: ["Trolley Speakers", "Battery Systems", "Wireless Mics"],
-        link: "/products?category=trolley-speakers",
+        name: "Travel & Lifestyle",
+        description: "Durable and stylish fashion for travelers and on-the-go lifestyles.",
+        features: ["Travel Bags", "Comfortable Footwear", "Utility Accessories"],
+        link: "/products",
     },
 ];
 
@@ -58,7 +58,7 @@ export default function IndustriesPage() {
         <div className="bg-page min-h-screen">
             <PageHero
                 title="Industries We Serve"
-                description="Professional audio solutions tailored for your specific needs"
+                description="Professional fashion solutions tailored for your specific needs"
                 breadcrumbs={[{ label: "Industries" }]}
                 variant="default"
                 size="md"
@@ -109,7 +109,7 @@ export default function IndustriesPage() {
                             Need Help Choosing?
                         </h2>
                         <p className="text-lg text-muted-foreground mb-8">
-                            Our audio experts can recommend the perfect equipment setup for your specific use case and budget.
+                            Our fashion experts can recommend the perfect outfit or accessory for your specific occasion and budget.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link href="/contact">

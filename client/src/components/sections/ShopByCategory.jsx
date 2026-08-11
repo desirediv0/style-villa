@@ -6,46 +6,46 @@ import { ArrowRight } from "lucide-react";
 
 const categories = [
   {
-    name: "Amplifier",
-    slug: "amplifier",
-    description: "Professional sound systems",
+    name: "Clothing",
+    slug: "clothing",
+    description: "Premium fashion collection",
     image: "/stylevilla.jpg",
-    products: "25+ Products"
+    products: "50+ Products"
   },
   {
-    name: "Crossover Network",
-    slug: "crossover-network",
-    description: "Power-packed performance",
+    name: "Handbags",
+    slug: "handbags",
+    description: "Designer bag collection",
     image: "/hero-slide-1.png",
-    products: "15+ Products"
-  },
-  {
-    name: "Driver Unit",
-    slug: "driver-unit",
-    description: "Public address systems",
-    image: "/hero-slide-2.jpg",
-    products: "20+ Products"
-  },
-  {
-    name: "Megaphone",
-    slug: "megaphone",
-    description: "High-power amplification",
-    image: "/hero-slide-3.png",
     products: "30+ Products"
   },
   {
-    name: "Mixer",
-    slug: "mixer",
-    description: "Next-gen technology",
-    image: "/stylevilla.jpg",
-    products: "12+ Products"
+    name: "Footwear",
+    slug: "footwear",
+    description: "Trendy shoes & sandals",
+    image: "/hero-slide-2.jpg",
+    products: "40+ Products"
   },
   {
-    name: "NEO Speaker",
-    slug: "neo-speaker",
-    description: "Portable solutions",
+    name: "Accessories",
+    slug: "accessories",
+    description: "Imported style essentials",
+    image: "/hero-slide-3.png",
+    products: "25+ Products"
+  },
+  {
+    name: "Watches",
+    slug: "watches",
+    description: "Classic timepieces",
+    image: "/stylevilla.jpg",
+    products: "15+ Products"
+  },
+  {
+    name: "Women's Fashion",
+    slug: "womens-fashion",
+    description: "Curated women's collection",
     image: "/hero-slide-1.png",
-    products: "18+ Products"
+    products: "60+ Products"
   }
 ];
 
@@ -60,7 +60,7 @@ export const ShopByCategory = () => {
               Shop by Category
             </p>
             <h2 className="font-display text-4xl md:text-5xl   text-foreground">
-              Find Your Sound
+              Find Your Style
             </h2>
           </div>
           <Link
