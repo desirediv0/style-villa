@@ -15,7 +15,7 @@ const provisions = [
     {
         icon: ShieldCheck,
         title: "Bespoke Orders & Customization",
-        description: "We require full style and sizing confirmation before beginning work on customised hair accessories and wedding sets."
+        description: "We require full style and sizing confirmation before beginning work on customised orders and bespoke pieces."
     },
     {
         icon: CreditCard,
@@ -70,7 +70,7 @@ export default function TermsPage() {
                                 Customised Jewelry Sourcing & Crafting
                             </h2>
                             <p className="text-slate-600 text-sm leading-relaxed mb-3">
-                                For all custom orders (including specialised hair accessories, bridal sets, and DIY kits):
+                                For all custom orders (including specialised products and bespoke items):
                             </p>
                             <ul className="space-y-2 pl-5 list-disc text-xs md:text-sm text-slate-600">
                                 <li>Custom orders require active styling parameters (color, sizing, bead selection) confirmed by the buyer.</li>
@@ -97,15 +97,15 @@ export default function TermsPage() {
                         <div>
                             <h2 className="font-display text-xl   text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
                                 <span className="w-1.5 h-5 bg-[#D4AF37] rounded-full" />
-                                Product Returns & 7-Day Refund Policy
+                                Product Returns & Replacement Policy
                             </h2>
                             <p className="text-slate-600 text-sm leading-relaxed mb-3">
-                                Our return policy preserves handcrafted product safety:
+                                Our policy preserves product quality and hygiene:
                             </p>
                             <ul className="space-y-2 pl-5 list-disc text-xs md:text-sm text-slate-600">
-                                <li>Only non-customized jewellery items can be returned within our standard 7-day return policy.</li>
-                                <li>All customized hair accessories, bridal sets, and DIY kits are strictly non-returnable and non-refundable once production or dispatch begins.</li>
-                                <li>Returned items must be completely unworn, clean, and in original packaging.</li>
+                                <li>Items can be reported for replacement within 24–48 hours if received damaged, defective, or incorrect as outlined in our Return & Refund Policy.</li>
+                                <li>All customized or bespoke items are strictly non-returnable and non-refundable once production or dispatch begins.</li>
+                                <li>Replacement items must be completely unworn, clean, and in original packaging with intact tags.</li>
                             </ul>
                         </div>
 
@@ -125,7 +125,7 @@ export default function TermsPage() {
                                 Governing Law & Jurisdiction
                             </h2>
                             <p className="text-slate-600 text-sm leading-relaxed">
-                                These Terms and Conditions and any transactions executed on this platform shall be governed by and construed in accordance with the laws of India. Any disputes arising out of or in connection with these terms shall be subject to the exclusive jurisdiction of the courts in New Delhi, India.
+                                These Terms and Conditions and any transactions executed on this platform shall be governed by and construed in accordance with the laws of India. Any disputes arising out of or in connection with these terms shall be subject to the exclusive jurisdiction of the courts in Kaithal, Haryana.
                             </p>
                         </div>
 

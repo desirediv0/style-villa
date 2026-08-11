@@ -103,7 +103,7 @@ export default function PrivacyPolicyPage() {
                                 Collected data is processed exclusively for shipping and custom crafting:
                             </p>
                             <ul className="space-y-2 pl-5 list-disc text-xs md:text-sm text-slate-600">
-                                <li>To customize hair accessories, necklaces, and other jewelry designs to your exact requirements.</li>
+                                <li>To customize products, clothing, bags, and fashion items to your exact requirements.</li>
                                 <li>To share shipping logs (recipient name, address, phone number) with verified courier firms (e.g., Blue Dart, Delhivery) for delivery.</li>
                                 <li>To dispatch order status notifications, payment receipts, or shipment tracking via WhatsApp and email.</li>
                             </ul>

@@ -58,7 +58,7 @@ export const WhyBuySection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 border border-line border-t-0 bg-white">
           {[
             { icon: Truck, title: "Express Shipping", desc: "Quick doorstep delivery across India and worldwide." },
-            { icon: RotateCcw, title: "Easy Returns", desc: "Hassle-free returns within 7 days of delivery." },
+            { icon: RotateCcw, title: "Quality Guarantee", desc: "Hassle-free replacement for defective or damaged items." },
             { icon: CreditCard, title: "Secure Payments", desc: "100% secure gateway with every payment option." },
           ].map(({ icon: Icon, title, desc }, idx) => (
             <Reveal key={title} delay={idx * 0.08}>

@@ -110,7 +110,7 @@ export function ColdChainBanner() {
     "Premium imported fashion from trusted global ateliers",
     "Every piece handpicked by our in-house stylists",
     "Quality you can feel — style you will live in",
-    "Express shipping & effortless 7-day returns",
+    "Express shipping & quality checked pieces",
   ];
 
   const stats = [

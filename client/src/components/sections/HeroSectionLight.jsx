@@ -63,7 +63,7 @@ const lineReveal = {
 
 const PERKS = [
   { icon: Truck, label: "Free shipping over ₹999" },
-  { icon: RefreshCw, label: "Easy 7-day returns" },
+  { icon: RefreshCw, label: "Quality Assurance" },
   { icon: ShieldCheck, label: "100% authentic" },
 ];
 
