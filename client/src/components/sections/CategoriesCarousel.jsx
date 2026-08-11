@@ -9,7 +9,7 @@ import {
   CarouselPrevious, CarouselNext,
 } from "@/components/ui/carousel";
 import { fetchApi } from "@/lib/utils";
-import { getPharmaIcon } from "@/lib/pharma-icons";
+import { getFashionIcon } from "@/lib/fashion-icons";
 
 const CategoriesCarousel = () => {
   const [categories, setCategories] = useState([]);
@@ -50,7 +50,7 @@ const CategoriesCarousel = () => {
         <Carousel setApi={setApi} opts={{ align: "start", dragFree: true }} className="w-full">
           <CarouselContent className="-ml-2">
             {categories.map((cat, index) => {
-              const { Icon, color } = getPharmaIcon(cat.name, cat.slug);
+              const { Icon, color } = getFashionIcon(cat.name, cat.slug);
               return (
                 <CarouselItem key={cat.id} className="pl-2 basis-[80px] sm:basis-[90px] md:basis-[100px]">
                   <Link href={`/category/${cat.slug}`}>

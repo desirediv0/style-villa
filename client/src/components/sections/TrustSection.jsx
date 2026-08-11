@@ -14,18 +14,18 @@ const STATS = [
 
 const TESTIMONIALS = [
   {
-    name: "Anita Sen",
-    role: "Collector",
+    name: "Neha Sharma",
+    role: "Fashion Lover",
     city: "Delhi",
-    text: "Exquisite necklaces that are perfect for wedding occasions. Every detail is perfect, and it came in a beautiful signature box. stylevilla is my go-to for unique accessories.",
+    text: "Amazing quality handbag! The stitching and material are top-notch. Way better than what I expected at this price. Style Villa is my go-to for fashion.",
     rating: 5,
     verified: true
   },
   {
     name: "Rohan Iyer",
-    role: "Custom Order",
+    role: "Repeat Buyer",
     city: "Mumbai",
-    text: "The custom gold-plated ring I ordered is stunning. The details are fine and the quality of the finish is excellent. A true handmade masterpiece.",
+    text: "The clothing collection is stunning. The fabric quality is premium and the designs are so trendy. A true fashion destination for men and women.",
     rating: 5,
     verified: true
   },
@@ -33,15 +33,15 @@ const TESTIMONIALS = [
     name: "Priya Nair",
     role: "Regular Buyer",
     city: "Kochi",
-    text: "Beautifully handcrafted earrings that got me so many compliments at a recent family function. The WhatsApp support is extremely friendly and helpful.",
+    text: "Beautifully curated shoes and accessories that got me so many compliments at a recent party. The WhatsApp support is extremely friendly and helpful.",
     rating: 5,
     verified: true
   },
   {
     name: "Sunita Mehta",
-    role: "Collector",
+    role: "Fashion Enthusiast",
     city: "Pune",
-    text: "I absolutely adore the festive sets from stylevilla. They feel premium, lightweight, and carry a distinct ethnic style that stands out from typical mass-produced jewelry.",
+    text: "I absolutely adore the festive collections from Style Villa. They feel premium, stylish, and carry a distinct modern look that stands out from mass-produced fashion.",
     rating: 5,
     verified: true
   },
@@ -49,7 +49,7 @@ const TESTIMONIALS = [
     name: "Kavitha Reddy",
     role: "Gifting Client",
     city: "Hyderabad",
-    text: "Ordered three customized sets as gifts for my sisters. The gift packaging was incredibly elegant and they arrived on time. Highly recommend Pooja Khan's designs.",
+    text: "Ordered handbags and accessories as gifts for my sisters. The gift packaging was incredibly elegant and they arrived on time. Highly recommend Style Villa.",
     rating: 5,
     verified: true
   },
@@ -243,7 +243,7 @@ export const TrustSection = () => {
             </h2>
           </div>
           <p className="text-gray-500 max-w-xs md:text-right text-base leading-relaxed">
-            From customized wedding adornments to elegant festive sets, stylevilla is the trusted choice for handcrafted jewelry.
+            From trendy handbags to premium clothing and footwear, Style Villa is the trusted choice for curated fashion.
           </p>
         </div>
 

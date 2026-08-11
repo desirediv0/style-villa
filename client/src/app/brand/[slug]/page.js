@@ -189,7 +189,7 @@ function BrandPageContent({ slug }) {
                             {brand?.name || "Our Brand"}
                         </h1>
                         <p className="text-sm md:text-base text-white/80 leading-relaxed max-w-md line-clamp-2">
-                            {brand?.description || "Explore authentic specialty medicines from our trusted partner brands."}
+                            {brand?.description || "Explore premium fashion from our trusted partner brands."}
                         </p>
                     </div>
                 </div>

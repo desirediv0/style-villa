@@ -20,7 +20,7 @@ const translations = {
   hero_badge: "Join Our Partner Network",
   hero_title: "Become an stylevilla Partner",
   hero_subtitle:
-    "Partner with India's trusted specialty pharma platform. Distribution, retail, or sourcing — let's grow together.",
+    "Partner with India's trusted fashion destination. Retail, distribution, or reselling — let's grow together.",
   btn_apply: "Join the Family",
   btn_login: "Partner Login",
   benefits_title: "Why Join stylevilla?",

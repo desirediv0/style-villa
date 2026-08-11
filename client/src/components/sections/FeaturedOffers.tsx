@@ -6,27 +6,27 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 const OFFERS = [
   {
-    image: "/IVF.png",
-    title: "IVF",
-    subtitle: "Advanced Fertility Solutions",
+    image: "/clothing.png",
+    title: "Clothing",
+    subtitle: "Premium Fashion Collection",
     href: "/products",
   },
   {
-    image: "/osteoporosis.png",
-    title: "Osteoporosis",
-    subtitle: "Bone Health Support",
+    image: "/handbags.png",
+    title: "Handbags",
+    subtitle: "Designer Bag Collection",
     href: "/products",
   },
   {
-    image: "/Anti-Cancer.png",
-    title: "Anti Cancer",
-    subtitle: "Targeted Cancer Therapies",
+    image: "/footwear.png",
+    title: "Footwear",
+    subtitle: "Trendy Shoes & Sandals",
     href: "/products",
   },
   {
-    image: "/Arthritis.png",
-    title: "Arthritis",
-    subtitle: "Joint Health Solutions",
+    image: "/accessories.png",
+    title: "Accessories",
+    subtitle: "Imported Style Essentials",
     href: "/products",
   },
 ];
@@ -50,9 +50,9 @@ export default function FeaturedOffers() {
           <div
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mb-4 border"
             style={{
-              background: "rgba(0,94,184,0.06)",
-              borderColor: "rgba(0,94,184,0.18)",
-              color: "#005EB8",
+              background: "rgba(169,88,164,0.06)",
+              borderColor: "rgba(169,88,164,0.18)",
+              color: "#A958A4",
             }}
           >
             <Sparkles className="h-3.5 w-3.5" />
@@ -62,10 +62,10 @@ export default function FeaturedOffers() {
             className="text-2xl sm:text-3xl md:text-4xl   mb-2 tracking-tight"
             style={{ color: "#0A2540" }}
           >
-            Featured Healthcare Offers
+            Featured Collections
           </h2>
           <p className="text-gray-500 text-sm sm:text-base max-w-lg">
-            Exclusive healthcare solutions and special categories
+            Explore our curated fashion categories
           </p>
         </div>
 
@@ -115,7 +115,7 @@ export default function FeaturedOffers() {
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 z-10">
                   <p
                     className="text-white/75 text-[11px] sm:text-xs font-semibold uppercase tracking-widest mb-1"
-                    style={{ color: "#16C7D9" }}
+                    style={{ color: "#A958A4" }}
                   >
                     {offer.subtitle}
                   </p>

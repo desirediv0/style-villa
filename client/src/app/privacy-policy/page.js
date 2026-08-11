@@ -70,7 +70,7 @@ export default function PrivacyPolicyPage() {
                                 Collection of Customer &amp; User Information
                             </h2>
                             <p className="text-slate-600 text-sm leading-relaxed mb-3">
-                                When you access stylevilla or request custom jewellery design sourcing, we collect necessary data to process orders safely:
+                                When you access stylevilla or place an order, we collect necessary data to process orders safely:
                             </p>
                             <ul className="space-y-2 pl-5 list-disc text-xs md:text-sm text-slate-600">
                                 <li><strong>Identity &amp; Demographics:</strong> Full name, telephone numbers, shipping coordinates, billing addresses, and active email contacts.</li>

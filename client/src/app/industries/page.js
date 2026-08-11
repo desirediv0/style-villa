@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/ui/PageHero";
 
 export const metadata = {
-    title: "Healthcare Segments | stylevilla",
-    description: "Specialty medicines for IVF, oncology, transplants, sexual wellness, paediatric care, and more across India.",
+    title: "Industries We Serve | stylevilla",
+    description: "Professional fashion and lifestyle solutions tailored for events, personal shopping, and corporate gifting across India.",
 };
 
 const industries = [

@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { fetchApi } from "@/lib/utils";
 import { AlertCircle, ChevronDown, ChevronLeft, Grid, List, Package } from "lucide-react";
-import { getPharmaIcon } from "@/lib/pharma-icons";
+import { getFashionIcon } from "@/lib/fashion-icons";
 import { ProductCard } from "@/components/products/ProductCard";
 
 const getImageUrl = (image) => {
@@ -131,7 +131,7 @@ export default function CategoryPage() {
         );
     }
 
-    const { Icon: CatIcon, color: catColor } = getPharmaIcon(category?.name || "", category?.slug || "");
+    const { Icon: CatIcon, color: catColor } = getFashionIcon(category?.name || "", category?.slug || "");
 
     return (
         <div className="min-h-screen" style={{ background: "#F7FAFC" }}>

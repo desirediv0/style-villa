@@ -3,18 +3,18 @@
 import React from 'react';
 
 const MESSAGES = [
-  "💊 Genuine Branded Medicines — Verified Sources",
-  "❄️ Temp-Controlled 2°C–8°C Delivery Available",
+  "✨ Premium Curated Fashion — Handpicked Designs",
   "🚚 Pan-India Delivery — Fast & Reliable",
-  "💬 Message us on WhatsApp for Medicine Enquiries",
-  "✅ IVF · Oncology · Transplant · Sexual Wellness · Ayurvedic",
+  "💬 Message us on WhatsApp for Style Advice",
+  "✅ Clothing · Handbags · Footwear · Accessories",
+  "💯 Quality Inspected — 100% Genuine Products",
 ];
 
 const AnnouncementBanner = () => {
   return (
     <div
       className="py-2.5 overflow-hidden relative group"
-      style={{ background: "linear-gradient(90deg, #005EB8, #0074e4, #16C7D9, #0074e4, #005EB8)" }}
+      style={{ background: "linear-gradient(90deg, #A958A4, #c77dbc, #00AEEF, #c77dbc, #A958A4)" }}
     >
       <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 

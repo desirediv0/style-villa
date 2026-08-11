@@ -12,7 +12,7 @@ export async function generateMetadata({ params }) {
     const { slug } = params;
     let title = "Product Details | stylevilla";
     let description =
-        "Exquisite handcrafted jewellery pieces designed to make you stand out. Browse our custom and handmade collections.";
+        "Explore premium fashion — clothing, handbags, footwear, and accessories. Curated designs delivered to your doorstep.";
     let image = null;
 
     try {

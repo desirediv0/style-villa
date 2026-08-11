@@ -17,7 +17,6 @@ const FALLBACK_CATEGORIES = [
   { name: "Handbags", slug: "handbags" },
   { name: "Footwear", slug: "footwear" },
   { name: "Accessories", slug: "accessories" },
-  { name: "Jewellery", slug: "jewellery" },
   { name: "Watches", slug: "watches" },
 ];
 
