@@ -74,7 +74,7 @@ export default function PrivacyPolicyPage() {
                             </p>
                             <ul className="space-y-2 pl-5 list-disc text-xs md:text-sm text-slate-600">
                                 <li><strong>Identity &amp; Demographics:</strong> Full name, telephone numbers, shipping coordinates, billing addresses, and active email contacts.</li>
-                                <li><strong>Design Documentation:</strong> Customer specifications, design files, sizing parameters, and accessory preferences to build custom designs.</li>
+
                                 <li><strong>Technical Identifiers:</strong> Log analytics, secure session tokens, cookies, and IP addresses to maintain shopping sessions and prevent fraud.</li>
                             </ul>
                         </div>
