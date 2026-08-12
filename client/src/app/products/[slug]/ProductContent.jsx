@@ -205,6 +205,40 @@ export default function ProductContent({ slug }) {
     finally { setIsAddingToWishlist(false); }
   };
 
+  const handleWhatsAppEnquiry = () => {
+    if (!product) return;
+    const currentUrl = typeof window !== "undefined" ? window.location.href : `https://stylevillaofficial.com/products/${slug}`;
+    const price = effectivePriceInfo?.price || selectedVariant?.salePrice || selectedVariant?.price || product?.basePrice || product?.regularPrice;
+    
+    let variantDetails = [];
+    if (product.attributeOptions?.length && selectedAttributes) {
+      product.attributeOptions.forEach((attr) => {
+        const valId = selectedAttributes[attr.id];
+        const valObj = attr.values?.find((v) => v.id === valId);
+        if (valObj) {
+          variantDetails.push(`${attr.name}: ${valObj.value}`);
+        }
+      });
+    }
+
+    const formattedPrice = price ? formatCurrency(price) : "";
+
+    let message = `Hello Style Villa, I would like to enquire about this product:\n\n`;
+    message += `🛍️ *Product:* ${product.name}\n`;
+    if (variantDetails.length > 0) {
+      message += `🎨 *Options:* ${variantDetails.join(", ")}\n`;
+    }
+    if (formattedPrice) {
+      message += `💰 *Price:* ${formattedPrice}\n`;
+    }
+    message += `📦 *Quantity:* ${quantity}\n`;
+    message += `🔗 *Link:* ${currentUrl}`;
+
+    const phoneNumber = "919991111861";
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  };
+
   const getDeliveryDates = () => {
     const today = new Date();
     const f = (d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -427,7 +461,7 @@ export default function ProductContent({ slug }) {
             )}
 
             {/* Quantity + Add to Cart */}
-            <div className="flex gap-3 mb-6" id="main-add-to-cart-btn">
+            <div className="flex gap-3 mb-3" id="main-add-to-cart-btn">
               <div className="flex items-center border border-noir/20 overflow-hidden h-14 bg-white">
                 <button onClick={() => handleQuantityChange(-1)} disabled={quantity <= (selectedVariant?.moq || 1) || isAddingToCart} className="w-12 h-full flex items-center justify-center text-noir/60 hover:bg-ivory disabled:opacity-30 transition-colors" aria-label="Decrease quantity">
                   <Minus className="h-4 w-4" />
@@ -442,6 +476,18 @@ export default function ProductContent({ slug }) {
                 {isAddingToCart ? <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" /> : outOfStock ? "Sold Out" : "Add to Bag"}
               </button>
             </div>
+
+            {/* WhatsApp Enquiry Button */}
+            <button
+              onClick={handleWhatsAppEnquiry}
+              type="button"
+              className="w-full h-14 mb-6 bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs md:text-sm font-bold tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-3 shadow-md hover:shadow-lg rounded-md active:scale-[0.99] cursor-pointer"
+            >
+              <svg className="w-6 h-6 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.573-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.461c-1.88 0-3.644-.504-5.176-1.385l-.371-.214-3.844 1.008 1.025-3.747-.235-.374a10.155 10.155 0 0 1-1.558-5.397c0-5.617 4.57-10.187 10.188-10.187 2.722 0 5.281 1.06 7.204 2.985a10.125 10.125 0 0 1 2.98 7.203c0 5.618-4.57 10.188-10.188 10.188m0-22.138C5.51 0 0 5.51 0 12.013c0 2.298.665 4.444 1.815 6.265L0 24l5.88-1.542a12.006 12.006 0 0 0 6.171 1.693c6.502 0 12.012-5.51 12.012-12.013C24.063 5.51 18.552 0 12.051 0z" />
+              </svg>
+              <span>Enquire on WhatsApp</span>
+            </button>
 
             {/* Delivery */}
             <div className="grid grid-cols-2 border border-line mb-7">
