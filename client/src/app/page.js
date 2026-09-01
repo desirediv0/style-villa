@@ -11,7 +11,6 @@ import { WhyBuySection } from "@/components/sections/WhyBuySection";
 import { ColdChainBanner } from "@/components/sections/JewelryHomeSections";
 import CategoryGrid from "@/components/sections/CategoryGrid";
 // import SocialMediaSection from "@/components/sections/SocialMediaSection";
-import JournalSection from "@/components/sections/JournalSection";
 import TestimonialSection from "@/components/sections/TestimonialSection";
 
 export const metadata = {
@@ -34,7 +33,6 @@ export default function Home() {
         <ColdChainBanner />
         <TrustBadgesSection />
         <TestimonialSection />
-        <JournalSection />
         <WhyBuySection />
         {/* <SocialMediaSection /> */}
       </main>
