@@ -400,9 +400,9 @@ function TestimonialsList() {
         <div className="grid gap-4">
           {testimonialList.map((t) => (
             <Card key={t.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-4 flex items-center gap-4">
+              <CardContent className="p-4 flex items-start gap-4">
                 {/* Image thumbnail */}
-                <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                <div className="w-20 h-20 rounded-lg bg-muted flex-shrink-0 overflow-hidden border border-border">
                   {t.image ? (
                     <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
                   ) : (
@@ -424,7 +424,7 @@ function TestimonialsList() {
                     {[t.role, t.city].filter(Boolean).join(" · ")}
                   </p>
                   {t.text && (
-                    <p className="text-sm text-muted-foreground truncate mt-1 italic">
+                    <p className="text-sm text-muted-foreground mt-1 italic line-clamp-2">
                       &ldquo;{t.text}&rdquo;
                     </p>
                   )}

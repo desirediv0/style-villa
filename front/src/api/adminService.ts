@@ -966,6 +966,9 @@ export const productSections = {
       data
     );
   },
+  syncSectionProducts: (sectionId: string) => {
+    return api.post(`/api/admin/product-sections/${sectionId}/sync`);
+  },
 };
 
 // Sub-Categories Management

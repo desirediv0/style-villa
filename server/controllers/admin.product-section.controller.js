@@ -96,9 +96,9 @@ export const getAllProductSections = asyncHandler(async (req, res, next) => {
   // Auto-seed default sections if missing
   try {
     const defaults = [
-      { name: "Featured Collections", slug: "featured", description: "Handpicked handcrafted jewellery pieces selected for your style", color: "bg-blue-500", displayOrder: 1 },
-      { name: "Latest Additions", slug: "latest", description: "Newly added premium jewellery collections", color: "bg-green-500", displayOrder: 2 },
-      { name: "Best Sellers", slug: "bestseller", description: "Our most popular jewellery designs loved by clients across India", color: "bg-yellow-500", displayOrder: 3 },
+      { name: "Featured Collections", slug: "featured", description: "Handpicked handcrafted bags selected for your style", color: "bg-blue-500", displayOrder: 1 },
+      { name: "Latest Additions", slug: "latest", description: "Newly added premium bag collections", color: "bg-green-500", displayOrder: 2 },
+      { name: "Best Sellers", slug: "bestseller", description: "Our most popular bag designs loved by clients across India", color: "bg-yellow-500", displayOrder: 3 },
       { name: "Trending Now", slug: "trending", description: "Most loved and trending handmade designs and accessories this week", color: "bg-purple-500", displayOrder: 4 },
       { name: "New Arrivals", slug: "new", description: "Fresh handcrafted creations added to our gallery", color: "bg-pink-500", displayOrder: 5 },
     ];
@@ -517,7 +517,73 @@ export const updateProductOrderInSection = asyncHandler(
   }
 );
 
+// Sync products for a section based on productType field
+export const syncSectionProducts = asyncHandler(async (req, res, next) => {
+  const { sectionId } = req.params;
 
+  const section = await prisma.productSection.findUnique({
+    where: { id: sectionId },
+    include: { items: true },
+  });
+
+  if (!section) {
+    throw new ApiError(404, "Product section not found");
+  }
+
+  // Find products that have this section's slug in their productType array
+  const matchingProducts = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      productType: {
+        array_contains: [section.slug],
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: section.maxProducts,
+  });
+
+  // Get existing product IDs in this section
+  const existingProductIds = new Set(section.items.map(item => item.productId));
+
+  // Filter out products already in the section
+  const newProducts = matchingProducts.filter(p => !existingProductIds.has(p.id));
+
+  if (newProducts.length === 0) {
+    return res
+      .status(200)
+      .json(
+        new ApiResponsive(
+          200,
+          { added: 0, total: matchingProducts.length, message: "No new products to add. Products must have '" + section.slug + "' in their productType field." },
+          "Sync completed"
+        )
+      );
+  }
+
+  // Add new products to the section
+  let maxOrder = section.items.reduce((max, item) => Math.max(max, item.displayOrder), -1);
+  const createPromises = newProducts.map((p, idx) =>
+    prisma.productSectionItem.create({
+      data: {
+        productSectionId: sectionId,
+        productId: p.id,
+        displayOrder: maxOrder + 1 + idx,
+      },
+    })
+  );
+
+  await Promise.all(createPromises);
+
+  res
+    .status(200)
+    .json(
+      new ApiResponsive(
+        200,
+        { added: newProducts.length, total: matchingProducts.length },
+        `${newProducts.length} products synced to section successfully`
+      )
+    );
+});
 
 
 

@@ -22,7 +22,7 @@ export const FASHION_ICON_MAP = [
   { keys: ["clothing", "apparel", "shirt", "dress", "top", "tshirt"], Icon: Shirt, color: "#A958A4" },
   { keys: ["bag", "handbag", "purse", "tote", "clutch"], Icon: ShoppingBag, color: "#00AEEF" },
   { keys: ["shoe", "footwear", "sandal", "heel", "sneaker", "boot"], Icon: Footprints, color: "#A958A4" },
-  { keys: ["accessories", "jewellery", "jewelry", "necklace", "earring", "ring", "bracelet"], Icon: Gem, color: "#00AEEF" },
+  { keys: ["accessories", "watch", "belt", "sunglasses"], Icon: Gem, color: "#00AEEF" },
   { keys: ["watch", "watches", "timepiece"], Icon: Watch, color: "#A958A4" },
   { keys: ["hair", "headband", "clip", "scarf"], Icon: Crown, color: "#00AEEF" },
   { keys: ["custom", "bespoke", "designer"], Icon: Award, color: "#A958A4" },

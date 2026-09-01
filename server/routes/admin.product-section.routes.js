@@ -9,6 +9,7 @@ import {
   addProductToSection,
   removeProductFromSection,
   updateProductOrderInSection,
+  syncSectionProducts,
 } from "../controllers/admin.product-section.controller.js";
 import {
   verifyAdminJWT,
@@ -94,6 +95,14 @@ router.put(
   verifyAdminJWT,
   hasPermission("products", "update"),
   updateProductOrderInSection
+);
+
+// Sync products for a section based on productType field
+router.post(
+  "/product-sections/:sectionId/sync",
+  verifyAdminJWT,
+  hasPermission("products", "update"),
+  syncSectionProducts
 );
 
 export default router;

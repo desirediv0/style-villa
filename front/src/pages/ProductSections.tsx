@@ -15,6 +15,7 @@ import {
   Layers,
   MoreVertical,
   Image as ImageIcon,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -103,6 +104,7 @@ export default function ProductSectionsPage() {
 
   const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null);
   const [draggedProductIndex, setDraggedProductIndex] = useState<number | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   const handleDragStartSection = (e: React.DragEvent, index: number) => {
     setDraggedSectionIndex(index);
@@ -375,6 +377,31 @@ export default function ProductSectionsPage() {
       toast.error(
         error.response?.data?.message || "Failed to remove product from section"
       );
+    }
+  };
+
+  const handleSyncProducts = async (section: ProductSection) => {
+    try {
+      setSyncing(true);
+      const response = await productSections.syncSectionProducts(section.id);
+      if (response.data?.success) {
+        const data = response.data.data;
+        if (data.added > 0) {
+          toast.success(`${data.added} products synced to "${section.name}"`);
+        } else {
+          toast.info(data.message || "No new products to add. Products must have the section slug in their productType field.");
+        }
+        fetchSections(true);
+      } else {
+        toast.error(response.data?.message || "Failed to sync products");
+      }
+    } catch (error: any) {
+      console.error("Error syncing products:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to sync products to section"
+      );
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -707,16 +734,32 @@ export default function ProductSectionsPage() {
                       </span>{" "}
                       / {currentSection.maxProducts}
                     </p>
-                    {currentSection.items &&
-                      currentSection.items.length < currentSection.maxProducts && (
-                        <Button
-                          size="sm"
-                          onClick={() => openAddProductDialog(currentSection)}
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add Product
-                        </Button>
-                      )}
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-[#E5E7EB] hover:bg-[#F3F7F6]"
+                        onClick={() => handleSyncProducts(currentSection)}
+                        disabled={syncing}
+                      >
+                        {syncing ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="mr-2 h-4 w-4" />
+                        )}
+                        Sync
+                      </Button>
+                      {currentSection.items &&
+                        currentSection.items.length < currentSection.maxProducts && (
+                          <Button
+                            size="sm"
+                            onClick={() => openAddProductDialog(currentSection)}
+                          >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Product
+                          </Button>
+                        )}
+                    </div>
                   </div>
 
                   {currentSection.items && currentSection.items.length > 0 ? (
@@ -817,15 +860,30 @@ export default function ProductSectionsPage() {
                         No products in this section
                       </h3>
                       <p className="text-sm text-[#9CA3AF] mb-6 max-w-sm mx-auto">
-                        Add products to display them on your homepage.
+                        Add products manually or sync products that have "{currentSection.slug}" in their productType field.
                       </p>
-                      <Button
-                        className=""
-                        onClick={() => openAddProductDialog(currentSection)}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Product
-                      </Button>
+                      <div className="flex items-center justify-center gap-3">
+                        <Button
+                          variant="outline"
+                          className="border-[#E5E7EB] hover:bg-[#F3F7F6]"
+                          onClick={() => handleSyncProducts(currentSection)}
+                          disabled={syncing}
+                        >
+                          {syncing ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                          )}
+                          Sync Products
+                        </Button>
+                        <Button
+                          className=""
+                          onClick={() => openAddProductDialog(currentSection)}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Product
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </CardContent>

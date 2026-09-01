@@ -55,11 +55,11 @@ export const getVerificationTemplate = (verificationLink, storeConfig = null) =>
 </head>
 <body>
     <div class="container">
-        ${HEADER_HTML(`Welcome to ${store.storeName}`, "Handcrafted Premium Jewellery", store)}
+        ${HEADER_HTML(`Welcome to ${store.storeName}`, "Handcrafted Premium Bags", store)}
         <div class="content">
             <h2>Verify Your Email Address</h2>
             <p>Hi there,</p>
-            <p>Thank you for registering with <strong>${store.storeName}</strong> — your premium destination for handcrafted jewellery and customised accessories.</p>
+            <p>Thank you for registering with <strong>${store.storeName}</strong> — your premium destination for handcrafted bags and customised accessories.</p>
             <p>Please verify your email address to complete your registration and start ordering:</p>
             <div class="button-container">
                 <a href="${verificationLink}" class="button">Verify My Email</a>
@@ -395,7 +395,7 @@ export const getPaymentSuccessTemplate = (data) => {
                 <p><strong>Order ID:</strong> ${data.paymentId}</p>
                 <p><strong>Date:</strong> ${new Date(data.date).toLocaleString()}</p>
             </div>
-            <p>Thank you for choosing <strong>${store.storeName}</strong> for your custom and handcrafted jewellery designs!</p>
+            <p>Thank you for choosing <strong>${store.storeName}</strong> for your custom and handcrafted bag designs!</p>
         </div>
         ${FOOTER_HTML(store)}
     </div>
@@ -481,7 +481,7 @@ export const getContactFormTemplate = (data) => {
     <div class="container">
         ${HEADER_HTML("New Contact Inquiry", "Customer Inquiry", store)}
         <div class="content">
-            <h2>${data.subject || "Jewellery Sourcing Inquiry"}</h2>
+            <h2>${data.subject || "Bag Sourcing Inquiry"}</h2>
             <div class="info-box">
                 <p>${data.message}</p>
             </div>

@@ -42,9 +42,9 @@ process.on("SIGINT", gracefulShutdown);
 const seedDefaultSections = async () => {
   try {
     const defaults = [
-      { name: "Featured Collections", slug: "featured", description: "Handpicked handcrafted jewellery pieces selected for your style", color: "bg-blue-500", displayOrder: 1 },
-      { name: "Latest Additions", slug: "latest", description: "Newly added premium jewellery collections", color: "bg-green-500", displayOrder: 2 },
-      { name: "Best Sellers", slug: "bestseller", description: "Our most popular jewellery designs loved by clients across India", color: "bg-yellow-500", displayOrder: 3 },
+      { name: "Featured Collections", slug: "featured", description: "Handpicked handcrafted bags selected for your style", color: "bg-blue-500", displayOrder: 1 },
+      { name: "Latest Additions", slug: "latest", description: "Newly added premium bag collections", color: "bg-green-500", displayOrder: 2 },
+      { name: "Best Sellers", slug: "bestseller", description: "Our most popular bag designs loved by clients across India", color: "bg-yellow-500", displayOrder: 3 },
       { name: "Trending Now", slug: "trending", description: "Most loved and trending handmade designs and accessories this week", color: "bg-purple-500", displayOrder: 4 },
       { name: "New Arrivals", slug: "new", description: "Fresh handcrafted creations added to our gallery", color: "bg-pink-500", displayOrder: 5 },
     ];
