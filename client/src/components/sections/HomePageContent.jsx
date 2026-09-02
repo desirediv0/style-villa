@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/utils";
 import Link from "next/link";
-import Image from "next/image";
 import BrandCarousel from "@/components/sections/BrandCarousel";
 import { ProductCard } from "@/components/products/ProductCard";
 import Reveal from "@/components/ui/Reveal";
@@ -165,102 +164,44 @@ export default function HomePageContent() {
           s.slug?.toLowerCase().replace(/-/g, "") === key.toLowerCase()
     );
 
-    // Only render if section exists in DB
     if (!dbSection) return null;
 
-    const banner = {
-      bannerImage: dbSection.image || null,
-      tag: dbSection.name || key.toUpperCase(),
-      title: dbSection.name || key.toUpperCase(),
-      subtitle: dbSection.description || "",
-      dateText: "",
-      linkUrl: `/products?search=${key}`
-    };
-
-    // Don't render if no banner image from DB
-    if (!banner.bannerImage) return null;
-
-    const isEven = ["featured", "bestseller", "new"].includes(key.toLowerCase());
-
-    const BannerCard = () => (
-      <div className="lg:col-span-4 relative overflow-hidden group min-h-[380px] lg:min-h-full bg-noir" data-cursor="Explore">
-        <Image
-          src={banner.bannerImage}
-          alt={banner.title}
-          fill
-          className="object-cover transition-transform duration-1400 ease-luxe group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/30 to-noir/10" />
-        <div className="absolute inset-3 border border-white/15 pointer-events-none" />
-
-        <div className="relative z-10 h-full flex flex-col justify-between p-8">
-          <div>
-            <span className="inline-block text-[9px] uppercase tracking-[0.4em] font-medium px-4 py-2 text-gold-light border border-gold/40 bg-noir/30 backdrop-blur-sm">
-              {banner.tag}
-            </span>
-          </div>
-
-          <div className="text-white">
-            <h3 className="font-display text-3xl md:text-4xl tracking-tight mb-2">
-              {banner.title.charAt(0) + banner.title.slice(1).toLowerCase()}
-              {banner.subtitle && (
-                <em className="luxe-italic text-gradient-light block text-2xl md:text-3xl mt-1">
-                  {banner.subtitle.charAt(0) + banner.subtitle.slice(1).toLowerCase()}
-                </em>
-              )}
-            </h3>
-            {banner.dateText && (
-              <p className="text-xs text-white/60 leading-relaxed mb-7 font-light max-w-xs">{banner.dateText}</p>
-            )}
-            <Link href={banner.linkUrl} className="btn-luxe-white !px-6 !py-3">
-              Explore More <IconArrowRight className="h-3.5 w-3.5" stroke={1.5} />
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    const sectionTitle = dbSection.name || key.toUpperCase();
+    const sectionDesc = dbSection.description || "";
+    const linkUrl = `/products?search=${key}`;
 
     return (
       <section className={`py-14 md:py-20 overflow-hidden ${sectionIndex % 2 === 1 ? "bg-ivory" : "bg-white"}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <Reveal>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-
-              {isEven && <BannerCard />}
-
-              {/* Products Slider & Title */}
-              <div className="lg:col-span-8 flex flex-col justify-center min-w-0">
-                <div className="flex items-end justify-between gap-4 mb-8">
-                  <div className="flex items-baseline gap-4">
-                    <span className="font-display text-sm text-gold-dark tracking-[0.2em] hidden sm:block">
-                      {String(sectionIndex + 1).padStart(2, "0")}
-                    </span>
-                    <div>
-                      <span className="luxe-eyebrow block mb-2">{banner.tag}</span>
-                      <h2 className="font-display text-3xl md:text-4xl tracking-tight text-noir">
-                        {banner.title.charAt(0) + banner.title.slice(1).toLowerCase()}
-                        {banner.subtitle && (
-                          <em className="luxe-italic text-gradient ml-2.5">
-                            {banner.subtitle.toLowerCase()}
-                          </em>
-                        )}
-                      </h2>
-                    </div>
+            <div className="flex flex-col justify-center min-w-0">
+              <div className="flex items-end justify-between gap-4 mb-8">
+                <div className="flex items-baseline gap-4">
+                  <span className="font-display text-sm text-gold-dark tracking-[0.2em] hidden sm:block">
+                    {String(sectionIndex + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <span className="luxe-eyebrow block mb-2">{sectionTitle}</span>
+                    <h2 className="font-display text-3xl md:text-4xl tracking-tight text-noir">
+                      {sectionTitle.charAt(0) + sectionTitle.slice(1).toLowerCase()}
+                      {sectionDesc && (
+                        <em className="luxe-italic text-gradient ml-2.5">
+                          {sectionDesc.toLowerCase()}
+                        </em>
+                      )}
+                    </h2>
                   </div>
-                  <Link
-                    href={banner.linkUrl}
-                    className="luxe-link text-noir shrink-0 inline-flex items-center gap-2 group/link"
-                  >
-                    View All
-                    <IconArrowRight className="h-3.5 w-3.5 transition-transform group-hover/link:translate-x-1" stroke={1.5} />
-                  </Link>
                 </div>
-
-                <ProductCarousel products={sectionProducts || []} isLoading={loading} />
+                <Link
+                  href={linkUrl}
+                  className="luxe-link text-noir shrink-0 inline-flex items-center gap-2 group/link"
+                >
+                  View All
+                  <IconArrowRight className="h-3.5 w-3.5 transition-transform group-hover/link:translate-x-1" stroke={1.5} />
+                </Link>
               </div>
 
-              {!isEven && <BannerCard />}
-
+              <ProductCarousel products={sectionProducts || []} isLoading={loading} />
             </div>
           </Reveal>
         </div>
