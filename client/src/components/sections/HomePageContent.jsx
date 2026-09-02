@@ -14,49 +14,6 @@ import {
 } from "@/components/ui/carousel";
 import { IconArrowRight, IconArrowLeft } from "@tabler/icons-react";
 
-const SECTION_METADATA = {
-  featured: {
-    bannerImage: "/featured_banner.png",
-    tag: "Curated Luxury",
-    title: "COLORFUL",
-    subtitle: "HAND BAG",
-    dateText: "Exquisite colorful handbags handcrafted for statement styling",
-    linkUrl: "/products?search=featured"
-  },
-  latest: {
-    bannerImage: "/latest_banner.png",
-    tag: "Just Landed",
-    title: "CHIC",
-    subtitle: "HAND BAG",
-    dateText: "Minimalist canvas and leather everyday handbags",
-    linkUrl: "/products?search=latest"
-  },
-  bestseller: {
-    bannerImage: "/bestseller_banner.png",
-    tag: "Best Loved",
-    title: "BLACK LEATHER",
-    subtitle: "BAG",
-    dateText: "Timeless classic black leather handbags with gold accents",
-    linkUrl: "/products?search=bestseller"
-  },
-  trending: {
-    bannerImage: "/trending_banner.png",
-    tag: "Must Have",
-    title: "RED LEATHER",
-    subtitle: "BAG",
-    dateText: "Bold red leather silhouettes to elevate your look",
-    linkUrl: "/products?search=trending"
-  },
-  new: {
-    bannerImage: "/new_banner.png",
-    tag: "Just In",
-    title: "LEATHER LUXURY",
-    subtitle: "BAG",
-    dateText: "Ultra-luxury designer collections with exquisite craftsmanship",
-    linkUrl: "/products?search=new"
-  }
-};
-
 const ProductSkeleton = () => (
   <div className="bg-white overflow-hidden animate-pulse">
     <div className="aspect-[3/4] w-full bg-ivory-deep" />
@@ -208,23 +165,20 @@ export default function HomePageContent() {
           s.slug?.toLowerCase().replace(/-/g, "") === key.toLowerCase()
     );
 
-    const defaultBanner = SECTION_METADATA[key] || {
-      bannerImage: "/placeholder.jpg",
-      tag: "Collection",
-      title: key.toUpperCase(),
-      subtitle: "",
+    // Only render if section exists in DB
+    if (!dbSection) return null;
+
+    const banner = {
+      bannerImage: dbSection.image || null,
+      tag: dbSection.name || key.toUpperCase(),
+      title: dbSection.name || key.toUpperCase(),
+      subtitle: dbSection.description || "",
       dateText: "",
       linkUrl: `/products?search=${key}`
     };
 
-    const banner = {
-      ...defaultBanner,
-      bannerImage: dbSection?.image || defaultBanner.bannerImage,
-      tag: defaultBanner.tag,
-      title: defaultBanner.title,
-      subtitle: defaultBanner.subtitle,
-      dateText: defaultBanner.dateText,
-    };
+    // Don't render if no banner image from DB
+    if (!banner.bannerImage) return null;
 
     const isEven = ["featured", "bestseller", "new"].includes(key.toLowerCase());
 
