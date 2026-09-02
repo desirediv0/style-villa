@@ -112,6 +112,9 @@ export function ProductForm({
   const [product, setProduct] = useState({
     name: "",
     description: "",
+    details: "",
+    shippingInfo: "",
+    returnPolicy: "",
     categoryId: "",
     categoryIds: [] as string[],
     primaryCategoryId: "",
@@ -188,6 +191,9 @@ export function ProductForm({
   // Jodit Editor reference and local state
   const editorRef = useRef<any>(null);
   const [editorContent, setEditorContent] = useState<string>("");
+  const [detailsEditorContent, setDetailsEditorContent] = useState<string>("");
+  const [shippingEditorContent, setShippingEditorContent] = useState<string>("");
+  const [returnEditorContent, setReturnEditorContent] = useState<string>("");
   const hasInitializedEditor = useRef(false);
 
   // Memoize editor config to prevent re-renders when other state changes
@@ -311,10 +317,19 @@ export function ProductForm({
       setEditorContent(product.description);
       hasInitializedEditor.current = true;
     }
+    if (mode === "edit" && product.details && !hasInitializedEditor.current) {
+      setDetailsEditorContent(product.details);
+    }
+    if (mode === "edit" && product.shippingInfo && !hasInitializedEditor.current) {
+      setShippingEditorContent(product.shippingInfo);
+    }
+    if (mode === "edit" && product.returnPolicy && !hasInitializedEditor.current) {
+      setReturnEditorContent(product.returnPolicy);
+    }
     if (mode === "create") {
       hasInitializedEditor.current = false;
     }
-  }, [mode, product.description]);
+  }, [mode, product.description, product.details, product.shippingInfo, product.returnPolicy]);
 
   // Define a proper interface for image previews
   interface ImagePreview {
@@ -526,10 +541,16 @@ export function ProductForm({
             // Set editor content for edit mode
             const existingDescription = productData.description || "";
             setEditorContent(existingDescription);
+            setDetailsEditorContent(productData.details || "");
+            setShippingEditorContent(productData.shippingInfo || "");
+            setReturnEditorContent(productData.returnPolicy || "");
 
             setProduct({
               name: productData.name || "",
               description: productData.description || "",
+              details: productData.details || "",
+              shippingInfo: productData.shippingInfo || "",
+              returnPolicy: productData.returnPolicy || "",
               // Prefill brandId if available
               brandId: productData.brand?.id || productData.brandId || "",
               categoryId: primaryCategory?.id || "",
@@ -925,6 +946,9 @@ export function ProductForm({
       }
 
       formData.append("description", finalDescription);
+      formData.append("details", detailsEditorContent || product.details || "");
+      formData.append("shippingInfo", shippingEditorContent || product.shippingInfo || "");
+      formData.append("returnPolicy", returnEditorContent || product.returnPolicy || "");
       formData.append("featured", String(product.featured));
       formData.append("ourProduct", String(product.ourProduct));
       formData.append("productType", JSON.stringify(product.productType));
@@ -1719,6 +1743,72 @@ export function ProductForm({
                 <p className="text-xs text-muted-foreground">
                   Use the toolbar to format your description. Supports rich text
                   formatting, tables, colors, images, links, and much more.
+                </p>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="details">Details</Label>
+                <div className="border rounded-md overflow-hidden">
+                  <JoditEditor
+                    value={detailsEditorContent}
+                    config={editorConfig}
+                    onBlur={(content: string) => {
+                      if (content !== detailsEditorContent) {
+                        setDetailsEditorContent(content);
+                        setProduct((prev) => ({ ...prev, details: content }));
+                      }
+                    }}
+                    onChange={(content: string) => {
+                      setProduct((prev) => ({ ...prev, details: content }));
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Product details like Style, Care, Origin, Material, etc.
+                </p>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="shippingInfo">Shipping Info</Label>
+                <div className="border rounded-md overflow-hidden">
+                  <JoditEditor
+                    value={shippingEditorContent}
+                    config={editorConfig}
+                    onBlur={(content: string) => {
+                      if (content !== shippingEditorContent) {
+                        setShippingEditorContent(content);
+                        setProduct((prev) => ({ ...prev, shippingInfo: content }));
+                      }
+                    }}
+                    onChange={(content: string) => {
+                      setProduct((prev) => ({ ...prev, shippingInfo: content }));
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Shipping delivery timelines, charges, and shipping policies.
+                </p>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="returnPolicy">Return Policy</Label>
+                <div className="border rounded-md overflow-hidden">
+                  <JoditEditor
+                    value={returnEditorContent}
+                    config={editorConfig}
+                    onBlur={(content: string) => {
+                      if (content !== returnEditorContent) {
+                        setReturnEditorContent(content);
+                        setProduct((prev) => ({ ...prev, returnPolicy: content }));
+                      }
+                    }}
+                    onChange={(content: string) => {
+                      setProduct((prev) => ({ ...prev, returnPolicy: content }));
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Return, exchange, and refund policies for this product.
                 </p>
               </div>
 

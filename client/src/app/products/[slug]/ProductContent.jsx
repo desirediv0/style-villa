@@ -495,7 +495,7 @@ export default function ProductContent({ slug }) {
                 <Truck className="h-4 w-4 text-gold-dark flex-shrink-0" strokeWidth={1.2} />
                 <div>
                   <p className="text-[9px] font-semibold text-noir uppercase tracking-[0.2em]">Free Delivery</p>
-                  <p className="text-[10px] text-stone mt-0.5">2–3 business days</p>
+                  <p className="text-[10px] text-stone mt-0.5">Dispatch in 1–2 days</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-4">
@@ -591,29 +591,54 @@ export default function ProductContent({ slug }) {
         <div className="py-10 max-w-4xl">
           {activeTab === "description" && <div className="prose prose-sm text-stone-dark leading-relaxed font-light tracking-wide" dangerouslySetInnerHTML={{ __html: product.description || "No description." }} />}
           {activeTab === "additional" && (
-            <div className="border border-line overflow-hidden">
-              <table className="w-full text-sm">
-                <tbody>
-                  {[["Style", "Premium Collection"], ["Care", "Follow the enclosed care instructions"], ["Origin", "Premium imported materials"]].map(([k, v], i) => (
-                    <tr key={k} className={`border-b border-line last:border-0 ${i % 2 === 0 ? "bg-ivory" : ""}`}>
-                      <td className="py-4 px-6 font-semibold text-noir w-40 text-[10px] uppercase tracking-[0.2em]">{k}</td>
-                      <td className="py-4 px-6 text-stone-dark font-light tracking-wide">{v}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="prose prose-sm text-stone-dark leading-relaxed font-light tracking-wide">
+              {product.details ? (
+                <div dangerouslySetInnerHTML={{ __html: product.details }} />
+              ) : (
+                <div className="border border-line overflow-hidden">
+                  <table className="w-full text-sm">
+                    <tbody>
+                      {[["Style", "Premium Collection"], ["Care", "Follow the enclosed care instructions"], ["Origin", "Premium imported materials"]].map(([k, v], i) => (
+                        <tr key={k} className={`border-b border-line last:border-0 ${i % 2 === 0 ? "bg-ivory" : ""}`}>
+                          <td className="py-4 px-6 font-semibold text-noir w-40 text-[10px] uppercase tracking-[0.2em]">{k}</td>
+                          <td className="py-4 px-6 text-stone-dark font-light tracking-wide">{v}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
           {activeTab === "reviews" && <ReviewSection product={product} />}
           {activeTab === "shipping" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[{ t: "Shipping", i: Truck, r: [["Metro", "24–48h"], ["India", "3–5 days"], ["Free", "All India"]] },
-                { t: "Returns", i: RefreshCw, r: [["Policy", "Defect Replacement"], ["Support", "WhatsApp"], ["Pickup", "Doorstep"]] }].map(({ t, i: I, r }) => (
-                <div key={t} className="p-8 border border-line bg-ivory">
-                  <h3 className="font-display text-xl text-noir mb-6 flex items-center gap-3"><I className="h-4 w-4 text-gold-dark" strokeWidth={1.2} />{t}</h3>
-                  <dl className="space-y-4">{r.map(([k, v]) => <div key={k} className="text-xs flex items-baseline gap-4"><dt className="w-20 font-semibold text-stone uppercase tracking-[0.2em] text-[9px]">{k}</dt><dd className="text-noir/70 tracking-wide">{v}</dd></div>)}</dl>
+            <div className="prose prose-sm text-stone-dark leading-relaxed font-light tracking-wide">
+              {product.shippingInfo || product.returnPolicy ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {product.shippingInfo && (
+                    <div className="p-8 border border-line bg-ivory">
+                      <h3 className="font-display text-xl text-noir mb-6 flex items-center gap-3"><Truck className="h-4 w-4 text-gold-dark" strokeWidth={1.2} />Shipping</h3>
+                      <div dangerouslySetInnerHTML={{ __html: product.shippingInfo }} />
+                    </div>
+                  )}
+                  {product.returnPolicy && (
+                    <div className="p-8 border border-line bg-ivory">
+                      <h3 className="font-display text-xl text-noir mb-6 flex items-center gap-3"><RefreshCw className="h-4 w-4 text-gold-dark" strokeWidth={1.2} />Returns</h3>
+                      <div dangerouslySetInnerHTML={{ __html: product.returnPolicy }} />
+                    </div>
+                  )}
                 </div>
-              ))}
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[{ t: "Shipping", i: Truck, r: [["Metro", "24–48h"], ["India", "3–5 days"], ["Free", "All India"]] },
+                    { t: "Returns", i: RefreshCw, r: [["Policy", "Defect Replacement"], ["Support", "WhatsApp"], ["Pickup", "Doorstep"]] }].map(({ t, i: I, r }) => (
+                  <div key={t} className="p-8 border border-line bg-ivory">
+                    <h3 className="font-display text-xl text-noir mb-6 flex items-center gap-3"><I className="h-4 w-4 text-gold-dark" strokeWidth={1.2} />{t}</h3>
+                    <dl className="space-y-4">{r.map(([k, v]) => <div key={k} className="text-xs flex items-baseline gap-4"><dt className="w-20 font-semibold text-stone uppercase tracking-[0.2em] text-[9px]">{k}</dt><dd className="text-noir/70 tracking-wide">{v}</dd></div>)}</dl>
+                  </div>
+                ))}
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -169,13 +169,7 @@ export default function HomePageContent() {
           console.error("Error fetching db sections:", sectionErr);
         }
 
-        const displaySections = fetchedSections.length > 0 ? fetchedSections : [
-          { slug: "featured" },
-          { slug: "latest" },
-          { slug: "bestseller" },
-          { slug: "trending" },
-          { slug: "new" },
-        ];
+        const displaySections = fetchedSections.length > 0 ? fetchedSections : [];
 
         const dynamicEndpoints = displaySections.map(sec => ({
           key: sec.slug?.toLowerCase(),
@@ -322,13 +316,7 @@ export default function HomePageContent() {
 
   const displaySections = dbSections.length > 0
     ? [...dbSections].sort((a, b) => a.displayOrder - b.displayOrder)
-    : [
-      { id: "featured", slug: "featured", name: "FEATURED COLLECTIONS", description: "Signature pieces, handpicked by our stylists for the season" },
-      { id: "latest", slug: "latest", name: "LATEST ADDITIONS", description: "Freshly imported bags and clothing, new to the maison" },
-      { id: "bestseller", slug: "bestseller", name: "BEST SELLERS", description: "The pieces our clients across India keep coming back for" },
-      { id: "trending", slug: "trending", name: "TRENDING NOW", description: "The most wanted silhouettes and styles of the week" },
-      { id: "new", slug: "new", name: "NEW ARRIVALS", description: "Fresh creations added to our curated collection" },
-    ];
+    : [];
 
   return (
     <>

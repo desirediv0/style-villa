@@ -243,6 +243,9 @@ model Product {
   id                String               @id @default(uuid())
   name              String
   description       String?
+  details           String?
+  shippingInfo      String?
+  returnPolicy      String?
   slug              String               @unique
   featured          Boolean              @default(false)
   productType       Json? // e.g. { "type": "mobile" }

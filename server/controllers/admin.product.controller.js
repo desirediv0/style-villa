@@ -427,6 +427,9 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   const {
     name,
     description,
+    details,
+    shippingInfo,
+    returnPolicy,
     categoryIds,
     primaryCategoryId,
     subCategoryIds,
@@ -554,6 +557,9 @@ export const createProduct = asyncHandler(async (req, res, next) => {
         data: {
           name: cleanName,
           description,
+          details: details || null,
+          shippingInfo: shippingInfo || null,
+          returnPolicy: returnPolicy || null,
           // Set brandId when provided (allow empty string or "null" to clear)
           ...(req.body.brandId !== undefined && {
             brandId:
@@ -1128,6 +1134,9 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   const {
     name,
     description,
+    details,
+    shippingInfo,
+    returnPolicy,
     categoryIds,
     primaryCategoryId,
     subCategoryIds,
@@ -1296,6 +1305,9 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
           ...(name && { name }),
           ...(name && { slug }),
           ...(description !== undefined && { description }),
+          ...(details !== undefined && { details: details || null }),
+          ...(shippingInfo !== undefined && { shippingInfo: shippingInfo || null }),
+          ...(returnPolicy !== undefined && { returnPolicy: returnPolicy || null }),
           ...(hasVariants !== undefined && { hasVariants: hasVariantsValue }),
           ...(featured !== undefined && {
             featured: featured === "true" || featured === true,
