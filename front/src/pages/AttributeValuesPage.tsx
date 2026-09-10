@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/select";
 
 export default function AttributeValuesPage() {
-  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { attributeId, id } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -82,6 +81,7 @@ export default function AttributeValuesPage() {
 
 function AttributeValuesList({ attributeId }: { attributeId: string }) {
   const { t } = useLanguage();
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [valuesList, setValuesList] = useState<any[]>([]);
   const [attribute, setAttribute] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AttributesPage() {
-  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { id } = useParams();
   const location = useLocation();
   const isNewAttribute = location.pathname.includes("/new");
@@ -56,6 +55,7 @@ export default function AttributesPage() {
 
 function AttributesList() {
   const { t } = useLanguage();
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [attributesList, setAttributesList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -2761,7 +2761,6 @@ const CategorySelector = ({
 };
 
 export default function ProductsPage() {
-  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { id } = useParams();
   const location = useLocation();
   const isNewProduct = location.pathname.includes("/new");
@@ -2782,6 +2781,7 @@ export default function ProductsPage() {
 // Product List Component
 function ProductsList() {
   const { t } = useLanguage();
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [productsList, setProductsList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
