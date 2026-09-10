@@ -36,6 +36,7 @@ import {
 import { DataTablePagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import {
   Star,
   MoreHorizontal,
@@ -52,6 +53,7 @@ import {
 } from "lucide-react";
 
 export default function ReviewsManagementPage() {
+  const { canUpdate, canDelete } = usePermissions();
   const { t } = useLanguage();
   // State for reviews data
   const [reviewsData, setReviewsData] = useState<any[]>([]);
@@ -640,30 +642,36 @@ export default function ReviewsManagementPage() {
                           >
                             {t("reviews.actions.reply")}
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-[#1F2937] hover:bg-[#F3F7F6]"
-                            onClick={() =>
-                              updateReviewStatus(review.id, "APPROVED")
-                            }
-                            disabled={review.status === "APPROVED"}
-                          >
-                            {t("reviews.actions.approve")}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-[#1F2937] hover:bg-[#F3F7F6]"
-                            onClick={() =>
-                              updateReviewStatus(review.id, "REJECTED")
-                            }
-                            disabled={review.status === "REJECTED"}
-                          >
-                            {t("reviews.actions.reject")}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-[#EF4444] hover:bg-[#FEF2F2]"
-                            onClick={() => handleDeleteReview(review)}
-                          >
-                            {t("reviews.actions.delete")}
-                          </DropdownMenuItem>
+                          {canUpdate("reviews") && (
+                            <DropdownMenuItem
+                              className="text-[#1F2937] hover:bg-[#F3F7F6]"
+                              onClick={() =>
+                                updateReviewStatus(review.id, "APPROVED")
+                              }
+                              disabled={review.status === "APPROVED"}
+                            >
+                              {t("reviews.actions.approve")}
+                            </DropdownMenuItem>
+                          )}
+                          {canUpdate("reviews") && (
+                            <DropdownMenuItem
+                              className="text-[#1F2937] hover:bg-[#F3F7F6]"
+                              onClick={() =>
+                                updateReviewStatus(review.id, "REJECTED")
+                              }
+                              disabled={review.status === "REJECTED"}
+                            >
+                              {t("reviews.actions.reject")}
+                            </DropdownMenuItem>
+                          )}
+                          {canDelete("reviews") && (
+                            <DropdownMenuItem
+                              className="text-[#EF4444] hover:bg-[#FEF2F2]"
+                              onClick={() => handleDeleteReview(review)}
+                            >
+                              {t("reviews.actions.delete")}
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

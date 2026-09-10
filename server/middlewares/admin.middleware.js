@@ -21,6 +21,7 @@ export const verifyAdminJWT = asyncHandler(async (req, res, next) => {
       where: { id: decoded.id },
       include: {
         permissions: true,
+        customRole: { include: { permissions: true } },
       },
     });
 
@@ -32,6 +33,16 @@ export const verifyAdminJWT = asyncHandler(async (req, res, next) => {
       throw new ApiError(403, "Your account has been deactivated");
     }
 
+    // Effective permissions = per-admin rows UNION the assigned custom Role's rows.
+    const permSet = new Set(
+      admin.permissions.map((p) => `${p.resource}:${p.action}`)
+    );
+    if (admin.customRole) {
+      for (const p of admin.customRole.permissions) {
+        permSet.add(`${p.resource}:${p.action}`);
+      }
+    }
+
     // Attach admin data to request
     req.admin = {
       id: admin.id,
@@ -39,7 +50,9 @@ export const verifyAdminJWT = asyncHandler(async (req, res, next) => {
       firstName: admin.firstName,
       lastName: admin.lastName,
       role: admin.role,
-      permissions: admin.permissions.map((p) => `${p.resource}:${p.action}`),
+      roleId: admin.roleId,
+      roleName: admin.customRole?.name || null,
+      permissions: Array.from(permSet),
     };
 
     next();

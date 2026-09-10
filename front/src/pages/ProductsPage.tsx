@@ -57,6 +57,7 @@ import {
 
 
 import { useLanguage } from "@/context/LanguageContext";
+import { usePermissions } from "@/hooks/usePermissions";
 
 function useCategories() {
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
@@ -131,6 +132,8 @@ export function ProductForm({
     metaTitle: "",
     metaDescription: "",
     keywords: "",
+    // Optional social / reel link (Instagram / Facebook / YouTube) shown on the product page
+    socialVideoUrl: "",
     tags: [] as string[],
     // single brand association
     brandId: "",
@@ -604,6 +607,7 @@ export function ProductForm({
               metaTitle: productData.metaTitle || "",
               metaDescription: productData.metaDescription || "",
               keywords: productData.keywords || "",
+              socialVideoUrl: productData.socialVideoUrl || "",
               tags: productData.tags || [],
               topBrandIds: productData.topBrandIds || [],
               newBrandIds: productData.newBrandIds || [],
@@ -970,6 +974,7 @@ export function ProductForm({
       }
       formData.append("metaDescription", metaDesc);
       formData.append("keywords", product.keywords || "");
+      formData.append("socialVideoUrl", product.socialVideoUrl || "");
       formData.append("tags", JSON.stringify(product.tags || []));
 
       // Add categories information
@@ -2218,6 +2223,23 @@ export function ProductForm({
                   {t("products.form.seo.keywords_hint")}
                 </p>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="socialVideoUrl">Reel / Social Video Link</Label>
+                <Input
+                  id="socialVideoUrl"
+                  name="socialVideoUrl"
+                  type="url"
+                  value={product.socialVideoUrl}
+                  onChange={handleChange}
+                  placeholder="https://www.instagram.com/reel/... or Facebook / YouTube link"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional. Paste an Instagram, Facebook or YouTube link. It shows
+                  as a &quot;View on&quot; button next to Add to Bag on the
+                  product page. Leave blank to hide.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -2739,6 +2761,7 @@ const CategorySelector = ({
 };
 
 export default function ProductsPage() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { id } = useParams();
   const location = useLocation();
   const isNewProduct = location.pathname.includes("/new");
@@ -3149,14 +3172,14 @@ function ProductsList() {
                 onKeyPress={(e) => e.key === "Enter" && handleSearch(e)}
               />
             </div>
-            <Button
-              asChild
-            >
-              <Link to="/products/new">
-                <Plus className="mr-2 h-4 w-4" />
-                {t("products.add_new")}
-              </Link>
-            </Button>
+            {canCreate("products") && (
+              <Button asChild>
+                <Link to="/products/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("products.add_new")}
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
         <div className="h-px bg-[#E5E7EB]" />
@@ -3221,14 +3244,14 @@ function ProductsList() {
             <p className="text-sm text-[#9CA3AF] mb-6 max-w-sm mx-auto">
               {t("products.list.table.empty_desc")}
             </p>
-            <Button
-              asChild
-            >
-              <Link to="/products/new">
-                <Plus className="mr-2 h-4 w-4" />
-                {t("products.add_new")}
-              </Link>
-            </Button>
+            {canCreate("products") && (
+              <Button asChild>
+                <Link to="/products/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("products.add_new")}
+                </Link>
+              </Button>
+            )}
           </div>
         </Card>
       ) : (
@@ -3392,28 +3415,34 @@ function ProductsList() {
                           >
                             <Link to={`/products/${product.id}`}>
                               <Edit className="h-4 w-4 mr-2" />
-                              Edit
+                              {canUpdate("products") ? "Edit" : "View"}
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-[#1F2937] hover:bg-[#F3F7F6]"
-                            onClick={() =>
-                              handleToggleProductStatus(
-                                product.id,
-                                product.isActive
-                              )
-                            }
-                          >
-                            {product.isActive ? "Deactivate" : "Activate"}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator className="bg-[#E5E7EB]" />
-                          <DropdownMenuItem
-                            className="text-[#EF4444] hover:bg-[#FEF2F2]"
-                            onClick={() => openDeleteDialog(product.id)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
+                          {canUpdate("products") && (
+                            <DropdownMenuItem
+                              className="text-[#1F2937] hover:bg-[#F3F7F6]"
+                              onClick={() =>
+                                handleToggleProductStatus(
+                                  product.id,
+                                  product.isActive
+                                )
+                              }
+                            >
+                              {product.isActive ? "Deactivate" : "Activate"}
+                            </DropdownMenuItem>
+                          )}
+                          {canDelete("products") && (
+                            <>
+                              <DropdownMenuSeparator className="bg-[#E5E7EB]" />
+                              <DropdownMenuItem
+                                className="text-[#EF4444] hover:bg-[#FEF2F2]"
+                                onClick={() => openDeleteDialog(product.id)}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

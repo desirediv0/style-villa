@@ -167,7 +167,6 @@ export default function HomePageContent() {
     if (!dbSection) return null;
 
     const sectionTitle = dbSection.name || key.toUpperCase();
-    const sectionDesc = dbSection.description || "";
     const linkUrl = `/products?search=${key}`;
 
     return (
@@ -184,11 +183,6 @@ export default function HomePageContent() {
                     <span className="luxe-eyebrow block mb-2">{sectionTitle}</span>
                     <h2 className="font-display text-3xl md:text-4xl tracking-tight text-noir">
                       {sectionTitle.charAt(0) + sectionTitle.slice(1).toLowerCase()}
-                      {sectionDesc && (
-                        <em className="luxe-italic text-gradient ml-2.5">
-                          {sectionDesc.toLowerCase()}
-                        </em>
-                      )}
                     </h2>
                   </div>
                 </div>

@@ -21,6 +21,7 @@ import {
   Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { useLanguage } from "@/context";
 
 interface FlashSaleItem {
@@ -61,6 +62,7 @@ export default function FlashSalesPage() {
 }
 
 function FlashSalesList() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { t } = useLanguage();
   const [flashSalesList, setFlashSalesList] = useState<FlashSaleItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -196,15 +198,14 @@ function FlashSalesList() {
               {t("flash_sales.subtitle")}
             </p>
           </div>
-          <Button
-            asChild
-
-          >
-            <Link to="/flash-sales/new">
-              <Plus className="h-4 w-4 mr-2" />
-              {t("flash_sales.create_button")}
-            </Link>
-          </Button>
+          {canCreate("flash-sales") && (
+            <Button asChild>
+              <Link to="/flash-sales/new">
+                <Plus className="h-4 w-4 mr-2" />
+                {t("flash_sales.create_button")}
+              </Link>
+            </Button>
+          )}
         </div>
         <div className="h-px bg-[#E5E7EB]" />
       </div>
@@ -221,15 +222,14 @@ function FlashSalesList() {
             <p className="text-sm text-[#9CA3AF] mb-6 max-w-sm mx-auto">
               {t("flash_sales.empty.description")}
             </p>
-            <Button
-              asChild
-
-            >
-              <Link to="/flash-sales/new">
-                <Plus className="h-4 w-4 mr-2" />
-                {t("flash_sales.create_button")}
-              </Link>
-            </Button>
+            {canCreate("flash-sales") && (
+              <Button asChild>
+                <Link to="/flash-sales/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t("flash_sales.create_button")}
+                </Link>
+              </Button>
+            )}
           </div>
         </Card>
       ) : (
@@ -309,30 +309,36 @@ function FlashSalesList() {
                   </div>
 
                   <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E5E7EB]">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 hover:bg-[#F3F4F6]"
-                      asChild
-                    >
-                      <Link to={`/flash-sales/${sale.id}`}>
-                        <Edit className="h-4 w-4 text-[#4B5563]" />
-                      </Link>
-                    </Button>
-                    <Switch
-                      checked={sale.isActive}
-                      onCheckedChange={() =>
-                        handleToggleStatus(sale.id, sale.isActive)
-                      }
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 hover:bg-[#FEF2F2]"
-                      onClick={() => handleDelete(sale.id, sale.name)}
-                    >
-                      <Trash2 className="h-4 w-4 text-[#EF4444]" />
-                    </Button>
+                    {canUpdate("flash-sales") && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 hover:bg-[#F3F4F6]"
+                        asChild
+                      >
+                        <Link to={`/flash-sales/${sale.id}`}>
+                          <Edit className="h-4 w-4 text-[#4B5563]" />
+                        </Link>
+                      </Button>
+                    )}
+                    {canUpdate("flash-sales") && (
+                      <Switch
+                        checked={sale.isActive}
+                        onCheckedChange={() =>
+                          handleToggleStatus(sale.id, sale.isActive)
+                        }
+                      />
+                    )}
+                    {canDelete("flash-sales") && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 hover:bg-[#FEF2F2]"
+                        onClick={() => handleDelete(sale.id, sale.name)}
+                      >
+                        <Trash2 className="h-4 w-4 text-[#EF4444]" />
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

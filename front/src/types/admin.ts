@@ -4,10 +4,26 @@ export interface Admin {
   firstName: string;
   lastName: string;
   role: "SUPER_ADMIN" | "ADMIN" | "MANAGER" | "SUPPORT_AGENT" | string;
+  roleId?: string | null;
+  roleName?: string | null;
   permissions: string[];
+  // Present on the admin-list response: split view of where permissions come from.
+  ownPermissions?: string[];
+  rolePermissions?: string[];
   lastLogin?: string;
   isActive?: boolean;
   language?: string; // e.g., "en", "hi", "es"
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AdminRoleItem {
+  id: string;
+  name: string;
+  description?: string | null;
+  isSystem: boolean;
+  adminCount: number;
+  permissions: string[]; // "resource:action"
   createdAt?: string;
   updatedAt?: string;
 }

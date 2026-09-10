@@ -1,12 +1,13 @@
 import express from "express";
 import { prisma } from "../config/db.js";
 import { isAdmin } from "../middlewares/auth.middleware.js";
+import { hasPermission } from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 // using shared `prisma` from `config/db.js`
 
 // Get all weights
-router.get("/weights", isAdmin, async (req, res) => {
+router.get("/weights", isAdmin, hasPermission("weights", "read"), async (req, res) => {
   try {
     const weights = await prisma.weight.findMany({
       orderBy: [{ value: "asc" }],
@@ -28,7 +29,7 @@ router.get("/weights", isAdmin, async (req, res) => {
 });
 
 // Get a weight by ID
-router.get("/weights/:id", isAdmin, async (req, res) => {
+router.get("/weights/:id", isAdmin, hasPermission("weights", "read"), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -59,7 +60,7 @@ router.get("/weights/:id", isAdmin, async (req, res) => {
 });
 
 // Create a new weight
-router.post("/weights", isAdmin, async (req, res) => {
+router.post("/weights", isAdmin, hasPermission("weights", "create"), async (req, res) => {
   try {
     const { value, unit } = req.body;
 
@@ -118,7 +119,7 @@ router.post("/weights", isAdmin, async (req, res) => {
 });
 
 // Update a weight
-router.patch("/weights/:id", isAdmin, async (req, res) => {
+router.patch("/weights/:id", isAdmin, hasPermission("weights", "update"), async (req, res) => {
   try {
     const { id } = req.params;
     const { value, unit } = req.body;
@@ -213,7 +214,7 @@ router.patch("/weights/:id", isAdmin, async (req, res) => {
 });
 
 // Delete a weight
-router.delete("/weights/:id", isAdmin, async (req, res) => {
+router.delete("/weights/:id", isAdmin, hasPermission("weights", "delete"), async (req, res) => {
   try {
     const { id } = req.params;
 

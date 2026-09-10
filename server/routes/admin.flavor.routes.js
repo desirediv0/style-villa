@@ -6,6 +6,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import s3client from "../utils/s3client.js";
 import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { isAdmin } from "../middlewares/auth.middleware.js";
+import { hasPermission } from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 // using shared `prisma` from `config/db.js`
@@ -25,7 +26,7 @@ const upload = multer({
 });
 
 // Get all flavors
-router.get("/flavors", isAdmin, async (req, res) => {
+router.get("/flavors", isAdmin, hasPermission("flavors", "read"), async (req, res) => {
   try {
     const { search } = req.query;
     let where = {};
@@ -66,7 +67,7 @@ router.get("/flavors", isAdmin, async (req, res) => {
 });
 
 // Get a flavor by ID
-router.get("/flavors/:id", isAdmin, async (req, res) => {
+router.get("/flavors/:id", isAdmin, hasPermission("flavors", "read"), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -103,7 +104,7 @@ router.get("/flavors/:id", isAdmin, async (req, res) => {
 });
 
 // Create a new flavor
-router.post("/flavors", isAdmin, upload.single("image"), async (req, res) => {
+router.post("/flavors", isAdmin, hasPermission("flavors", "create"), upload.single("image"), async (req, res) => {
   try {
     const { name, description } = req.body;
 
@@ -174,6 +175,7 @@ router.post("/flavors", isAdmin, upload.single("image"), async (req, res) => {
 router.patch(
   "/flavors/:id",
   isAdmin,
+  hasPermission("flavors", "update"),
   upload.single("image"),
   async (req, res) => {
     try {
@@ -272,7 +274,7 @@ router.patch(
 );
 
 // Delete a flavor
-router.delete("/flavors/:id", isAdmin, async (req, res) => {
+router.delete("/flavors/:id", isAdmin, hasPermission("flavors", "delete"), async (req, res) => {
   try {
     const { id } = req.params;
 

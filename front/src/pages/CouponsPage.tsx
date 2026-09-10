@@ -27,6 +27,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface CouponItem {
@@ -66,6 +67,7 @@ export default function CouponsPage() {
 }
 
 function CouponsList() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { t } = useLanguage();
   const [couponsList, setCouponsList] = useState<CouponItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -208,15 +210,14 @@ function CouponsList() {
               {t('coupons.description')}
             </p>
           </div>
-          <Button
-            asChild
-            className=""
-          >
-            <Link to="/coupons/new">
-              <Plus className="mr-2 h-4 w-4" />
-              {t('coupons.add_coupon')}
-            </Link>
-          </Button>
+          {canCreate("coupons") && (
+            <Button asChild className="">
+              <Link to="/coupons/new">
+                <Plus className="mr-2 h-4 w-4" />
+                {t('coupons.add_coupon')}
+              </Link>
+            </Button>
+          )}
         </div>
         <div className="h-px bg-[#E5E7EB]" />
       </div>
@@ -387,24 +388,28 @@ function CouponsList() {
 
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E5E7EB]">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 hover:bg-[#F3F4F6]"
-                    asChild
-                  >
-                    <Link to={`/coupons/${coupon.id}`}>
-                      <Edit className="h-4 w-4 text-[#4B5563]" />
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 hover:bg-[#FEF2F2]"
-                    onClick={() => handleDeleteCoupon(coupon.id, coupon.code || "")}
-                  >
-                    <Trash2 className="h-4 w-4 text-[#EF4444]" />
-                  </Button>
+                  {canUpdate("coupons") && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 hover:bg-[#F3F4F6]"
+                      asChild
+                    >
+                      <Link to={`/coupons/${coupon.id}`}>
+                        <Edit className="h-4 w-4 text-[#4B5563]" />
+                      </Link>
+                    </Button>
+                  )}
+                  {canDelete("coupons") && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 hover:bg-[#FEF2F2]"
+                      onClick={() => handleDeleteCoupon(coupon.id, coupon.code || "")}
+                    >
+                      <Trash2 className="h-4 w-4 text-[#EF4444]" />
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

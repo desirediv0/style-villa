@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { fetchApi, formatCurrency } from "@/lib/utils";
-import { Minus, Plus, AlertCircle, Heart, CheckCircle, Zap, Truck, RefreshCw, ShieldCheck, ChevronRight, Share2, Star } from "lucide-react";
+import { Minus, Plus, AlertCircle, Heart, CheckCircle, Zap, Truck, RefreshCw, ShieldCheck, Share2, Star, PlayCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import ReviewSection from "./ReviewSection";
@@ -16,6 +16,26 @@ const getImageUrl = (img) => {
   if (!img) return "/placeholder.jpg";
   if (img.startsWith("http")) return img;
   return `https://desirediv-storage.blr1.digitaloceanspaces.com/${img}`;
+};
+
+// Detect the platform of a social/reel link so we can label the "View on ..." button.
+const getSocialVideoMeta = (rawUrl) => {
+  if (!rawUrl || typeof rawUrl !== "string") return null;
+  let url = rawUrl.trim();
+  if (!url) return null;
+  if (!/^https?:\/\//i.test(url)) url = `https://${url}`;
+  let host = "";
+  try {
+    host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return null;
+  }
+  if (host.includes("instagram.com")) return { url, label: "View on Instagram" };
+  if (host.includes("facebook.com") || host.includes("fb.watch"))
+    return { url, label: "View on Facebook" };
+  if (host.includes("youtube.com") || host.includes("youtu.be"))
+    return { url, label: "Watch on YouTube" };
+  return { url, label: "Watch Video" };
 };
 
 export default function ProductContent({ slug }) {
@@ -209,7 +229,7 @@ export default function ProductContent({ slug }) {
     if (!product) return;
     const currentUrl = typeof window !== "undefined" ? window.location.href : `https://stylevillaofficial.com/products/${slug}`;
     const price = effectivePriceInfo?.price || selectedVariant?.salePrice || selectedVariant?.price || product?.basePrice || product?.regularPrice;
-    
+
     let variantDetails = [];
     if (product.attributeOptions?.length && selectedAttributes) {
       product.attributeOptions.forEach((attr) => {
@@ -411,7 +431,7 @@ export default function ProductContent({ slug }) {
 
             {/* Rating */}
             <div className="flex items-center gap-2.5 mb-6">
-              <div className="flex gap-0.5">{[1,2,3,4,5].map(i => <Star key={i} className="h-3.5 w-3.5 text-gold fill-gold" />)}</div>
+              <div className="flex gap-0.5">{[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3.5 w-3.5 text-gold fill-gold" />)}</div>
               <span className="text-[11px] tracking-[0.15em] uppercase text-stone">({product.reviewCount || 0} reviews)</span>
             </div>
 
@@ -476,6 +496,23 @@ export default function ProductContent({ slug }) {
                 {isAddingToCart ? <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" /> : outOfStock ? "Sold Out" : "Add to Bag"}
               </button>
             </div>
+
+            {/* Social / reel link — only when the product has one set in admin */}
+            {(() => {
+              const social = getSocialVideoMeta(product?.socialVideoUrl);
+              if (!social) return null;
+              return (
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full h-14 mb-3 border border-noir text-noir text-[10px] font-semibold uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all duration-300 hover:bg-noir hover:text-ivory active:scale-[0.99]"
+                >
+                  <PlayCircle className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
+                  {social.label}
+                </a>
+              );
+            })()}
 
             {/* WhatsApp Enquiry Button */}
             <button
@@ -631,12 +668,12 @@ export default function ProductContent({ slug }) {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[{ t: "Shipping", i: Truck, r: [["Metro", "24–48h"], ["India", "3–5 days"], ["Free", "All India"]] },
-                    { t: "Returns", i: RefreshCw, r: [["Policy", "Defect Replacement"], ["Support", "WhatsApp"], ["Pickup", "Doorstep"]] }].map(({ t, i: I, r }) => (
-                  <div key={t} className="p-8 border border-line bg-ivory">
-                    <h3 className="font-display text-xl text-noir mb-6 flex items-center gap-3"><I className="h-4 w-4 text-gold-dark" strokeWidth={1.2} />{t}</h3>
-                    <dl className="space-y-4">{r.map(([k, v]) => <div key={k} className="text-xs flex items-baseline gap-4"><dt className="w-20 font-semibold text-stone uppercase tracking-[0.2em] text-[9px]">{k}</dt><dd className="text-noir/70 tracking-wide">{v}</dd></div>)}</dl>
-                  </div>
-                ))}
+                  { t: "Returns", i: RefreshCw, r: [["Policy", "Defect Replacement"], ["Support", "WhatsApp"], ["Pickup", "Doorstep"]] }].map(({ t, i: I, r }) => (
+                    <div key={t} className="p-8 border border-line bg-ivory">
+                      <h3 className="font-display text-xl text-noir mb-6 flex items-center gap-3"><I className="h-4 w-4 text-gold-dark" strokeWidth={1.2} />{t}</h3>
+                      <dl className="space-y-4">{r.map(([k, v]) => <div key={k} className="text-xs flex items-baseline gap-4"><dt className="w-20 font-semibold text-stone uppercase tracking-[0.2em] text-[9px]">{k}</dt><dd className="text-noir/70 tracking-wide">{v}</dd></div>)}</dl>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

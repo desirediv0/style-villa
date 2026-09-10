@@ -7,8 +7,6 @@ import LuxuryMarquee from "@/components/sections/LuxuryMarquee";
 import TrustBadgesSection from "@/components/sections/TrustBadgesSection";
 import HomePageContent from "@/components/sections/HomePageContent";
 import WatchAndBuySection from "@/components/sections/WatchAndBuySection";
-import { WhyBuySection } from "@/components/sections/WhyBuySection";
-import { ColdChainBanner } from "@/components/sections/JewelryHomeSections";
 import CategoryGrid from "@/components/sections/CategoryGrid";
 // import SocialMediaSection from "@/components/sections/SocialMediaSection";
 import TestimonialSection from "@/components/sections/TestimonialSection";
@@ -27,13 +25,11 @@ export default function Home() {
         {/* <HeroSectionStore /> */}
         {/* <HeroSectionLight /> */}
         <LuxuryMarquee />
+        <CategoryGrid />
         <WatchAndBuySection />
         <HomePageContent />
-        <CategoryGrid />
-        <ColdChainBanner />
         <TrustBadgesSection />
         <TestimonialSection />
-        <WhyBuySection />
         {/* <SocialMediaSection /> */}
       </main>
     </>

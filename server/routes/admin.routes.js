@@ -9,6 +9,7 @@ import {
   updateAdminRole,
   deleteAdmin,
   updateAdminPermissions,
+  updateAdminDetails,
   getLowStockAlerts,
   getUsers,
   getUserById,
@@ -70,12 +71,20 @@ router.delete(
   deleteAdmin
 );
 
-// Update admin permissions (can be used to fix missing permissions)
+// Update admin permissions (replace the admin's per-admin permission set)
 router.post(
   "/admins/:adminId/update-permissions",
   verifyAdminJWT,
   hasRole("SUPER_ADMIN"),
   updateAdminPermissions
+);
+
+// Update an admin's profile details / reset password
+router.patch(
+  "/admins/:adminId/details",
+  verifyAdminJWT,
+  hasRole("SUPER_ADMIN"),
+  updateAdminDetails
 );
 
 // User Management Routes

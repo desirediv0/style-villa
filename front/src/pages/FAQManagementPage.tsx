@@ -33,11 +33,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Edit, MoreHorizontal, Plus, Trash, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { usePermissions } from "@/hooks/usePermissions";
 import { Badge } from "@/components/ui/badge";
 
 
 export default function FAQManagementPage() {
   const { t } = useLanguage();
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
@@ -210,12 +212,11 @@ export default function FAQManagementPage() {
               {t("faq_management.description")}
             </p>
           </div>
-          <Button
-            onClick={handleCreateNew}
-            className=""
-          >
-            <Plus className="mr-2 h-4 w-4" /> {t("faq_management.add_button")}
-          </Button>
+          {canCreate("faqs") && (
+            <Button onClick={handleCreateNew} className="">
+              <Plus className="mr-2 h-4 w-4" /> {t("faq_management.add_button")}
+            </Button>
+          )}
         </div>
         <div className="h-px bg-[#E5E7EB]" />
       </div>
@@ -338,12 +339,14 @@ export default function FAQManagementPage() {
                             {t("faq_management.actions")}
                           </DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-[#1F2937] hover:bg-[#F3F7F6]"
-                            onClick={() => handleEdit(faq)}
-                          >
-                            <Edit className="h-4 w-4 mr-2" /> {t("faq_management.edit")}
-                          </DropdownMenuItem>
+                          {canUpdate("faqs") && (
+                            <DropdownMenuItem
+                              className="text-[#1F2937] hover:bg-[#F3F7F6]"
+                              onClick={() => handleEdit(faq)}
+                            >
+                              <Edit className="h-4 w-4 mr-2" /> {t("faq_management.edit")}
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem
                             className="text-[#1F2937] hover:bg-[#F3F7F6]"
                             onClick={() => togglePublish(faq)}
@@ -358,13 +361,14 @@ export default function FAQManagementPage() {
                               </>
                             )}
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-
-                            className="text-[#EF4444] hover:bg-[#FEF2F2]"
-                            onClick={() => setDeleteConfirmId(faq.id)}
-                          >
-                            <Trash className="h-4 w-4 mr-2" /> {t("faq_management.delete")}
-                          </DropdownMenuItem>
+                          {canDelete("faqs") && (
+                            <DropdownMenuItem
+                              className="text-[#EF4444] hover:bg-[#FEF2F2]"
+                              onClick={() => setDeleteConfirmId(faq.id)}
+                            >
+                              <Trash className="h-4 w-4 mr-2" /> {t("faq_management.delete")}
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

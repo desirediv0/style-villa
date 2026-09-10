@@ -6,6 +6,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import s3client from "../utils/s3client.js";
 import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { isAdmin } from "../middlewares/auth.middleware.js";
+import { hasPermission } from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 // using shared `prisma` from `config/db.js`
@@ -25,7 +26,7 @@ const upload = multer({
 });
 
 // Get all categories
-router.get("/categories", isAdmin, async (req, res) => {
+router.get("/categories", isAdmin, hasPermission("categories", "read"), async (req, res) => {
   try {
     const categories = await prisma.category.findMany({
       include: {
@@ -60,7 +61,7 @@ router.get("/categories", isAdmin, async (req, res) => {
 });
 
 // Get a category by ID
-router.get("/categories/:id", isAdmin, async (req, res) => {
+router.get("/categories/:id", isAdmin, hasPermission("categories", "read"), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -107,6 +108,7 @@ router.get("/categories/:id", isAdmin, async (req, res) => {
 router.post(
   "/categories",
   isAdmin,
+  hasPermission("categories", "create"),
   upload.single("image"),
   async (req, res) => {
     try {
@@ -195,6 +197,7 @@ router.post(
 router.patch(
   "/categories/:id",
   isAdmin,
+  hasPermission("categories", "update"),
   upload.single("image"),
   async (req, res) => {
     try {
@@ -327,7 +330,7 @@ router.patch(
 );
 
 // Delete a category
-router.delete("/categories/:id", isAdmin, async (req, res) => {
+router.delete("/categories/:id", isAdmin, hasPermission("categories", "delete"), async (req, res) => {
   try {
     const { id } = req.params;
     const { force } = req.query; // Add force parameter to force deletion

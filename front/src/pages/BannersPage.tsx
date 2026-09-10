@@ -19,6 +19,7 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useDropzone } from "react-dropzone";
@@ -608,6 +609,7 @@ function BannerForm({
 
 // Banners List Component
 function BannersList() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { t } = useLanguage();
   const [bannersList, setBannersList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -709,15 +711,14 @@ function BannersList() {
               {t("banners.subtitle")}
             </p>
           </div>
-          <Button
-            asChild
-            className=""
-          >
-            <Link to="/banners/new">
-              <Plus className="mr-2 h-4 w-4" />
-              {t("banners.create_button")}
-            </Link>
-          </Button>
+          {canCreate("banners") && (
+            <Button asChild className="">
+              <Link to="/banners/new">
+                <Plus className="mr-2 h-4 w-4" />
+                {t("banners.create_button")}
+              </Link>
+            </Button>
+          )}
         </div>
         <div className="h-px bg-[#E5E7EB]" />
       </div>
@@ -876,29 +877,33 @@ function BannersList() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 hover:bg-[#F3F4F6]"
-                      onClick={() => handleTogglePublish(banner.id)}
-                      title={banner.isPublished ? t("banners.list.unpublish") : t("banners.list.publish")}
-                    >
-                      {banner.isPublished ? (
-                        <EyeOff className="h-4 w-4 text-[#4B5563]" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-[#4B5563]" />
-                      )}
-                    </Button>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 hover:bg-[#F3F4F6]"
-                    >
-                      <Link to={`/banners/${banner.id}`}>
-                        <Edit className="h-4 w-4 text-[#4B5563]" />
-                      </Link>
-                    </Button>
+                    {canUpdate("banners") && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 hover:bg-[#F3F4F6]"
+                        onClick={() => handleTogglePublish(banner.id)}
+                        title={banner.isPublished ? t("banners.list.unpublish") : t("banners.list.publish")}
+                      >
+                        {banner.isPublished ? (
+                          <EyeOff className="h-4 w-4 text-[#4B5563]" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-[#4B5563]" />
+                        )}
+                      </Button>
+                    )}
+                    {canUpdate("banners") && (
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 hover:bg-[#F3F4F6]"
+                      >
+                        <Link to={`/banners/${banner.id}`}>
+                          <Edit className="h-4 w-4 text-[#4B5563]" />
+                        </Link>
+                      </Button>
+                    )}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -929,14 +934,18 @@ function BannersList() {
                             </>
                           )}
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-[#E5E7EB]" />
-                        <DropdownMenuItem
-                          className="text-[#EF4444] hover:bg-[#FEF2F2]"
-                          onClick={() => handleDelete(banner.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          {t("banners.delete")}
-                        </DropdownMenuItem>
+                        {canDelete("banners") && (
+                          <>
+                            <DropdownMenuSeparator className="bg-[#E5E7EB]" />
+                            <DropdownMenuItem
+                              className="text-[#EF4444] hover:bg-[#FEF2F2]"
+                              onClick={() => handleDelete(banner.id)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              {t("banners.delete")}
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

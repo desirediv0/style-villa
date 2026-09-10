@@ -1,12 +1,13 @@
 import express from "express";
 import { prisma } from "../config/db.js";
 import { isAdmin } from "../middlewares/auth.middleware.js";
+import { hasPermission } from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 // using shared `prisma` from `config/db.js`
 
 // Get all coupons
-router.get("/coupons", isAdmin, async (req, res) => {
+router.get("/coupons", isAdmin, hasPermission("coupons", "read"), async (req, res) => {
   try {
     const coupons = await prisma.coupon.findMany({
       orderBy: [{ code: "asc" }],
@@ -45,7 +46,7 @@ router.get("/coupons", isAdmin, async (req, res) => {
 });
 
 // Get coupon by ID
-router.get("/coupons/:id", isAdmin, async (req, res) => {
+router.get("/coupons/:id", isAdmin, hasPermission("coupons", "read"), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -92,7 +93,7 @@ router.get("/coupons/:id", isAdmin, async (req, res) => {
 });
 
 // Create coupon
-router.post("/coupons", isAdmin, async (req, res) => {
+router.post("/coupons", isAdmin, hasPermission("coupons", "create"), async (req, res) => {
   try {
     const {
       code,
@@ -319,7 +320,7 @@ router.post("/coupons", isAdmin, async (req, res) => {
 });
 
 // Update coupon
-router.patch("/coupons/:id", isAdmin, async (req, res) => {
+router.patch("/coupons/:id", isAdmin, hasPermission("coupons", "update"), async (req, res) => {
   try {
     const { id } = req.params;
     const {
@@ -615,7 +616,7 @@ router.patch("/coupons/:id", isAdmin, async (req, res) => {
 });
 
 // Delete coupon
-router.delete("/coupons/:id", isAdmin, async (req, res) => {
+router.delete("/coupons/:id", isAdmin, hasPermission("coupons", "delete"), async (req, res) => {
   try {
     const { id } = req.params;
 

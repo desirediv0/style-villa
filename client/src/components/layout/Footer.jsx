@@ -133,6 +133,46 @@ export const Footer = () => {
                 </svg>
               </a>
             </div>
+
+            {/* Social follow callout */}
+            <div className="mt-6 max-w-[280px]">
+              <p className="text-sm font-semibold text-plum mb-2">Most important!</p>
+              <ul className="space-y-1.5 text-sm text-stone-dark">
+                <li>
+                  Follow Instagram{" "}
+                  <a
+                    href="https://www.instagram.com/stylevillaofficial"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-plum hover:underline break-all"
+                  >
+                    @stylevillaofficial
+                  </a>
+                </li>
+                <li>
+                  Follow Facebook{" "}
+                  <a
+                    href="https://www.facebook.com/stylevillafamily"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-plum hover:underline break-all"
+                  >
+                    /stylevillafamily
+                  </a>
+                </li>
+                <li>
+                  For updates &amp; live notifications on YouTube —{" "}
+                  <a
+                    href="https://www.youtube.com/@stylevillaofficial"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-plum hover:underline break-all"
+                  >
+                    stylevillaofficial
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Quick Links */}

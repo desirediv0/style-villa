@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import {
   Dialog,
   DialogContent,
@@ -51,6 +52,7 @@ export default function CategoriesPage() {
 
 // Categories List Component
 function CategoriesList() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -250,15 +252,14 @@ function CategoriesList() {
             >
               <HelpCircle className="h-4 w-4" />
             </Button>
-            <Button
-              asChild
-              className=""
-            >
-              <Link to="/categories/new">
-                <Plus className="mr-2 h-4 w-4" />
-                {t("categories.create_button")}
-              </Link>
-            </Button>
+            {canCreate("categories") && (
+              <Button asChild className="">
+                <Link to="/categories/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("categories.create_button")}
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
         <div className="h-px bg-[#E5E7EB]" />
@@ -277,15 +278,14 @@ function CategoriesList() {
             <p className="text-sm text-[#9CA3AF] mb-6 max-w-sm mx-auto">
               {t("categories.empty.description")}
             </p>
-            <Button
-              asChild
-              className=""
-            >
-              <Link to="/categories/new">
-                <Plus className="mr-2 h-4 w-4" />
-                {t("categories.empty.create_first")}
-              </Link>
-            </Button>
+            {canCreate("categories") && (
+              <Button asChild className="">
+                <Link to="/categories/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("categories.empty.create_first")}
+                </Link>
+              </Button>
+            )}
           </div>
         </Card>
       ) : (
@@ -320,24 +320,28 @@ function CategoriesList() {
                   </div>
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#E5E7EB]">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 hover:bg-[#F3F4F6]"
-                    asChild
-                  >
-                    <Link to={`/categories/${category.id}`}>
-                      <Edit className="h-4 w-4 text-[#4B5563]" />
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 hover:bg-[#FEF2F2]"
-                    onClick={() => openDeleteDialog(category.id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-[#EF4444]" />
-                  </Button>
+                  {canUpdate("categories") && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 hover:bg-[#F3F4F6]"
+                      asChild
+                    >
+                      <Link to={`/categories/${category.id}`}>
+                        <Edit className="h-4 w-4 text-[#4B5563]" />
+                      </Link>
+                    </Button>
+                  )}
+                  {canDelete("categories") && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 hover:bg-[#FEF2F2]"
+                      onClick={() => openDeleteDialog(category.id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-[#EF4444]" />
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -576,6 +580,7 @@ function CategoryForm({
 }) {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { canUpdate: canUpdateSub, canDelete: canDeleteSub } = usePermissions();
   const [isLoading, setIsLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(mode === "edit");
 
@@ -1005,15 +1010,17 @@ function CategoryForm({
                   {t("categories.subcategories.subtitle")}
                 </p>
               </div>
-              <Button
-                type="button"
-                className=""
-                onClick={() => openSubCategoryDialog()}
-                disabled={!categoryId}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                {t("categories.subcategories.add_button")}
-              </Button>
+              {canUpdateSub("subcategories") && (
+                <Button
+                  type="button"
+                  className=""
+                  onClick={() => openSubCategoryDialog()}
+                  disabled={!categoryId}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("categories.subcategories.add_button")}
+                </Button>
+              )}
             </div>
           </CardHeader>
           <CardContent className="px-6 pb-6">
@@ -1033,14 +1040,16 @@ function CategoryForm({
                 <p className="text-sm text-[#9CA3AF] mb-6">
                   {t("categories.subcategories.empty_desc")}
                 </p>
-                <Button
-                  type="button"
-                  className=""
-                  onClick={() => openSubCategoryDialog()}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t("categories.subcategories.add_button")}
-                </Button>
+                {canUpdateSub("subcategories") && (
+                  <Button
+                    type="button"
+                    className=""
+                    onClick={() => openSubCategoryDialog()}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t("categories.subcategories.add_button")}
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1080,14 +1089,17 @@ function CategoryForm({
                           </Badge>
                         </div>
                         <div className="flex flex-col gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 hover:bg-[#F3F4F6]"
-                            onClick={() => openSubCategoryDialog(subCategory)}
-                          >
-                            <Edit className="h-4 w-4 text-[#4B5563]" />
-                          </Button>
+                          {canUpdateSub("subcategories") && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-[#F3F4F6]"
+                              onClick={() => openSubCategoryDialog(subCategory)}
+                            >
+                              <Edit className="h-4 w-4 text-[#4B5563]" />
+                            </Button>
+                          )}
+                          {canDeleteSub("subcategories") && (
                           <Button
                             variant="ghost"
                             size="icon"
@@ -1098,6 +1110,7 @@ function CategoryForm({
                           >
                             <Trash2 className="h-4 w-4 text-[#EF4444]" />
                           </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>

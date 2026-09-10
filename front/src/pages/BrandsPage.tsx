@@ -24,6 +24,7 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { getImageUrl } from "@/utils/image";
+import { usePermissions } from "@/hooks/usePermissions";
 import { products } from "@/api/adminService";
 import { MultiSelect } from "@/components/ui/multiselect";
 import {
@@ -54,6 +55,7 @@ interface Brand {
 }
 
 export default function BrandsPage() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [brandsList, setBrandsList] = useState<Brand[]>([]);
   const [open, setOpen] = useState(false);
   const [editBrand, setEditBrand] = useState<Brand | null>(null);
@@ -214,20 +216,22 @@ export default function BrandsPage() {
                 if (!v) handleDialogClose();
               }}
             >
-              <DialogTrigger asChild>
-                <Button
-                  className=""
-                  onClick={() => {
-                    setEditBrand(null);
-                    setForm({ name: "", image: null });
-                    setImagePreview(null);
-                    setBrandTags([]);
-                  }}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t("brands.add_button")}
-                </Button>
-              </DialogTrigger>
+              {canCreate("brands") && (
+                <DialogTrigger asChild>
+                  <Button
+                    className=""
+                    onClick={() => {
+                      setEditBrand(null);
+                      setForm({ name: "", image: null });
+                      setImagePreview(null);
+                      setBrandTags([]);
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t("brands.add_button")}
+                  </Button>
+                </DialogTrigger>
+              )}
               <DialogContent className="bg-[#FFFFFF] border-[#E5E7EB]">
                 <DialogHeader>
                   <DialogTitle className="text-xl font-semibold text-[#1F2937]">
@@ -468,21 +472,27 @@ export default function BrandsPage() {
                         <Eye className="h-4 w-4 mr-2" />
                         {t("brands.actions.view_products")}
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-[#1F2937] hover:bg-[#F3F7F6]"
-                        onClick={() => handleEdit(brand)}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        {t("brands.actions.edit")}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator className="bg-[#E5E7EB]" />
-                      <DropdownMenuItem
-                        className="text-[#EF4444] hover:bg-[#FEF2F2]"
-                        onClick={() => handleDelete(brand.id)}
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        {t("brands.actions.delete")}
-                      </DropdownMenuItem>
+                      {canUpdate("brands") && (
+                        <DropdownMenuItem
+                          className="text-[#1F2937] hover:bg-[#F3F7F6]"
+                          onClick={() => handleEdit(brand)}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          {t("brands.actions.edit")}
+                        </DropdownMenuItem>
+                      )}
+                      {canDelete("brands") && (
+                        <>
+                          <DropdownMenuSeparator className="bg-[#E5E7EB]" />
+                          <DropdownMenuItem
+                            className="text-[#EF4444] hover:bg-[#FEF2F2]"
+                            onClick={() => handleDelete(brand.id)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            {t("brands.actions.delete")}
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

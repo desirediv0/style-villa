@@ -20,6 +20,7 @@ import {
   Film,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { Label } from "@/components/ui/label";
 import { useDropzone } from "react-dropzone";
 import { Badge } from "@/components/ui/badge";
@@ -584,6 +585,7 @@ function VideoReelForm({
 
 // Video Reels List Component
 function VideoReelsList() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [reels, setReels] = useState<VideoReelItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -666,12 +668,14 @@ function VideoReelsList() {
             Manage Watch and Buy video reels
           </p>
         </div>
-        <Button asChild>
-          <Link to="/video-reels/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Reel
-          </Link>
-        </Button>
+        {canCreate("video-reels") && (
+          <Button asChild>
+            <Link to="/video-reels/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Reel
+            </Link>
+          </Button>
+        )}
       </div>
 
       {/* Filters */}
@@ -719,12 +723,14 @@ function VideoReelsList() {
             <p className="text-sm text-[#9CA3AF] mb-6">
               Create your first video reel to show on the homepage
             </p>
-            <Button asChild>
-              <Link to="/video-reels/new">
-                <Plus className="mr-2 h-4 w-4" />
-                Create Reel
-              </Link>
-            </Button>
+            {canCreate("video-reels") && (
+              <Button asChild>
+                <Link to="/video-reels/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Reel
+                </Link>
+              </Button>
+            )}
           </div>
         </Card>
       ) : (
@@ -773,38 +779,44 @@ function VideoReelsList() {
                   products
                 </p>
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleToggleActive(reel.id)}
-                    className="h-8 px-3"
-                  >
-                    {reel.isActive ? (
-                      <EyeOff className="h-4 w-4 mr-1" />
-                    ) : (
-                      <Eye className="h-4 w-4 mr-1" />
-                    )}
-                    {reel.isActive ? "Deactivate" : "Activate"}
-                  </Button>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 px-3"
-                  >
-                    <Link to={`/video-reels/${reel.id}`}>
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-                    onClick={() => handleDelete(reel.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {canUpdate("video-reels") && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleToggleActive(reel.id)}
+                      className="h-8 px-3"
+                    >
+                      {reel.isActive ? (
+                        <EyeOff className="h-4 w-4 mr-1" />
+                      ) : (
+                        <Eye className="h-4 w-4 mr-1" />
+                      )}
+                      {reel.isActive ? "Deactivate" : "Activate"}
+                    </Button>
+                  )}
+                  {canUpdate("video-reels") && (
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-3"
+                    >
+                      <Link to={`/video-reels/${reel.id}`}>
+                        <Edit className="h-4 w-4 mr-1" />
+                        Edit
+                      </Link>
+                    </Button>
+                  )}
+                  {canDelete("video-reels") && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => handleDelete(reel.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

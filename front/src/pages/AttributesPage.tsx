@@ -24,6 +24,7 @@ import {
   Info,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { useLanguage } from "@/context/LanguageContext";
 import { ErrorDialog } from "@/components/ErrorDialog";
 import { useDebounce } from "@/utils/debounce";
@@ -36,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AttributesPage() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const { id } = useParams();
   const location = useLocation();
   const isNewAttribute = location.pathname.includes("/new");
@@ -167,12 +169,14 @@ function AttributesList() {
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl  ">{t("attributes.title")}</h1>
-        <Button asChild>
-          <Link to="/attributes/new">
-            <Plus className="mr-2 h-4 w-4" />
-            {t("attributes.create_button")}
-          </Link>
-        </Button>
+        {canCreate("attributes") && (
+          <Button asChild>
+            <Link to="/attributes/new">
+              <Plus className="mr-2 h-4 w-4" />
+              {t("attributes.create_button")}
+            </Link>
+          </Button>
+        )}
       </div>
 
       <Card className="p-4">
@@ -192,12 +196,14 @@ function AttributesList() {
             <p className="mt-2 text-sm text-muted-foreground">
               {t("attributes.empty.description")}
             </p>
-            <Button asChild className="mt-4">
-              <Link to="/attributes/new">
-                <Plus className="mr-2 h-4 w-4" />
-                {t("attributes.create_button")}
-              </Link>
-            </Button>
+            {canCreate("attributes") && (
+              <Button asChild className="mt-4">
+                <Link to="/attributes/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("attributes.create_button")}
+                </Link>
+              </Button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -239,22 +245,22 @@ function AttributesList() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          asChild
-                        >
-                          <Link to={`/attributes/${attribute.id}`}>
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => confirmDeleteAttribute(attribute.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        {canUpdate("attributes") && (
+                          <Button variant="ghost" size="sm" asChild>
+                            <Link to={`/attributes/${attribute.id}`}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        )}
+                        {canDelete("attributes") && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => confirmDeleteAttribute(attribute.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>

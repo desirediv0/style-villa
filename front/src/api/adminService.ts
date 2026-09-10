@@ -124,6 +124,7 @@ export const adminUsers = {
     firstName: string;
     lastName: string;
     role: string;
+    roleId?: string | null;
     customPermissions?: Array<{ resource: string; action: string }>;
   }) => {
     return api.post("/api/admin/register", data);
@@ -133,6 +134,64 @@ export const adminUsers = {
     data: { permissions: Array<{ resource: string; action: string }> }
   ) => {
     return api.post(`/api/admin/admins/${adminId}/update-permissions`, data);
+  },
+  // Update role / active status / assigned custom role.
+  updateAdmin: (
+    adminId: string,
+    data: {
+      role?: string;
+      isActive?: boolean;
+      roleId?: string | null;
+      resetPermissionsFromRole?: boolean;
+    }
+  ) => {
+    return api.patch(`/api/admin/admins/${adminId}`, data);
+  },
+  // Update profile details / reset password.
+  updateAdminDetails: (
+    adminId: string,
+    data: {
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      password?: string;
+      isActive?: boolean;
+    }
+  ) => {
+    return api.patch(`/api/admin/admins/${adminId}/details`, data);
+  },
+};
+
+// Roles & Permissions
+export const adminRoles = {
+  getPermissionCatalog: () => {
+    return api.get("/api/admin/roles/catalog");
+  },
+  getRoles: () => {
+    return api.get("/api/admin/roles");
+  },
+  getRole: (roleId: string) => {
+    return api.get(`/api/admin/roles/${roleId}`);
+  },
+  createRole: (data: {
+    name: string;
+    description?: string;
+    permissions: Array<{ resource: string; action: string }>;
+  }) => {
+    return api.post("/api/admin/roles", data);
+  },
+  updateRole: (
+    roleId: string,
+    data: {
+      name?: string;
+      description?: string;
+      permissions?: Array<{ resource: string; action: string }>;
+    }
+  ) => {
+    return api.patch(`/api/admin/roles/${roleId}`, data);
+  },
+  deleteRole: (roleId: string) => {
+    return api.delete(`/api/admin/roles/${roleId}`);
   },
 };
 

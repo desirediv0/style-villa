@@ -16,6 +16,8 @@ import CouponsPage from "./pages/CouponsPage";
 import AdminsPage from "./pages/AdminsPage";
 import AdminCreatePage from "./pages/AdminCreatePage";
 import AdminPermissionsPage from "./pages/AdminPermissionsPage";
+import AdminEditPage from "./pages/AdminEditPage";
+import RolesPage from "./pages/RolesPage";
 import ContactManagementPage from "./pages/ContactManagementPage";
 import ReviewsManagementPage from "./pages/ReviewsManagementPage";
 import FAQManagementPage from "./pages/FAQManagementPage";
@@ -537,10 +539,28 @@ const App = () => {
             />
 
             <Route
+              path="admins/:adminId/edit"
+              element={
+                <ProtectedRoute superAdminOnly={true}>
+                  <AdminEditPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="admins/permissions/:adminId"
               element={
                 <ProtectedRoute superAdminOnly={true}>
                   <AdminPermissionsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="roles"
+              element={
+                <ProtectedRoute superAdminOnly={true}>
+                  <RolesPage />
                 </ProtectedRoute>
               }
             />

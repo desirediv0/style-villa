@@ -5,15 +5,33 @@ import { prisma } from "../config/db.js";
 import { getFileUrl } from "../utils/deleteFromS3.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import {
+  getDefaultPermissionsForRole,
+  sanitizePermissions,
+} from "../config/permissions.js";
 
 // Register a new admin
 export const registerAdmin = asyncHandler(async (req, res) => {
-  const { email, password, firstName, lastName, role, customPermissions } =
-    req.body;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    role,
+    roleId,
+    customPermissions,
+  } = req.body;
 
   // Check if the current user is a super admin (if not, they shouldn't be here)
   if (req.admin && req.admin.role !== "SUPER_ADMIN") {
     throw new ApiError(403, "Only Super Admins can create new admins");
+  }
+
+  if (!email || !password || !firstName || !lastName) {
+    throw new ApiError(400, "Email, password, first name and last name are required");
+  }
+  if (password.length < 8) {
+    throw new ApiError(400, "Password must be at least 8 characters");
   }
 
   // Check if admin already exists
@@ -25,8 +43,23 @@ export const registerAdmin = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Email already registered");
   }
 
+  // Validate the assigned custom role, if any
+  let resolvedRoleId = null;
+  if (roleId) {
+    const found = await prisma.role.findUnique({ where: { id: roleId } });
+    if (!found) throw new ApiError(400, "Selected role does not exist");
+    resolvedRoleId = found.id;
+  }
+
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Explicit customPermissions win; otherwise fall back to the enum-role defaults.
+  // (A custom Role's permissions are merged in at auth time, not copied here.)
+  const permissionsToCreate =
+    Array.isArray(customPermissions) && customPermissions.length > 0
+      ? sanitizePermissions(customPermissions)
+      : getDefaultPermissionsForRole(role || "ADMIN");
 
   // Create admin with permissions
   const newAdmin = await prisma.$transaction(async (tx) => {
@@ -38,24 +71,15 @@ export const registerAdmin = asyncHandler(async (req, res) => {
         firstName,
         lastName,
         role: role || "ADMIN",
+        roleId: resolvedRoleId,
         lastLogin: new Date(),
       },
     });
 
-    // If customPermissions were provided, use them instead of defaults
-    const permissionsToCreate =
-      Array.isArray(customPermissions) && customPermissions.length > 0
-        ? customPermissions
-        : getDefaultPermissionsForRole(role || "ADMIN");
-
-    // Add permissions
-    for (const perm of permissionsToCreate) {
-      await tx.permission.create({
-        data: {
-          adminId: admin.id,
-          resource: perm.resource,
-          action: perm.action,
-        },
+    if (permissionsToCreate.length) {
+      await tx.permission.createMany({
+        data: permissionsToCreate.map((p) => ({ adminId: admin.id, ...p })),
+        skipDuplicates: true,
       });
     }
 
@@ -86,6 +110,7 @@ export const loginAdmin = asyncHandler(async (req, res, next) => {
     where: { email },
     include: {
       permissions: true,
+      customRole: { include: { permissions: true } },
     },
   });
 
@@ -105,13 +130,23 @@ export const loginAdmin = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "Invalid email or password");
   }
 
+  // Effective permissions = per-admin rows UNION assigned custom Role's rows.
+  const effectivePermissions = Array.from(
+    new Set([
+      ...admin.permissions.map((p) => `${p.resource}:${p.action}`),
+      ...(admin.customRole?.permissions || []).map(
+        (p) => `${p.resource}:${p.action}`
+      ),
+    ])
+  );
+
   // Generate token
   const token = jwt.sign(
     {
       id: admin.id,
       email: admin.email,
       role: admin.role,
-      permissions: admin.permissions.map((p) => `${p.resource}:${p.action}`),
+      permissions: effectivePermissions,
     },
     process.env.ADMIN_JWT_SECRET,
     {
@@ -126,8 +161,9 @@ export const loginAdmin = asyncHandler(async (req, res, next) => {
   });
 
   // Remove sensitive data from response
-  const adminWithoutPassword = { ...admin };
-  delete adminWithoutPassword.password;
+  const { password: _pw, customRole, ...adminWithoutPassword } = admin;
+  adminWithoutPassword.roleName = customRole?.name || null;
+  adminWithoutPassword.permissions = effectivePermissions;
 
   res.status(200).json(
     new ApiResponsive(
@@ -147,6 +183,7 @@ export const getAdminProfile = asyncHandler(async (req, res, next) => {
     where: { id: req.admin.id },
     include: {
       permissions: true,
+      customRole: { include: { permissions: true } },
     },
   });
 
@@ -154,9 +191,19 @@ export const getAdminProfile = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "Admin not found");
   }
 
+  const effectivePermissions = Array.from(
+    new Set([
+      ...admin.permissions.map((p) => `${p.resource}:${p.action}`),
+      ...(admin.customRole?.permissions || []).map(
+        (p) => `${p.resource}:${p.action}`
+      ),
+    ])
+  );
+
   // Remove sensitive data from response
-  const adminWithoutPassword = { ...admin };
-  delete adminWithoutPassword.password;
+  const { password: _pw, customRole, ...adminWithoutPassword } = admin;
+  adminWithoutPassword.roleName = customRole?.name || null;
+  adminWithoutPassword.permissions = effectivePermissions;
 
   res
     .status(200)
@@ -235,15 +282,27 @@ export const getAllAdmins = asyncHandler(async (req, res, next) => {
   }
 
   const admins = await prisma.admin.findMany({
-    include: { permissions: true },
+    include: {
+      permissions: true,
+      customRole: { include: { permissions: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
-  // Remove sensitive data
+  // Remove sensitive data and expose effective (own UNION role) permissions.
   const adminsWithoutPasswords = admins.map((admin) => {
-    const adminData = { ...admin };
-    delete adminData.password;
-    return adminData;
+    const { password, customRole, ...adminData } = admin;
+    const own = admin.permissions.map((p) => `${p.resource}:${p.action}`);
+    const fromRole = (customRole?.permissions || []).map(
+      (p) => `${p.resource}:${p.action}`
+    );
+    return {
+      ...adminData,
+      roleName: customRole?.name || null,
+      ownPermissions: own,
+      rolePermissions: fromRole,
+      permissions: Array.from(new Set([...own, ...fromRole])),
+    };
   });
 
   res
@@ -257,48 +316,50 @@ export const getAllAdmins = asyncHandler(async (req, res, next) => {
     );
 });
 
-// Update admin role (super admin only)
+// Update admin role / active status / assigned custom role (super admin only)
 export const updateAdminRole = asyncHandler(async (req, res, next) => {
   const { adminId } = req.params;
-  const { role, isActive } = req.body;
+  // roleId: null clears the custom role; undefined leaves it untouched.
+  // resetPermissionsFromRole: if true, replace per-admin permissions with the
+  //   enum-role defaults (the old behaviour). Off by default now that custom
+  //   roles are merged at auth time.
+  const { role, isActive, roleId, resetPermissionsFromRole } = req.body;
 
   // Check if current admin is a super admin
   if (req.admin.role !== "SUPER_ADMIN") {
     throw new ApiError(403, "Forbidden: Insufficient permissions");
   }
 
+  const target = await prisma.admin.findUnique({ where: { id: adminId } });
+  if (!target) throw new ApiError(404, "Admin not found");
+
   // Prevent self-demotion
-  if (adminId === req.admin.id) {
-    throw new ApiError(400, "You cannot modify your own role");
+  if (adminId === req.admin.id && (role || isActive === false)) {
+    throw new ApiError(400, "You cannot change your own role or active status");
+  }
+
+  if (roleId) {
+    const found = await prisma.role.findUnique({ where: { id: roleId } });
+    if (!found) throw new ApiError(400, "Selected role does not exist");
   }
 
   const updatedAdmin = await prisma.$transaction(async (tx) => {
-    // Update the admin role
     const admin = await tx.admin.update({
       where: { id: adminId },
       data: {
         ...(role && { role }),
         ...(isActive !== undefined && { isActive }),
+        ...(roleId !== undefined && { roleId: roleId || null }),
       },
     });
 
-    // If role changed, update permissions
-    if (role) {
-      // Delete existing permissions
-      await tx.permission.deleteMany({
-        where: { adminId },
-      });
-
-      // Add new permissions based on role
-      const defaultPermissions = getDefaultPermissionsForRole(role);
-
-      for (const perm of defaultPermissions) {
-        await tx.permission.create({
-          data: {
-            adminId,
-            resource: perm.resource,
-            action: perm.action,
-          },
+    if (role && resetPermissionsFromRole) {
+      await tx.permission.deleteMany({ where: { adminId } });
+      const defaults = getDefaultPermissionsForRole(role);
+      if (defaults.length) {
+        await tx.permission.createMany({
+          data: defaults.map((p) => ({ adminId, ...p })),
+          skipDuplicates: true,
         });
       }
     }
@@ -306,9 +367,7 @@ export const updateAdminRole = asyncHandler(async (req, res, next) => {
     return admin;
   });
 
-  // Remove sensitive data
-  const adminWithoutPassword = { ...updatedAdmin };
-  delete adminWithoutPassword.password;
+  const { password, ...adminWithoutPassword } = updatedAdmin;
 
   res
     .status(200)
@@ -316,7 +375,56 @@ export const updateAdminRole = asyncHandler(async (req, res, next) => {
       new ApiResponsive(
         200,
         { admin: adminWithoutPassword },
-        "Admin role updated successfully"
+        "Admin updated successfully"
+      )
+    );
+});
+
+// Update an admin's profile details / password (super admin only)
+export const updateAdminDetails = asyncHandler(async (req, res) => {
+  const { adminId } = req.params;
+  const { firstName, lastName, email, password, isActive } = req.body;
+
+  if (req.admin.role !== "SUPER_ADMIN") {
+    throw new ApiError(403, "Forbidden: Insufficient permissions");
+  }
+
+  const target = await prisma.admin.findUnique({ where: { id: adminId } });
+  if (!target) throw new ApiError(404, "Admin not found");
+
+  if (adminId === req.admin.id && isActive === false) {
+    throw new ApiError(400, "You cannot deactivate your own account");
+  }
+
+  if (email && email !== target.email) {
+    const clash = await prisma.admin.findUnique({ where: { email } });
+    if (clash) throw new ApiError(409, "Email already registered");
+  }
+
+  if (password !== undefined && password !== "" && password.length < 8) {
+    throw new ApiError(400, "Password must be at least 8 characters");
+  }
+
+  const updated = await prisma.admin.update({
+    where: { id: adminId },
+    data: {
+      ...(firstName ? { firstName } : {}),
+      ...(lastName ? { lastName } : {}),
+      ...(email ? { email } : {}),
+      ...(isActive !== undefined ? { isActive } : {}),
+      ...(password ? { password: await bcrypt.hash(password, 10) } : {}),
+    },
+  });
+
+  const { password: _pw, ...adminWithoutPassword } = updated;
+
+  res
+    .status(200)
+    .json(
+      new ApiResponsive(
+        200,
+        { admin: adminWithoutPassword },
+        "Admin details updated successfully"
       )
     );
 });
@@ -345,64 +453,33 @@ export const deleteAdmin = asyncHandler(async (req, res, next) => {
     .json(new ApiResponsive(200, {}, "Admin deleted successfully"));
 });
 
-// Update admin permissions based on their role
+// Replace an admin's per-admin permission set with exactly what the UI sends.
+// Body: { permissions: [{ resource, action }, ...] }
+// If `permissions` is omitted, fall back to re-seeding from the enum-role defaults.
 export const updateAdminPermissions = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
+  const { permissions } = req.body;
 
-  // Check if admin exists
-  const admin = await prisma.admin.findUnique({
-    where: { id: adminId },
-    include: {
-      permissions: true,
-    },
-  });
-
-  if (!admin) {
-    throw new ApiError(404, "Admin not found");
+  if (req.admin.role !== "SUPER_ADMIN") {
+    throw new ApiError(403, "Forbidden: Insufficient permissions");
   }
 
-  // Get default permissions for this role
-  const defaultPermissions = getDefaultPermissionsForRole(admin.role);
+  const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+  if (!admin) throw new ApiError(404, "Admin not found");
 
-  // Create a record of existing permissions
-  const existingPermissions = admin.permissions.map(
-    (p) => `${p.resource}:${p.action}`
-  );
+  const desired = Array.isArray(permissions)
+    ? sanitizePermissions(permissions)
+    : getDefaultPermissionsForRole(admin.role);
 
-  // Filter out permissions that already exist
-  const newPermissions = defaultPermissions.filter(
-    (p) => !existingPermissions.includes(`${p.resource}:${p.action}`)
-  );
-
-  if (newPermissions.length === 0) {
-    return res.status(200).json(
-      new ApiResponsive(
-        200,
-        {
-          adminId,
-          message: "No new permissions to add",
-        },
-        "Admin permissions are already up to date"
-      )
-    );
-  }
-
-  // Add missing permissions in a transaction
   const result = await prisma.$transaction(async (tx) => {
-    const createdPermissions = [];
-
-    for (const permission of newPermissions) {
-      const createdPermission = await tx.adminPermission.create({
-        data: {
-          adminId,
-          resource: permission.resource,
-          action: permission.action,
-        },
+    await tx.permission.deleteMany({ where: { adminId } });
+    if (desired.length) {
+      await tx.permission.createMany({
+        data: desired.map((p) => ({ adminId, ...p })),
+        skipDuplicates: true,
       });
-      createdPermissions.push(createdPermission);
     }
-
-    return createdPermissions;
+    return tx.permission.findMany({ where: { adminId } });
   });
 
   res.status(200).json(
@@ -410,10 +487,10 @@ export const updateAdminPermissions = asyncHandler(async (req, res) => {
       200,
       {
         adminId,
-        addedPermissions: result,
+        permissions: result.map((p) => `${p.resource}:${p.action}`),
         count: result.length,
       },
-      `Added ${result.length} new permissions to admin`
+      "Admin permissions updated successfully"
     )
   );
 });
@@ -524,132 +601,6 @@ export const getLowStockAlerts = asyncHandler(async (req, res) => {
     )
   );
 });
-
-// Helper function to get default permissions based on role
-const getDefaultPermissionsForRole = (role) => {
-  const permissions = [];
-
-  // Common permissions for all admins
-  permissions.push({ resource: "dashboard", action: "read" });
-
-  if (role === "SUPER_ADMIN") {
-    // Super admin has all permissions
-    permissions.push(
-      { resource: "admins", action: "create" },
-      { resource: "admins", action: "read" },
-      { resource: "admins", action: "update" },
-      { resource: "admins", action: "delete" },
-      { resource: "users", action: "create" },
-      { resource: "users", action: "read" },
-      { resource: "users", action: "update" },
-      { resource: "users", action: "delete" },
-      { resource: "products", action: "create" },
-      { resource: "products", action: "read" },
-      { resource: "products", action: "update" },
-      { resource: "products", action: "delete" },
-      { resource: "orders", action: "create" },
-      { resource: "orders", action: "read" },
-      { resource: "orders", action: "update" },
-      { resource: "orders", action: "delete" },
-      { resource: "categories", action: "create" },
-      { resource: "categories", action: "read" },
-      { resource: "categories", action: "update" },
-      { resource: "categories", action: "delete" },
-      { resource: "reviews", action: "create" },
-      { resource: "reviews", action: "read" },
-      { resource: "reviews", action: "update" },
-      { resource: "reviews", action: "delete" },
-      { resource: "settings", action: "read" },
-      { resource: "settings", action: "update" },
-      { resource: "inventory", action: "create" },
-      { resource: "inventory", action: "read" },
-      { resource: "inventory", action: "update" },
-      { resource: "inventory", action: "delete" },
-      { resource: "coupons", action: "create" },
-      { resource: "coupons", action: "read" },
-      { resource: "coupons", action: "update" },
-      { resource: "coupons", action: "delete" },
-      { resource: "flavors", action: "create" },
-      { resource: "flavors", action: "read" },
-      { resource: "flavors", action: "update" },
-      { resource: "flavors", action: "delete" },
-      { resource: "weights", action: "create" },
-      { resource: "weights", action: "read" },
-      { resource: "weights", action: "update" },
-      { resource: "weights", action: "delete" }
-    );
-  } else if (role === "ADMIN") {
-    // Regular admin permissions
-    permissions.push(
-      { resource: "users", action: "read" },
-      { resource: "users", action: "update" },
-      { resource: "products", action: "create" },
-      { resource: "products", action: "read" },
-      { resource: "products", action: "update" },
-      { resource: "orders", action: "read" },
-      { resource: "orders", action: "update" },
-      { resource: "categories", action: "read" },
-      { resource: "categories", action: "create" },
-      { resource: "categories", action: "update" },
-      { resource: "reviews", action: "read" },
-      { resource: "reviews", action: "update" },
-      { resource: "inventory", action: "create" },
-      { resource: "inventory", action: "read" },
-      { resource: "inventory", action: "update" },
-      { resource: "inventory", action: "delete" },
-      { resource: "coupons", action: "read" },
-      { resource: "coupons", action: "create" },
-      { resource: "coupons", action: "update" },
-      { resource: "flavors", action: "read" },
-      { resource: "flavors", action: "create" },
-      { resource: "flavors", action: "update" },
-      { resource: "weights", action: "read" },
-      { resource: "weights", action: "create" },
-      { resource: "weights", action: "create" },
-      { resource: "weights", action: "update" },
-      { resource: "settings", action: "read" },
-      { resource: "settings", action: "update" }
-    );
-  } else if (role === "MANAGER") {
-    // Manager permissions
-    permissions.push(
-      { resource: "users", action: "read" },
-      { resource: "products", action: "read" },
-      { resource: "products", action: "update" },
-      { resource: "orders", action: "read" },
-      { resource: "orders", action: "update" },
-      { resource: "categories", action: "read" },
-      { resource: "reviews", action: "read" },
-      { resource: "reviews", action: "update" },
-      { resource: "inventory", action: "read" },
-      { resource: "inventory", action: "create" },
-      { resource: "coupons", action: "read" },
-      { resource: "flavors", action: "read" },
-      { resource: "weights", action: "read" }
-    );
-  } else if (role === "CONTENT_EDITOR") {
-    // Content editor permissions
-    permissions.push(
-      { resource: "products", action: "read" },
-      { resource: "products", action: "update" },
-      { resource: "categories", action: "read" },
-      { resource: "categories", action: "update" },
-      { resource: "flavors", action: "read" },
-      { resource: "weights", action: "read" }
-    );
-  } else if (role === "SUPPORT_AGENT") {
-    // Support agent permissions
-    permissions.push(
-      { resource: "users", action: "read" },
-      { resource: "orders", action: "read" },
-      { resource: "products", action: "read" },
-      { resource: "reviews", action: "read" },
-      { resource: "inventory", action: "read" }
-    );
-  }
-
-  return permissions;
-};
 
 // Get users with pagination and search
 export const getUsers = asyncHandler(async (req, res) => {

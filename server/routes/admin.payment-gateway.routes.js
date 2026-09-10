@@ -17,27 +17,35 @@ const router = express.Router();
 router.use(verifyAdminJWT);
 
 // Get all payment gateway settings for a user
-router.get("/payment-gateway-settings/:userId", getPaymentGatewaySettings);
+router.get(
+    "/payment-gateway-settings/:userId",
+    hasPermission("payment", "read"),
+    getPaymentGatewaySettings
+);
 
 // Get specific gateway setting
 router.get(
     "/payment-gateway-settings/:userId/:gateway",
+    hasPermission("payment", "read"),
     getPaymentGatewaySetting
 );
 
 // Create or Update payment gateway setting
 router.post(
     "/payment-gateway-settings/:userId",
+    hasPermission("payment", "update"),
     upsertPaymentGatewaySetting
 );
 router.put(
     "/payment-gateway-settings/:userId",
+    hasPermission("payment", "update"),
     upsertPaymentGatewaySetting
 );
 
 // Delete payment gateway setting
 router.delete(
     "/payment-gateway-settings/:userId/:gateway",
+    hasPermission("payment", "delete"),
     deletePaymentGatewaySetting
 );
 

@@ -132,6 +132,7 @@ model Admin {
   firstName   String
   lastName    String
   role        AdminRole     @default(ADMIN)
+  roleId      String?
   language    String        @default("en")
   isActive    Boolean       @default(true)
   lastLogin   DateTime?
@@ -140,6 +141,7 @@ model Admin {
   BlogPost    BlogPost[]
   PageContent PageContent[]
   permissions Permission[]
+  customRole  Role?         @relation(fields: [roleId], references: [id], onDelete: SetNull)
 }
 
 model Permission {
@@ -150,6 +152,29 @@ model Permission {
   admin    Admin  @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
   @@unique([adminId, resource, action])
+}
+
+// Reusable named roles with their own permission matrix.
+// An admin's effective permissions = (their role's permissions) UNION (their per-admin Permission rows).
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+  isSystem    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  admins      Admin[]
+  permissions RolePermission[]
+}
+
+model RolePermission {
+  id       String @id @default(uuid())
+  roleId   String
+  resource String
+  action   String
+  role     Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, resource, action])
 }
 
 // -----------------------
@@ -257,6 +282,7 @@ model Product {
   metaTitle         String?
   metaDescription   String?
   keywords          String?
+  socialVideoUrl    String? // optional Instagram / Facebook / YouTube reel link shown on the product page
   tags              String[]             @default([])
   topBrandIds       String[]             @default([])
   newBrandIds       String[]             @default([])

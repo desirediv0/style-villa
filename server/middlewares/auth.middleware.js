@@ -83,6 +83,11 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
             action: true,
           },
         },
+        customRole: {
+          include: {
+            permissions: { select: { resource: true, action: true } },
+          },
+        },
       },
     });
 
@@ -94,13 +99,19 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
       throw new ApiError(403, "Admin account is inactive");
     }
 
-    // Map permissions for easier access
-    const permissionsArray = admin.permissions.map(
-      (p) => `${p.resource}:${p.action}`
+    // Effective permissions = per-admin rows UNION assigned custom Role's rows.
+    const permSet = new Set(
+      admin.permissions.map((p) => `${p.resource}:${p.action}`)
     );
+    if (admin.customRole) {
+      for (const p of admin.customRole.permissions) {
+        permSet.add(`${p.resource}:${p.action}`);
+      }
+    }
 
     // Add formatted permissions to the admin object
-    admin.permissions = permissionsArray;
+    admin.permissions = Array.from(permSet);
+    admin.roleName = admin.customRole?.name || null;
 
     // Attach admin to request
     req.admin = admin;

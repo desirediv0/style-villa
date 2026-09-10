@@ -40,6 +40,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { formatDate } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -340,6 +341,7 @@ const DeleteConfirmDialog = ({
 
 // Main user management page component
 export default function UserManagementPage() {
+  const { canUpdate, canDelete } = usePermissions();
   const { t } = useLanguage();
   // States
   const [users, setUsers] = useState<User[]>([]);
@@ -699,17 +701,19 @@ export default function UserManagementPage() {
                             <Eye className="h-4 w-4 mr-2" />
                             {t("user_management.actions.view_details")}
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-[#1F2937] hover:bg-[#F3F7F6]"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setEditDialogOpen(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            {t("user_management.actions.edit")}
-                          </DropdownMenuItem>
-                          {!user.emailVerified && (
+                          {canUpdate("users") && (
+                            <DropdownMenuItem
+                              className="text-[#1F2937] hover:bg-[#F3F7F6]"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setEditDialogOpen(true);
+                              }}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              {t("user_management.actions.edit")}
+                            </DropdownMenuItem>
+                          )}
+                          {canUpdate("users") && !user.emailVerified && (
                             <DropdownMenuItem
                               className="text-[#1F2937] hover:bg-[#F3F7F6]"
                               onClick={() => handleVerifyUser(user.id)}
@@ -718,16 +722,18 @@ export default function UserManagementPage() {
                               {t("user_management.actions.verify_email")}
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem
-                            className="text-[#EF4444] hover:bg-[#FEF2F2]"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            {t("user_management.actions.delete")}
-                          </DropdownMenuItem>
+                          {canDelete("users") && (
+                            <DropdownMenuItem
+                              className="text-[#EF4444] hover:bg-[#FEF2F2]"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setDeleteDialogOpen(true);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              {t("user_management.actions.delete")}
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

@@ -18,6 +18,7 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useDropzone } from "react-dropzone";
@@ -296,6 +297,7 @@ function TestimonialForm({
 
 // ── Testimonials List ──
 function TestimonialsList() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [testimonialList, setTestimonialList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -350,11 +352,13 @@ function TestimonialsList() {
           <h1 className="text-2xl font-bold">Testimonials</h1>
           <p className="text-muted-foreground text-sm">Manage customer reviews shown on homepage</p>
         </div>
-        <Link to="/testimonials/new">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" /> Add Testimonial
-          </Button>
-        </Link>
+        {canCreate("testimonials") && (
+          <Link to="/testimonials/new">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> Add Testimonial
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Filters */}
@@ -389,11 +393,13 @@ function TestimonialsList() {
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Quote className="h-12 w-12 text-muted-foreground/30 mb-4" />
             <p className="text-muted-foreground">No testimonials yet</p>
-            <Link to="/testimonials/new">
-              <Button variant="outline" className="mt-4">
-                <Plus className="mr-2 h-4 w-4" /> Add First Testimonial
-              </Button>
-            </Link>
+            {canCreate("testimonials") && (
+              <Link to="/testimonials/new">
+                <Button variant="outline" className="mt-4">
+                  <Plus className="mr-2 h-4 w-4" /> Add First Testimonial
+                </Button>
+              </Link>
+            )}
           </CardContent>
         </Card>
       ) : (
@@ -455,11 +461,13 @@ function TestimonialsList() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <Link to={`/testimonials/${t.id}`}>
-                        <Edit className="mr-2 h-4 w-4" /> Edit
-                      </Link>
-                    </DropdownMenuItem>
+                    {canUpdate("testimonials") && (
+                      <DropdownMenuItem asChild>
+                        <Link to={`/testimonials/${t.id}`}>
+                          <Edit className="mr-2 h-4 w-4" /> Edit
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => handleTogglePublish(t.id)}>
                       {t.isPublished ? (
                         <>
@@ -471,13 +479,17 @@ function TestimonialsList() {
                         </>
                       )}
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => handleDelete(t.id)}
-                      className="text-destructive"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
+                    {canDelete("testimonials") && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(t.id)}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </CardContent>

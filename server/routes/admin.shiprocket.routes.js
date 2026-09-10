@@ -4,6 +4,7 @@
 
 import express from "express";
 import { isAdmin } from "../middlewares/auth.middleware.js";
+import { hasPermission } from "../middlewares/admin.middleware.js";
 import {
     getSettings,
     updateSettings,
@@ -24,25 +25,25 @@ import {
 const router = express.Router();
 
 // Settings routes
-router.get("/settings", isAdmin, getSettings);
-router.put("/settings", isAdmin, updateSettings);
-router.post("/test-connection", isAdmin, testConnection);
+router.get("/settings", isAdmin, hasPermission("shiprocket", "read"), getSettings);
+router.put("/settings", isAdmin, hasPermission("shiprocket", "update"), updateSettings);
+router.post("/test-connection", isAdmin, hasPermission("shiprocket", "read"), testConnection);
 
 // Pickup address routes
-router.get("/pickup-addresses", isAdmin, getPickupAddresses);
-router.post("/pickup-addresses", isAdmin, createPickupAddress);
-router.put("/pickup-addresses/:id", isAdmin, updatePickupAddress);
-router.delete("/pickup-addresses/:id", isAdmin, deletePickupAddress);
+router.get("/pickup-addresses", isAdmin, hasPermission("shiprocket", "read"), getPickupAddresses);
+router.post("/pickup-addresses", isAdmin, hasPermission("shiprocket", "create"), createPickupAddress);
+router.put("/pickup-addresses/:id", isAdmin, hasPermission("shiprocket", "update"), updatePickupAddress);
+router.delete("/pickup-addresses/:id", isAdmin, hasPermission("shiprocket", "delete"), deletePickupAddress);
 
 // Serviceability check
-router.post("/serviceability", isAdmin, checkOrderServiceability);
+router.post("/serviceability", isAdmin, hasPermission("shiprocket", "read"), checkOrderServiceability);
 
-// Order operations
-router.post("/orders/:orderId/sync", isAdmin, syncOrderToShiprocket);
-router.get("/orders/:orderId/tracking", isAdmin, getOrderTracking);
-router.post("/orders/:orderId/cancel", isAdmin, cancelShipment);
-router.get("/orders/:orderId/label", isAdmin, getShippingLabel);
-router.get("/orders/:orderId/invoice", isAdmin, getOrderInvoice);
+// Order operations (tied to orders permissions)
+router.post("/orders/:orderId/sync", isAdmin, hasPermission("orders", "update"), syncOrderToShiprocket);
+router.get("/orders/:orderId/tracking", isAdmin, hasPermission("orders", "read"), getOrderTracking);
+router.post("/orders/:orderId/cancel", isAdmin, hasPermission("orders", "update"), cancelShipment);
+router.get("/orders/:orderId/label", isAdmin, hasPermission("orders", "read"), getShippingLabel);
+router.get("/orders/:orderId/invoice", isAdmin, hasPermission("orders", "read"), getOrderInvoice);
 
 // Webhook (public - no auth, but with security token check in controller)
 router.post("/webhook", handleWebhook);

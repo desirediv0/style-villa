@@ -18,6 +18,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePermissions } from "@/hooks/usePermissions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -77,6 +78,7 @@ interface ProductSection {
 }
 
 export default function ProductSectionsPage() {
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [sections, setSections] = useState<ProductSection[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -547,16 +549,18 @@ export default function ProductSectionsPage() {
             >
               <HelpCircle className="h-4 w-4 text-[#4B5563]" />
             </Button>
-            <Button
-              className=""
-              onClick={() => {
-                resetForm();
-                setShowCreateDialog(true);
-              }}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Create Section
-            </Button>
+            {canCreate("product-sections") && (
+              <Button
+                className=""
+                onClick={() => {
+                  resetForm();
+                  setShowCreateDialog(true);
+                }}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Create Section
+              </Button>
+            )}
           </div>
         </div>
         <div className="h-px bg-[#E5E7EB]" />
@@ -574,16 +578,18 @@ export default function ProductSectionsPage() {
             <p className="text-sm text-[#9CA3AF] mb-6 max-w-sm mx-auto">
               Create your first section to organize products.
             </p>
-            <Button
-              className=""
-              onClick={() => {
-                resetForm();
-                setShowCreateDialog(true);
-              }}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Create First Section
-            </Button>
+            {canCreate("product-sections") && (
+              <Button
+                className=""
+                onClick={() => {
+                  resetForm();
+                  setShowCreateDialog(true);
+                }}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Create First Section
+              </Button>
+            )}
           </div>
         </Card>
       ) : (
@@ -705,21 +711,29 @@ export default function ProductSectionsPage() {
                           align="end"
                           className="bg-[#FFFFFF] border-[#E5E7EB] shadow-lg"
                         >
-                          <DropdownMenuItem
-                            className="text-[#1F2937] hover:bg-[#F3F7F6]"
-                            onClick={() => openEditDialog(currentSection)}
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator className="bg-[#E5E7EB]" />
-                          <DropdownMenuItem
-                            className="text-[#EF4444] hover:bg-[#FEF2F2]"
-                            onClick={() => handleDeleteSection(currentSection.id)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
+                          {canUpdate("product-sections") && (
+                            <DropdownMenuItem
+                              className="text-[#1F2937] hover:bg-[#F3F7F6]"
+                              onClick={() => openEditDialog(currentSection)}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                          )}
+                          {canDelete("product-sections") && (
+                            <>
+                              <DropdownMenuSeparator className="bg-[#E5E7EB]" />
+                              <DropdownMenuItem
+                                className="text-[#EF4444] hover:bg-[#FEF2F2]"
+                                onClick={() =>
+                                  handleDeleteSection(currentSection.id)
+                                }
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -749,7 +763,8 @@ export default function ProductSectionsPage() {
                         )}
                         Sync
                       </Button>
-                      {currentSection.items &&
+                      {canUpdate("product-sections") &&
+                        currentSection.items &&
                         currentSection.items.length < currentSection.maxProducts && (
                           <Button
                             size="sm"
@@ -876,13 +891,15 @@ export default function ProductSectionsPage() {
                           )}
                           Sync Products
                         </Button>
-                        <Button
-                          className=""
-                          onClick={() => openAddProductDialog(currentSection)}
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add Product
-                        </Button>
+                        {canUpdate("product-sections") && (
+                          <Button
+                            className=""
+                            onClick={() => openAddProductDialog(currentSection)}
+                          >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Product
+                          </Button>
+                        )}
                       </div>
                     </div>
                   )}

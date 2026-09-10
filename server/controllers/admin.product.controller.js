@@ -441,6 +441,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     metaTitle,
     metaDescription,
     keywords,
+    socialVideoUrl,
     ourProduct,
   } = req.body;
 
@@ -575,6 +576,8 @@ export const createProduct = asyncHandler(async (req, res, next) => {
           metaTitle: seo.metaTitle,
           metaDescription: seo.metaDescription,
           keywords,
+          socialVideoUrl:
+            socialVideoUrl && socialVideoUrl.trim() ? socialVideoUrl.trim() : null,
           tags: req.body.tags
             ? Array.isArray(req.body.tags)
               ? req.body.tags
@@ -1151,6 +1154,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     metaTitle,
     metaDescription,
     keywords,
+    socialVideoUrl,
     ourProduct,
   } = req.body;
 
@@ -1324,6 +1328,12 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
           ...(metaTitle !== undefined && { metaTitle }),
           ...(metaDescription !== undefined && { metaDescription }),
           ...(keywords !== undefined && { keywords }),
+          ...(socialVideoUrl !== undefined && {
+            socialVideoUrl:
+              socialVideoUrl && socialVideoUrl.trim()
+                ? socialVideoUrl.trim()
+                : null,
+          }),
           ...(req.body.tags !== undefined && {
             tags: Array.isArray(req.body.tags)
               ? req.body.tags
