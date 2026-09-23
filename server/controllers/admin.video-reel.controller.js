@@ -5,6 +5,20 @@ import { prisma } from "../config/db.js";
 import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { uploadVideo } from "../middlewares/multer.middlerware.js";
 
+const VIDEO_URL_RE = /^https?:\/\/.+\.(mp4|webm|mov)(\?.*)?$/i;
+
+const isExternalVideoUrl = (url) => /^https?:\/\//i.test(url || "");
+
+const validateVideoUrl = (url) => {
+  if (!url || !VIDEO_URL_RE.test(url)) {
+    throw new ApiError(
+      400,
+      "Video URL must be a direct .mp4, .webm or .mov link"
+    );
+  }
+  return url;
+};
+
 // Helper: format reel response
 const formatReel = (reel) => ({
   ...reel,
@@ -116,23 +130,34 @@ export const getVideoReelById = asyncHandler(async (req, res, next) => {
 });
 
 // Create video reel (admin) - position is ALWAYS auto-assigned
+// Source: uploaded file OR direct external video URL
 export const createVideoReel = asyncHandler(async (req, res, next) => {
-  const { title, isActive, productIds } = req.body;
+  const { title, isActive, productIds, videoUrl } = req.body;
 
   if (!title) {
     throw new ApiError(400, "Title is required");
   }
 
-  if (!req.files || !req.files.video || !req.files.video[0]) {
-    throw new ApiError(400, "Video file is required");
+  const hasFile = req.files && req.files.video && req.files.video[0];
+  const hasUrl = !!videoUrl;
+
+  if (!hasFile && !hasUrl) {
+    throw new ApiError(400, "Video file or video URL is required");
   }
 
-  // Upload video
   let videoKey;
-  try {
-    videoKey = await uploadVideo(req.files.video[0]);
-  } catch (error) {
-    throw new ApiError(400, "Failed to upload video: " + error.message);
+  let sourceType;
+
+  if (hasFile) {
+    sourceType = "upload";
+    try {
+      videoKey = await uploadVideo(req.files.video[0]);
+    } catch (error) {
+      throw new ApiError(400, "Failed to upload video: " + error.message);
+    }
+  } else {
+    sourceType = "url";
+    videoKey = validateVideoUrl(videoUrl);
   }
 
   // Auto-assign position (always next available)
@@ -153,6 +178,7 @@ export const createVideoReel = asyncHandler(async (req, res, next) => {
     data: {
       title,
       videoUrl: videoKey,
+      sourceType,
       position: reelPosition,
       isActive: isActive !== "false" && isActive !== false,
       products: {
@@ -182,9 +208,10 @@ export const createVideoReel = asyncHandler(async (req, res, next) => {
 });
 
 // Update video reel (admin) - position reorder: if manual position set, shift others
+// Supports switching source: file upload <-> external video URL
 export const updateVideoReel = asyncHandler(async (req, res, next) => {
   const { reelId } = req.params;
-  const { title, position, isActive, productIds } = req.body;
+  const { title, position, isActive, productIds, videoUrl } = req.body;
 
   const existingReel = await prisma.videoReel.findUnique({
     where: { id: reelId },
@@ -239,16 +266,27 @@ export const updateVideoReel = asyncHandler(async (req, res, next) => {
     updateData.position = newPosition;
   }
 
-  // Handle video reupload - delete old from S3
-  if (req.files && req.files.video && req.files.video[0]) {
-    if (existingReel.videoUrl) {
+  const hasNewFile = req.files && req.files.video && req.files.video[0];
+  const hasNewUrl = videoUrl !== undefined && videoUrl !== null && videoUrl !== "";
+
+  // Video re-upload (file replaces previous source)
+  if (hasNewFile) {
+    if (existingReel.videoUrl && existingReel.sourceType !== "url") {
       await deleteFromS3(existingReel.videoUrl);
     }
     try {
       updateData.videoUrl = await uploadVideo(req.files.video[0]);
+      updateData.sourceType = "upload";
     } catch (error) {
       throw new ApiError(400, "Failed to upload video: " + error.message);
     }
+  } else if (hasNewUrl) {
+    // External URL replaces previous source; drop S3 file if it was an upload
+    if (existingReel.videoUrl && existingReel.sourceType !== "url") {
+      await deleteFromS3(existingReel.videoUrl);
+    }
+    updateData.videoUrl = validateVideoUrl(videoUrl);
+    updateData.sourceType = "url";
   }
 
   // Update products if provided
@@ -308,8 +346,8 @@ export const deleteVideoReel = asyncHandler(async (req, res, next) => {
 
   const deletedPosition = reel.position;
 
-  // Delete video from S3 storage
-  if (reel.videoUrl) {
+  // Delete video from S3 storage (uploads only — skip external URLs)
+  if (reel.videoUrl && reel.sourceType !== "url" && !isExternalVideoUrl(reel.videoUrl)) {
     try {
       await deleteFromS3(reel.videoUrl);
     } catch (err) {
@@ -390,6 +428,7 @@ export const getActiveVideoReels = asyncHandler(async (req, res, next) => {
     id: reel.id,
     title: reel.title,
     videoUrl: reel.videoUrl ? getFileUrl(reel.videoUrl) : null,
+    sourceType: reel.sourceType || "upload",
     products: reel.products.map((rp) => {
       const primaryVariant = rp.product.variants?.[0];
       return {

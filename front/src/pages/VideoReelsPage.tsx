@@ -18,6 +18,8 @@ import {
   X,
   Check,
   Film,
+  Link2,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -62,11 +64,16 @@ interface VideoReelItem {
   id: string;
   title: string;
   videoUrl: string;
+  sourceType?: "upload" | "url";
   position: number;
   isActive: boolean;
   products: ReelProduct[];
   createdAt: string;
 }
+
+type VideoSourceType = "upload" | "url";
+
+const VIDEO_URL_RE = /^https?:\/\/.+\.(mp4|webm|mov)(\?.*)?$/i;
 
 // Video Reel Form Component
 function VideoReelForm({
@@ -86,6 +93,8 @@ function VideoReelForm({
   });
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [videoSource, setVideoSource] = useState<VideoSourceType>("upload");
+  const [videoUrlInput, setVideoUrlInput] = useState("");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [productSearchQuery, setProductSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<ProductItem[]>([]);
@@ -107,6 +116,11 @@ function VideoReelForm({
               position: reel.position || 0,
               isActive: reel.isActive !== false,
             });
+            const isExternal =
+              reel.sourceType === "url" ||
+              /^https?:\/\//i.test(reel.videoUrl || "");
+            setVideoSource(isExternal ? "url" : "upload");
+            setVideoUrlInput(isExternal ? reel.videoUrl || "" : "");
             setVideoPreview(reel.videoUrl);
             const productIds = (reel.products || []).map(
               (rp: ReelProduct) => rp.productId
@@ -203,9 +217,21 @@ function VideoReelForm({
       return;
     }
 
-    if (mode === "create" && !videoFile) {
+    if (mode === "create" && videoSource === "upload" && !videoFile) {
       toast.error("Video file is required");
       return;
+    }
+
+    if (videoSource === "url") {
+      const url = videoUrlInput.trim();
+      if (!url) {
+        toast.error("Video URL is required");
+        return;
+      }
+      if (!VIDEO_URL_RE.test(url)) {
+        toast.error("URL must be a direct .mp4, .webm or .mov link");
+        return;
+      }
     }
 
     if (mode === "edit" && !reelId) return;
@@ -216,6 +242,7 @@ function VideoReelForm({
         title: formData.title,
         isActive: formData.isActive,
         productIds: selectedProductIds,
+        sourceType: videoSource,
       };
 
       // Only send position on edit (not create - auto-assigned)
@@ -223,7 +250,11 @@ function VideoReelForm({
         submitData.position = parseInt(formData.position.toString()) || 0;
       }
 
-      if (videoFile) submitData.video = videoFile;
+      if (videoSource === "upload") {
+        if (videoFile) submitData.video = videoFile;
+      } else {
+        submitData.videoUrl = videoUrlInput.trim();
+      }
 
       let response;
       if (mode === "create") {
@@ -357,7 +388,7 @@ function VideoReelForm({
             </CardContent>
           </Card>
 
-          {/* Video Upload */}
+          {/* Video Upload / URL */}
           <Card className="bg-white border-[#E5E7EB]">
             <CardHeader className="px-6 py-4">
               <div className="flex items-center gap-2">
@@ -368,47 +399,114 @@ function VideoReelForm({
                 </CardTitle>
               </div>
               <p className="text-sm text-[#9CA3AF]">
-                Upload the video reel (MP4, WebM, MOV - max 100MB)
+                Upload a file (MP4, WebM, MOV - max 100MB) or paste a direct
+                video URL
               </p>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
-              <div
-                {...getVideoRootProps()}
-                className={cn(
-                  "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all",
-                  isVideoDragActive
-                    ? "border-primary bg-primary/5"
-                    : "border-[#E5E7EB] hover:border-primary hover:bg-[#F3F7F6]"
-                )}
-              >
-                <input {...getVideoInputProps()} />
-                {videoPreview ? (
-                  <div className="space-y-4">
-                    <video
-                      src={videoPreview}
-                      className="max-h-60 mx-auto rounded-lg"
-                      controls
+            <CardContent className="px-6 pb-6 space-y-4">
+              {/* Source tabs */}
+              <div className="flex gap-2 p-1 bg-[#F3F7F6] rounded-lg w-fit">
+                <button
+                  type="button"
+                  onClick={() => setVideoSource("upload")}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                    videoSource === "upload"
+                      ? "bg-white text-[#1F2937] shadow-sm"
+                      : "text-[#9CA3AF] hover:text-[#4B5563]"
+                  )}
+                >
+                  <Upload className="h-4 w-4" />
+                  Upload Video
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVideoSource("url")}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                    videoSource === "url"
+                      ? "bg-white text-[#1F2937] shadow-sm"
+                      : "text-[#9CA3AF] hover:text-[#4B5563]"
+                  )}
+                >
+                  <Link2 className="h-4 w-4" />
+                  Video URL
+                </button>
+              </div>
+
+              {videoSource === "upload" ? (
+                <div
+                  {...getVideoRootProps()}
+                  className={cn(
+                    "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all",
+                    isVideoDragActive
+                      ? "border-primary bg-primary/5"
+                      : "border-[#E5E7EB] hover:border-primary hover:bg-[#F3F7F6]"
+                  )}
+                >
+                  <input {...getVideoInputProps()} />
+                  {videoPreview && videoSource === "upload" ? (
+                    <div className="space-y-4">
+                      <video
+                        src={videoPreview}
+                        className="max-h-60 mx-auto rounded-lg"
+                        controls
+                      />
+                      <p className="text-xs text-[#9CA3AF]">
+                        {videoFile
+                          ? "New video selected (click to replace)"
+                          : "Existing video (click to replace)"}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#F3F4F6]">
+                        <Video className="h-8 w-8 text-[#9CA3AF]" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-[#1F2937]">
+                          Drop video here or click to upload
+                        </p>
+                        <p className="text-xs text-[#9CA3AF] mt-2">
+                          MP4, WebM, MOV up to 100MB
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-[#4B5563]">
+                      Direct Video URL{" "}
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="url"
+                      value={videoUrlInput}
+                      onChange={(e) => {
+                        setVideoUrlInput(e.target.value);
+                        setVideoPreview(e.target.value || null);
+                      }}
+                      placeholder="https://example.com/video.mp4"
+                      className="border-[#E5E7EB]"
                     />
                     <p className="text-xs text-[#9CA3AF]">
-                      {videoFile ? "New video selected (click to replace)" : "Existing video (click to replace)"}
+                      Direct link to .mp4, .webm or .mov file
                     </p>
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#F3F4F6]">
-                      <Video className="h-8 w-8 text-[#9CA3AF]" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-[#1F2937]">
-                        Drop video here or click to upload
-                      </p>
-                      <p className="text-xs text-[#9CA3AF] mt-2">
-                        MP4, WebM, MOV up to 100MB
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+                  {videoUrlInput.trim() && VIDEO_URL_RE.test(videoUrlInput.trim()) && (
+                    <video
+                      src={videoUrlInput.trim()}
+                      className="max-h-60 w-full rounded-lg bg-black"
+                      controls
+                      muted
+                      loop
+                      playsInline
+                    />
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -745,7 +843,10 @@ function VideoReelsList() {
                   <video
                     src={reel.videoUrl}
                     className="w-full h-full object-cover"
+                    autoPlay
                     muted
+                    loop
+                    playsInline
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">

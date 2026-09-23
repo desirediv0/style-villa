@@ -75,9 +75,11 @@ function ReelCard({ reel, onClick }) {
             ref={videoRef}
             src={reel.videoUrl}
             className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
+            autoPlay
             muted
             loop
             playsInline
+            preload="metadata"
           />
         ) : (
           <div className="flex items-center justify-center h-full bg-gray-900">
@@ -373,7 +375,6 @@ export default function WatchAndBuySection() {
       <section className="py-16 md:py-24 bg-ivory luxe-aurora-light border-y border-line">
         <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-10">
-            <span className="luxe-eyebrow block mb-3">Le Cinéma</span>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight text-noir">Watch &amp; Buy</h2>
           </div>
           <div className="flex gap-4 overflow-hidden">
@@ -395,7 +396,6 @@ export default function WatchAndBuySection() {
           {/* Section Header */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
             <div>
-              <span className="luxe-eyebrow block mb-3">Le Cinéma</span>
               <h2 className="font-display text-3xl md:text-5xl tracking-tight text-noir">
                 Watch <em className="luxe-italic text-gradient">&amp; Buy</em>
               </h2>

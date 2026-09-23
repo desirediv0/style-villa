@@ -1336,7 +1336,9 @@ export const videoReels = {
     title: string;
     isActive?: boolean;
     productIds?: string[];
-    video: File;
+    video?: File;
+    videoUrl?: string;
+    sourceType?: "upload" | "url";
   }) => {
     const formData = new FormData();
     formData.append("title", data.title);
@@ -1344,7 +1346,9 @@ export const videoReels = {
       formData.append("isActive", data.isActive.toString());
     if (data.productIds)
       formData.append("productIds", JSON.stringify(data.productIds));
-    formData.append("video", data.video);
+    if (data.video) formData.append("video", data.video);
+    if (data.videoUrl) formData.append("videoUrl", data.videoUrl);
+    if (data.sourceType) formData.append("sourceType", data.sourceType);
 
     return api.post("/api/admin/video-reels", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -1358,6 +1362,8 @@ export const videoReels = {
       isActive?: boolean;
       productIds?: string[];
       video?: File | null;
+      videoUrl?: string;
+      sourceType?: "upload" | "url";
     }
   ) => {
     const formData = new FormData();
@@ -1369,6 +1375,8 @@ export const videoReels = {
     if (data.productIds)
       formData.append("productIds", JSON.stringify(data.productIds));
     if (data.video) formData.append("video", data.video);
+    if (data.videoUrl) formData.append("videoUrl", data.videoUrl);
+    if (data.sourceType) formData.append("sourceType", data.sourceType);
 
     return api.put(`/api/admin/video-reels/${reelId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },

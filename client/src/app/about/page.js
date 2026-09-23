@@ -45,7 +45,7 @@ const CATEGORIES = [
   "Trendy Footwear",
   "Imported Accessories",
   "Women's Fashion",
-  "Men's Collection",
+  "Streetwear Clothing",
   "Youth Styles",
   "Seasonal Collections",
 ];

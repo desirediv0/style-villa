@@ -13,11 +13,11 @@ import CategoriesPage from "./pages/CategoriesPage";
 import AttributesPage from "./pages/AttributesPage";
 import AttributeValuesPage from "./pages/AttributeValuesPage";
 import CouponsPage from "./pages/CouponsPage";
-import AdminsPage from "./pages/AdminsPage";
-import AdminCreatePage from "./pages/AdminCreatePage";
-import AdminPermissionsPage from "./pages/AdminPermissionsPage";
-import AdminEditPage from "./pages/AdminEditPage";
-import RolesPage from "./pages/RolesPage";
+// import AdminsPage from "./pages/AdminsPage";
+// import AdminCreatePage from "./pages/AdminCreatePage";
+// import AdminPermissionsPage from "./pages/AdminPermissionsPage";
+// import AdminEditPage from "./pages/AdminEditPage";
+// import RolesPage from "./pages/RolesPage";
 import ContactManagementPage from "./pages/ContactManagementPage";
 import ReviewsManagementPage from "./pages/ReviewsManagementPage";
 import FAQManagementPage from "./pages/FAQManagementPage";
@@ -520,7 +520,8 @@ const App = () => {
               }
             />
 
-            <Route
+            {/* Admins page hidden temporarily — uncomment to restore */}
+            {/* <Route
               path="admins"
               element={
                 <ProtectedRoute superAdminOnly={true}>
@@ -554,16 +555,19 @@ const App = () => {
                   <AdminPermissionsPage />
                 </ProtectedRoute>
               }
-            />
+            /> */}
+            <Route path="admins*" element={<Navigate to="/dashboard" replace />} />
 
-            <Route
+            {/* Roles page hidden temporarily — uncomment to restore */}
+            {/* <Route
               path="roles"
               element={
                 <ProtectedRoute superAdminOnly={true}>
                   <RolesPage />
                 </ProtectedRoute>
               }
-            />
+            /> */}
+            <Route path="roles*" element={<Navigate to="/dashboard" replace />} />
 
             <Route
               path="users"
