@@ -25,6 +25,26 @@ function getProductImageUrl(product) {
   return null;
 }
 
+const INSTAGRAM_URL_RE =
+  /^https?:\/\/(www\.)?instagram\.com\/(reels?|p|tv)\/[\w-]+/i;
+
+function isInstagramUrl(url) {
+  return INSTAGRAM_URL_RE.test(url || "");
+}
+
+function getInstagramEmbedUrl(url) {
+  const match = (url || "").match(/instagram\.com\/(reels?|p|tv)\/([\w-]+)/i);
+  if (!match) return null;
+  const kind = match[1].toLowerCase() === "reels" ? "reel" : match[1];
+  return `https://www.instagram.com/${kind}/${match[2]}/embed/`;
+}
+
+function isDirectVideoUrl(url) {
+  if (!url) return false;
+  if (isInstagramUrl(url)) return false;
+  return /^https?:\/\//i.test(url);
+}
+
 const ReelSkeleton = () => (
   <div className="flex-shrink-0 w-[160px] sm:w-[180px] animate-pulse">
     <div className="aspect-[9/14] bg-ivory-deep" />
@@ -40,7 +60,12 @@ function ReelCard({ reel, onClick }) {
   const cardRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const instagramEmbed =
+    isInstagramUrl(reel.videoUrl) ? getInstagramEmbedUrl(reel.videoUrl) : null;
+  const directVideo = isDirectVideoUrl(reel.videoUrl);
+
   useEffect(() => {
+    if (!directVideo) return;
     if (!cardRef.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -58,7 +83,7 @@ function ReelCard({ reel, onClick }) {
     );
     observer.observe(cardRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [directVideo]);
 
   const product = reel.products?.[0];
 
@@ -70,7 +95,15 @@ function ReelCard({ reel, onClick }) {
       data-cursor="Play"
     >
       <div className="relative aspect-[9/14] overflow-hidden bg-noir-soft border border-white/10 group-hover/card:border-gold/50 transition-colors duration-500">
-        {reel.videoUrl ? (
+        {instagramEmbed ? (
+          <iframe
+            src={instagramEmbed}
+            className="w-full h-full border-0"
+            allow="autoplay; encrypted-media"
+            title={reel.title || "Instagram reel"}
+            onClick={(e) => e.stopPropagation()}
+          />
+        ) : directVideo ? (
           <video
             ref={videoRef}
             src={reel.videoUrl}
@@ -161,6 +194,10 @@ function ReelViewer({ reels, currentIndex, onClose, onNavigate }) {
 
   const currentReel = reels[currentIndex];
   const product = currentReel?.products?.[0];
+  const instagramEmbed = isInstagramUrl(currentReel?.videoUrl)
+    ? getInstagramEmbedUrl(currentReel.videoUrl)
+    : null;
+  const directVideo = isDirectVideoUrl(currentReel?.videoUrl);
 
   useEffect(() => {
     setIsMuted(false);
@@ -168,15 +205,16 @@ function ReelViewer({ reels, currentIndex, onClose, onNavigate }) {
   }, [currentIndex]);
 
   useEffect(() => {
+    if (!directVideo) return;
     if (!videoRef.current) return;
     videoRef.current.muted = false;
     videoRef.current.play().catch(() => {});
     setIsPlaying(true);
     setIsMuted(false);
-  }, [currentIndex]);
+  }, [currentIndex, directVideo]);
 
   const handleVideoClick = () => {
-    if (!videoRef.current) return;
+    if (!directVideo || !videoRef.current) return;
     if (videoRef.current.paused) {
       videoRef.current.play();
       setIsPlaying(true);
@@ -239,13 +277,25 @@ function ReelViewer({ reels, currentIndex, onClose, onNavigate }) {
         onTouchEnd={handleTouchEnd}
       >
         <div className="relative flex-1 bg-black cursor-pointer rounded-3xl overflow-hidden" onClick={handleVideoClick}>
-          <video ref={videoRef} src={currentReel.videoUrl} className="w-full h-full object-contain" loop playsInline />
+          {instagramEmbed ? (
+            <iframe
+              src={instagramEmbed}
+              className="w-full h-full border-0"
+              allow="autoplay; encrypted-media"
+              title={currentReel.title || "Instagram reel"}
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <video ref={videoRef} src={currentReel.videoUrl} className="w-full h-full object-contain" loop playsInline />
+          )}
 
-          <button onClick={toggleMute} className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors">
-            {isMuted ? <VolumeX className="h-5 w-5 text-white" /> : <Volume2 className="h-5 w-5 text-white" />}
-          </button>
+          {directVideo && (
+            <button onClick={toggleMute} className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors">
+              {isMuted ? <VolumeX className="h-5 w-5 text-white" /> : <Volume2 className="h-5 w-5 text-white" />}
+            </button>
+          )}
 
-          {!isPlaying && (
+          {directVideo && !isPlaying && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/20">
               <div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center">
                 <Play className="h-7 w-7 text-gray-900 ml-1" fill="currentColor" />

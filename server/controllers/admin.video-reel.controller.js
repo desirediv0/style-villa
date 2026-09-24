@@ -6,14 +6,16 @@ import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { uploadVideo } from "../middlewares/multer.middlerware.js";
 
 const VIDEO_URL_RE = /^https?:\/\/.+\.(mp4|webm|mov)(\?.*)?$/i;
+const INSTAGRAM_URL_RE =
+  /^https?:\/\/(www\.)?instagram\.com\/(reels?|p|tv)\/[\w-]+/i;
 
 const isExternalVideoUrl = (url) => /^https?:\/\//i.test(url || "");
 
 const validateVideoUrl = (url) => {
-  if (!url || !VIDEO_URL_RE.test(url)) {
+  if (!url || (!VIDEO_URL_RE.test(url) && !INSTAGRAM_URL_RE.test(url))) {
     throw new ApiError(
       400,
-      "Video URL must be a direct .mp4, .webm or .mov link"
+      "Video URL must be a direct .mp4, .webm, .mov link or Instagram reel/post URL"
     );
   }
   return url;

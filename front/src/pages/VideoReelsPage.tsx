@@ -74,6 +74,22 @@ interface VideoReelItem {
 type VideoSourceType = "upload" | "url";
 
 const VIDEO_URL_RE = /^https?:\/\/.+\.(mp4|webm|mov)(\?.*)?$/i;
+const INSTAGRAM_URL_RE =
+  /^https?:\/\/(www\.)?instagram\.com\/(reels?|p|tv)\/[\w-]+/i;
+
+const isValidVideoUrl = (url: string) =>
+  VIDEO_URL_RE.test(url) || INSTAGRAM_URL_RE.test(url);
+
+const isInstagramUrl = (url: string) => INSTAGRAM_URL_RE.test(url);
+
+function getInstagramEmbedUrl(url: string): string | null {
+  const match = url.match(
+    /instagram\.com\/(reels?|p|tv)\/([\w-]+)/i
+  );
+  if (!match) return null;
+  const kind = match[1].toLowerCase() === "reels" ? "reel" : match[1];
+  return `https://www.instagram.com/${kind}/${match[2]}/embed/`;
+}
 
 // Video Reel Form Component
 function VideoReelForm({
@@ -228,8 +244,10 @@ function VideoReelForm({
         toast.error("Video URL is required");
         return;
       }
-      if (!VIDEO_URL_RE.test(url)) {
-        toast.error("URL must be a direct .mp4, .webm or .mov link");
+      if (!isValidVideoUrl(url)) {
+        toast.error(
+          "URL must be a direct .mp4, .webm, .mov link or Instagram reel/post URL"
+        );
         return;
       }
     }
@@ -478,7 +496,7 @@ function VideoReelForm({
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-[#4B5563]">
-                      Direct Video URL{" "}
+                      Video URL{" "}
                       <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -488,23 +506,34 @@ function VideoReelForm({
                         setVideoUrlInput(e.target.value);
                         setVideoPreview(e.target.value || null);
                       }}
-                      placeholder="https://example.com/video.mp4"
+                      placeholder="https://example.com/video.mp4 or Instagram reel link"
                       className="border-[#E5E7EB]"
                     />
                     <p className="text-xs text-[#9CA3AF]">
-                      Direct link to .mp4, .webm or .mov file
+                      Direct .mp4/.webm/.mov link or Instagram reel/post URL
                     </p>
                   </div>
-                  {videoUrlInput.trim() && VIDEO_URL_RE.test(videoUrlInput.trim()) && (
-                    <video
-                      src={videoUrlInput.trim()}
-                      className="max-h-60 w-full rounded-lg bg-black"
-                      controls
-                      muted
-                      loop
-                      playsInline
-                    />
-                  )}
+                  {videoUrlInput.trim() &&
+                    isValidVideoUrl(videoUrlInput.trim()) &&
+                    (isInstagramUrl(videoUrlInput.trim()) ? (
+                      getInstagramEmbedUrl(videoUrlInput.trim()) && (
+                        <iframe
+                          src={getInstagramEmbedUrl(videoUrlInput.trim())!}
+                          className="max-h-80 w-full rounded-lg bg-black aspect-[9/16] mx-auto"
+                          allow="autoplay; encrypted-media"
+                          title="Instagram reel preview"
+                        />
+                      )
+                    ) : (
+                      <video
+                        src={videoUrlInput.trim()}
+                        className="max-h-60 w-full rounded-lg bg-black"
+                        controls
+                        muted
+                        loop
+                        playsInline
+                      />
+                    ))}
                 </div>
               )}
             </CardContent>
@@ -840,14 +869,29 @@ function VideoReelsList() {
             >
               <div className="relative aspect-[9/16] max-h-64 bg-[#1F2937] rounded-t-xl overflow-hidden">
                 {reel.videoUrl ? (
-                  <video
-                    src={reel.videoUrl}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  />
+                  isInstagramUrl(reel.videoUrl) ? (
+                    getInstagramEmbedUrl(reel.videoUrl) ? (
+                      <iframe
+                        src={getInstagramEmbedUrl(reel.videoUrl)!}
+                        className="w-full h-full"
+                        allow="autoplay; encrypted-media"
+                        title={reel.title}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <Film className="h-12 w-12 text-[#4B5563]" />
+                      </div>
+                    )
+                  ) : (
+                    <video
+                      src={reel.videoUrl}
+                      className="w-full h-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  )
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <Film className="h-12 w-12 text-[#4B5563]" />
