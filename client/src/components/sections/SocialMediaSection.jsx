@@ -1,4 +1,4 @@
-import { Instagram, Facebook, ArrowUpRight } from "lucide-react";
+import { Instagram, Facebook, Youtube, ArrowUpRight } from "lucide-react";
 
 const SOCIALS = [
   {
@@ -20,6 +20,16 @@ const SOCIALS = [
     accentBg: "rgba(24, 119, 242, 0.08)",
     desc: "Join our community for exclusive deals, new arrivals, and behind-the-scenes content from Style Villa.",
     stats: "Join Our Family"
+  },
+  {
+    name: "YouTube",
+    handle: "@stylevillaofficial",
+    url: "https://www.youtube.com/@stylevillaofficial",
+    icon: Youtube,
+    accent: "#FF0000",
+    accentBg: "rgba(255, 0, 0, 0.08)",
+    desc: "Watch hauls, styling tips and live notifications — never miss a drop from Style Villa.",
+    stats: "Subscribe Now"
   },
 ];
 
@@ -46,7 +56,7 @@ export const SocialMediaSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {SOCIALS.map((s) => (
             <a
               key={s.name}

@@ -37,7 +37,7 @@ export const getStoreConfig = () => {
     socialFacebook: process.env.SOCIAL_FACEBOOK || "",
     socialTwitter: process.env.SOCIAL_TWITTER || "",
     socialInstagram: process.env.SOCIAL_INSTAGRAM || "https://www.instagram.com/stylevillaofficial",
-    socialYoutube: process.env.SOCIAL_YOUTUBE || "https://www.youtube.com/@stylevillabypoojakhan",
+    socialYoutube: process.env.SOCIAL_YOUTUBE || "https://www.youtube.com/@stylevillaofficial",
     socialWhatsapp: process.env.SOCIAL_WHATSAPP || "919991111861",
   };
 };
