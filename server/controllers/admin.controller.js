@@ -54,11 +54,16 @@ export const registerAdmin = asyncHandler(async (req, res) => {
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Explicit customPermissions win; otherwise fall back to the enum-role defaults.
-  // (A custom Role's permissions are merged in at auth time, not copied here.)
+  // Explicit customPermissions win. If a custom Role was assigned, its
+  // permissions are merged in at auth time (see admin.middleware.js) — don't
+  // also stamp the enum-role defaults onto the admin, or "role X only grants Y"
+  // stops being true. Only fall back to enum-role defaults when there's
+  // neither a custom role nor explicit overrides.
   const permissionsToCreate =
     Array.isArray(customPermissions) && customPermissions.length > 0
       ? sanitizePermissions(customPermissions)
+      : resolvedRoleId
+      ? []
       : getDefaultPermissionsForRole(role || "ADMIN");
 
   // Create admin with permissions

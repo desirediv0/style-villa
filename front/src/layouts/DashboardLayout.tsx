@@ -27,7 +27,7 @@ import {
   Truck,
   Video,
   Quote,
-  // ShieldCheck,
+  ShieldCheck,
   // Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -671,18 +671,18 @@ export default function DashboardLayout() {
                       Action.UPDATE
                     ),
                   },
-                  // {
-                  //   href: "/roles",
-                  //   title: "Roles & Permissions",
-                  //   icon: <ShieldCheck className="h-3 w-3" />,
-                  //   hasPermission: admin?.role === "SUPER_ADMIN",
-                  // },
-                  // {
-                  //   href: "/admins",
-                  //   title: "Admin Users",
-                  //   icon: <Settings className="h-3 w-3" />,
-                  //   hasPermission: admin?.role === "SUPER_ADMIN",
-                  // },
+                  {
+                    href: "/roles",
+                    title: "Roles & Permissions",
+                    icon: <ShieldCheck className="h-3 w-3" />,
+                    hasPermission: admin?.role === "SUPER_ADMIN",
+                  },
+                  {
+                    href: "/admins",
+                    title: "Admin Users",
+                    icon: <Settings className="h-3 w-3" />,
+                    hasPermission: admin?.role === "SUPER_ADMIN",
+                  },
                 ]}
               />
             </div>
@@ -1073,18 +1073,18 @@ export default function DashboardLayout() {
                       Action.UPDATE
                     ),
                   },
-                  // {
-                  //   href: "/roles",
-                  //   title: "Roles & Permissions",
-                  //   icon: <ShieldCheck className="h-3 w-3" />,
-                  //   hasPermission: admin?.role === "SUPER_ADMIN",
-                  // },
-                  // {
-                  //   href: "/admins",
-                  //   title: "Admin Users",
-                  //   icon: <Settings className="h-3 w-3" />,
-                  //   hasPermission: admin?.role === "SUPER_ADMIN",
-                  // },
+                  {
+                    href: "/roles",
+                    title: "Roles & Permissions",
+                    icon: <ShieldCheck className="h-3 w-3" />,
+                    hasPermission: admin?.role === "SUPER_ADMIN",
+                  },
+                  {
+                    href: "/admins",
+                    title: "Admin Users",
+                    icon: <Settings className="h-3 w-3" />,
+                    hasPermission: admin?.role === "SUPER_ADMIN",
+                  },
                 ]}
               />
             </div>
