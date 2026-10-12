@@ -90,6 +90,61 @@ function useCategories() {
 }
 
 // Export ProductForm for reuse in other components
+// Main image size on the product page, entered in pixels (stored as "<width>:<height>").
+// Shared by the Product Images card (no variants) and the Product Page Display card (variants).
+function ImageSizeFields({
+  product,
+  setProduct,
+}: {
+  product: { imageWidth: string; imageHeight: string };
+  setProduct: React.Dispatch<React.SetStateAction<any>>;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label>Main image size (pixels)</Label>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <Label htmlFor="imageWidth" className="text-xs text-muted-foreground">
+            Width (px)
+          </Label>
+          <Input
+            id="imageWidth"
+            name="imageWidth"
+            type="number"
+            min={1}
+            value={product.imageWidth}
+            onChange={(e) =>
+              setProduct((prev: any) => ({ ...prev, imageWidth: e.target.value }))
+            }
+            placeholder="e.g. 800"
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="imageHeight" className="text-xs text-muted-foreground">
+            Height (px)
+          </Label>
+          <Input
+            id="imageHeight"
+            name="imageHeight"
+            type="number"
+            min={1}
+            value={product.imageHeight}
+            onChange={(e) =>
+              setProduct((prev: any) => ({ ...prev, imageHeight: e.target.value }))
+            }
+            placeholder="e.g. 1000"
+          />
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Enter the size of your photos (for example 800 × 1000). The product page shows the image
+        in that proportion, scaled to fit the screen. The full photo is always shown, never
+        cropped. Leave both blank for the default (3:4).
+      </p>
+    </div>
+  );
+}
+
 export function ProductForm({
   mode,
   productId,
@@ -2065,6 +2120,7 @@ export function ProductForm({
               <h2 className="text-xl font-semibold border-b pb-2">
                 Product Images
               </h2>
+              <ImageSizeFields product={product} setProduct={setProduct} />
               <div className="space-y-2">
                 <div className="flex flex-col gap-1">
                   <p className="text-sm font-medium">{t("products.form.media.upload_title")}</p>
@@ -2179,54 +2235,15 @@ export function ProductForm({
             </div>
           )}
 
-          {/* Product page display — shown for every product, with or without variants */}
-          <div className="space-y-4 rounded-lg border p-4 bg-gray-50">
-            <h2 className="text-xl font-semibold border-b pb-2">
-              Product Page Display
-            </h2>
-            <div className="space-y-2">
-              <Label>Main image size (pixels)</Label>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label htmlFor="imageWidth" className="text-xs text-muted-foreground">
-                    Width (px)
-                  </Label>
-                  <Input
-                    id="imageWidth"
-                    name="imageWidth"
-                    type="number"
-                    min={1}
-                    value={product.imageWidth}
-                    onChange={(e) =>
-                      setProduct((prev) => ({ ...prev, imageWidth: e.target.value }))
-                    }
-                    placeholder="e.g. 800"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="imageHeight" className="text-xs text-muted-foreground">
-                    Height (px)
-                  </Label>
-                  <Input
-                    id="imageHeight"
-                    name="imageHeight"
-                    type="number"
-                    min={1}
-                    value={product.imageHeight}
-                    onChange={(e) =>
-                      setProduct((prev) => ({ ...prev, imageHeight: e.target.value }))
-                    }
-                    placeholder="e.g. 1000"
-                  />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Enter the size of your photos (for example 800 × 1000). The product page shows
-                the image in that proportion, scaled to fit the screen. The full photo is always
-                shown, never cropped. Leave both blank for the default (3:4).
-              </p>
+          {/* Products with variants upload images per variant, so the main image size gets its own card */}
+          {hasVariants && (
+            <div className="space-y-4 rounded-lg border p-4 bg-gray-50">
+              <h2 className="text-xl font-semibold border-b pb-2">
+                Product Page Display
+              </h2>
+              <ImageSizeFields product={product} setProduct={setProduct} />
             </div>
-          </div>
+          )}
 
           {/* SEO Section */}
           <div className="space-y-4 rounded-lg border p-4 bg-gray-50">

@@ -22,10 +22,15 @@ const getImageUrl = (img) => {
 // The admin enters the main image size in pixels; it is stored as "<width>:<height>"
 // (e.g. "800:1000"). Only the proportion is used so the box scales to any screen. The whole
 // photo is always shown (object-contain), so this only decides how much empty space is left.
+// The box is also capped to the visible screen height (minus the header) so the whole image
+// fits on screen without scrolling; if the cap kicks in, the photo is centred with side margins.
 const getImageBoxStyle = (value) => {
   const match = /^(\d{1,5}):(\d{1,5})$/.exec(value || "");
   const valid = match && Number(match[1]) > 0 && Number(match[2]) > 0;
-  return { aspectRatio: valid ? `${match[1]} / ${match[2]}` : "3 / 4" };
+  return {
+    aspectRatio: valid ? `${match[1]} / ${match[2]}` : "3 / 4",
+    maxHeight: "calc(100vh - 6rem)",
+  };
 };
 
 // Image for a product that came from a list API: its own image, else the first variant's.
