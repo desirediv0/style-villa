@@ -134,8 +134,9 @@ export function ProductForm({
     keywords: "",
     // Optional social / reel link (Instagram / Facebook / YouTube) shown on the product page
     socialVideoUrl: "",
-    // Shape of the main image box on the product page ("" = default 3:4)
-    imageAspectRatio: "",
+    // Main image size on the product page, in pixels (both blank = default 3:4)
+    imageWidth: "",
+    imageHeight: "",
     tags: [] as string[],
     // single brand association
     brandId: "",
@@ -610,7 +611,9 @@ export function ProductForm({
               metaDescription: productData.metaDescription || "",
               keywords: productData.keywords || "",
               socialVideoUrl: productData.socialVideoUrl || "",
-              imageAspectRatio: productData.imageAspectRatio || "",
+              // stored as "<width>:<height>" in pixels
+              imageWidth: (productData.imageAspectRatio || "").split(":")[0] || "",
+              imageHeight: (productData.imageAspectRatio || "").split(":")[1] || "",
               tags: productData.tags || [],
               topBrandIds: productData.topBrandIds || [],
               newBrandIds: productData.newBrandIds || [],
@@ -978,7 +981,12 @@ export function ProductForm({
       formData.append("metaDescription", metaDesc);
       formData.append("keywords", product.keywords || "");
       formData.append("socialVideoUrl", product.socialVideoUrl || "");
-      formData.append("imageAspectRatio", product.imageAspectRatio || "");
+      const imageWidthPx = parseInt(product.imageWidth, 10);
+      const imageHeightPx = parseInt(product.imageHeight, 10);
+      formData.append(
+        "imageAspectRatio",
+        imageWidthPx > 0 && imageHeightPx > 0 ? `${imageWidthPx}:${imageHeightPx}` : ""
+      );
       formData.append("tags", JSON.stringify(product.tags || []));
 
       // Add categories information
@@ -2177,25 +2185,45 @@ export function ProductForm({
               Product Page Display
             </h2>
             <div className="space-y-2">
-              <Label htmlFor="imageAspectRatio">Main image shape (width : height)</Label>
-              <select
-                id="imageAspectRatio"
-                name="imageAspectRatio"
-                value={product.imageAspectRatio}
-                onChange={(e) =>
-                  setProduct((prev) => ({ ...prev, imageAspectRatio: e.target.value }))
-                }
-                className="rounded-md border bg-background px-3 py-2 text-sm w-full"
-              >
-                <option value="">Default (3:4 portrait)</option>
-                <option value="1:1">1:1 — Square</option>
-                <option value="4:5">4:5 — Slightly tall</option>
-                <option value="2:3">2:3 — Tall portrait</option>
-                <option value="4:3">4:3 — Landscape</option>
-              </select>
+              <Label>Main image size (pixels)</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label htmlFor="imageWidth" className="text-xs text-muted-foreground">
+                    Width (px)
+                  </Label>
+                  <Input
+                    id="imageWidth"
+                    name="imageWidth"
+                    type="number"
+                    min={1}
+                    value={product.imageWidth}
+                    onChange={(e) =>
+                      setProduct((prev) => ({ ...prev, imageWidth: e.target.value }))
+                    }
+                    placeholder="e.g. 800"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="imageHeight" className="text-xs text-muted-foreground">
+                    Height (px)
+                  </Label>
+                  <Input
+                    id="imageHeight"
+                    name="imageHeight"
+                    type="number"
+                    min={1}
+                    value={product.imageHeight}
+                    onChange={(e) =>
+                      setProduct((prev) => ({ ...prev, imageHeight: e.target.value }))
+                    }
+                    placeholder="e.g. 1000"
+                  />
+                </div>
+              </div>
               <p className="text-xs text-muted-foreground">
-                The full photo is always shown, never cropped. Pick the shape closest to your
-                photos so there is less empty space around them.
+                Enter the size of your photos (for example 800 × 1000). The product page shows
+                the image in that proportion, scaled to fit the screen. The full photo is always
+                shown, never cropped. Leave both blank for the default (3:4).
               </p>
             </div>
           </div>

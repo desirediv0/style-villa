@@ -19,14 +19,13 @@ const getImageUrl = (img) => {
   return `https://desirediv-storage.blr1.digitaloceanspaces.com/${img}`;
 };
 
-// Shapes the admin can pick per product for the main image box. The whole photo is
-// always shown (object-contain), so the shape only decides how much empty space is left.
-const IMAGE_ASPECT_CLASS = {
-  "1:1": "aspect-square",
-  "3:4": "aspect-[3/4]",
-  "4:5": "aspect-[4/5]",
-  "2:3": "aspect-[2/3]",
-  "4:3": "aspect-[4/3]",
+// The admin enters the main image size in pixels; it is stored as "<width>:<height>"
+// (e.g. "800:1000"). Only the proportion is used so the box scales to any screen. The whole
+// photo is always shown (object-contain), so this only decides how much empty space is left.
+const getImageBoxStyle = (value) => {
+  const match = /^(\d{1,5}):(\d{1,5})$/.exec(value || "");
+  const valid = match && Number(match[1]) > 0 && Number(match[2]) > 0;
+  return { aspectRatio: valid ? `${match[1]} / ${match[2]}` : "3 / 4" };
 };
 
 // Image for a product that came from a list API: its own image, else the first variant's.
@@ -404,7 +403,7 @@ export default function ProductContent({ slug }) {
             )}
 
             {/* Main Image */}
-            <div className={`relative flex-1 ${IMAGE_ASPECT_CLASS[product.imageAspectRatio] || "aspect-[3/4]"} overflow-hidden bg-ivory group`} data-cursor="Zoom">
+            <div className="relative flex-1 overflow-hidden bg-ivory group" style={getImageBoxStyle(product.imageAspectRatio)} data-cursor="Zoom">
               {images.length > 0 ? (
                 <Image src={getImageUrl(primary?.url)} alt={product.name} fill className="object-contain" priority sizes="(max-width: 1024px) 100vw, 50vw" />
               ) : (

@@ -27,10 +27,15 @@ const stripHtmlToPlain = (value = "", maxLength = 160) => {
   return `${plain.substring(0, maxLength)}...`;
 };
 
-// Shapes the admin can pick for the main product-page image box. Anything else is stored as null (default).
-const ALLOWED_IMAGE_ASPECT_RATIOS = ["1:1", "3:4", "4:5", "2:3", "4:3"];
-const cleanImageAspectRatio = (value) =>
-  ALLOWED_IMAGE_ASPECT_RATIOS.includes(value) ? value : null;
+// Main product-page image size, entered by the admin in pixels and stored as "<width>:<height>"
+// (e.g. "800:1000"). The storefront only uses the proportion. Anything invalid becomes null (default).
+const cleanImageAspectRatio = (value) => {
+  const match = /^(\d{1,5}):(\d{1,5})$/.exec(String(value ?? "").trim());
+  if (!match) return null;
+  const width = Number(match[1]);
+  const height = Number(match[2]);
+  return width > 0 && height > 0 ? `${width}:${height}` : null;
+};
 
 const buildProductSeo = (name, description, metaTitle, metaDescription) => {
   const cleanName = String(name || "").trim();

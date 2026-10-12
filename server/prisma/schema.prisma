@@ -283,7 +283,7 @@ model Product {
   metaDescription   String?
   keywords          String?
   socialVideoUrl    String? // optional Instagram / Facebook / YouTube reel link shown on the product page
-  imageAspectRatio  String? // shape of the main product-page image box, e.g. "3:4"; null = default (3:4)
+  imageAspectRatio  String? // main product-page image size in pixels as "<width>:<height>", e.g. "800:1000"; null = default (3:4)
   tags              String[]             @default([])
   topBrandIds       String[]             @default([])
   newBrandIds       String[]             @default([])
