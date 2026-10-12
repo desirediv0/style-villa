@@ -28,19 +28,27 @@ import { useDropzone } from "react-dropzone";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { getImageUrl } from "@/utils/image";
 
 // Helper to get product image URL
 function getProductImageUrl(product: any): string | null {
   if (!product) return null;
-  // Admin API returns "primaryImage" (string)
-  if (product.primaryImage) return product.primaryImage;
-  // Fallback: check images array
-  if (product.images && product.images.length > 0) {
-    const img = product.images[0];
-    if (typeof img === "string") return img;
-    if (img?.url) return img.url;
+  const urlOf = (img: any): string | null =>
+    typeof img === "string" ? img : img?.url || null;
+
+  // Admin reel API returns "primaryImage" (string); product lists return an images array
+  let url: string | null =
+    product.primaryImage || urlOf(product.images?.[0]) || null;
+
+  // Many products only have images on their variants, not on the product itself
+  if (!url) {
+    const variantWithImage = product.variants?.find(
+      (v: any) => v?.images?.length > 0
+    );
+    url = urlOf(variantWithImage?.images?.[0]);
   }
-  return null;
+
+  return url ? getImageUrl(url) : null;
 }
 
 interface ProductItem {

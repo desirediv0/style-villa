@@ -21,6 +21,29 @@ const validateVideoUrl = (url) => {
   return url;
 };
 
+// What to load for each product attached to a reel. Many products only have
+// images on their variants (no product-level image), so load a variant image
+// too and fall back to it — otherwise those products show up with no picture.
+const reelProductInclude = {
+  images: { orderBy: [{ isPrimary: "desc" }, { order: "asc" }], take: 1 },
+  variants: {
+    where: { isActive: true },
+    orderBy: { createdAt: "asc" },
+    take: 5,
+    include: {
+      images: { orderBy: [{ isPrimary: "desc" }, { order: "asc" }], take: 1 },
+    },
+  },
+};
+
+// Product image: product-level image first, else the first variant that has one.
+const getReelProductImage = (product) => {
+  const url =
+    product.images?.[0]?.url ||
+    product.variants?.find((v) => v.images?.[0]?.url)?.images[0].url;
+  return url ? getFileUrl(url) : null;
+};
+
 // Helper: format reel response
 const formatReel = (reel) => ({
   ...reel,
@@ -29,9 +52,7 @@ const formatReel = (reel) => ({
     ...rp,
     product: {
       ...rp.product,
-      primaryImage: rp.product.images?.[0]?.url
-        ? getFileUrl(rp.product.images[0].url)
-        : null,
+      primaryImage: getReelProductImage(rp.product),
       price: rp.product.variants?.[0]?.price || null,
       salePrice: rp.product.variants?.[0]?.salePrice || null,
       hasVariants: rp.product.hasVariants || false,
@@ -71,8 +92,7 @@ export const getVideoReels = asyncHandler(async (req, res, next) => {
         include: {
           product: {
             include: {
-              images: { where: { isPrimary: true }, take: 1 },
-              variants: { take: 1 },
+              ...reelProductInclude,
             },
           },
         },
@@ -112,8 +132,7 @@ export const getVideoReelById = asyncHandler(async (req, res, next) => {
         include: {
           product: {
             include: {
-              images: { where: { isPrimary: true }, take: 1 },
-              variants: { take: 1 },
+              ...reelProductInclude,
             },
           },
         },
@@ -195,8 +214,7 @@ export const createVideoReel = asyncHandler(async (req, res, next) => {
         include: {
           product: {
             include: {
-              images: { where: { isPrimary: true }, take: 1 },
-              variants: { take: 1 },
+              ...reelProductInclude,
             },
           },
         },
@@ -319,8 +337,7 @@ export const updateVideoReel = asyncHandler(async (req, res, next) => {
         include: {
           product: {
             include: {
-              images: { where: { isPrimary: true }, take: 1 },
-              variants: { take: 1 },
+              ...reelProductInclude,
             },
           },
         },
@@ -415,8 +432,7 @@ export const getActiveVideoReels = asyncHandler(async (req, res, next) => {
         include: {
           product: {
             include: {
-              images: { where: { isPrimary: true }, take: 1 },
-              variants: { take: 1 },
+              ...reelProductInclude,
             },
           },
         },
@@ -441,9 +457,7 @@ export const getActiveVideoReels = asyncHandler(async (req, res, next) => {
         variantId: primaryVariant?.id || null,
         price: primaryVariant?.price || null,
         salePrice: primaryVariant?.salePrice || null,
-        image: rp.product.images?.[0]?.url
-          ? getFileUrl(rp.product.images[0].url)
-          : null,
+        image: getReelProductImage(rp.product),
       };
     }),
   }));

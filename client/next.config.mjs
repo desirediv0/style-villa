@@ -14,7 +14,14 @@ const nextConfig = {
     },
     experimental: {
         webpackBuildWorker: false,
-    }
+    },
+    // The real product route is /products/[slug]. Older builds linked to
+    // /product/[slug] (Watch & Buy "View"), so send those visitors to the right page.
+    async redirects() {
+        return [
+            { source: "/product/:slug", destination: "/products/:slug", permanent: false },
+        ];
+    },
 };
 
 export default nextConfig;

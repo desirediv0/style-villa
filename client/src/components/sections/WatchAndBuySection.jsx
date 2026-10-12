@@ -96,12 +96,16 @@ function ReelCard({ reel, onClick }) {
     >
       <div className="relative aspect-[9/14] overflow-hidden bg-noir-soft border border-white/10 group-hover/card:border-gold/50 transition-colors duration-500">
         {instagramEmbed ? (
+          // Preview only: no scrollbars, header cropped out, and clicks pass through
+          // to the card so tapping it opens the full viewer like the other reels.
           <iframe
             src={instagramEmbed}
-            className="w-full h-full border-0"
+            scrolling="no"
+            loading="lazy"
+            className="absolute left-0 w-full border-0 pointer-events-none"
+            style={{ top: "-68px", height: "calc(100% + 180px)" }}
             allow="autoplay; encrypted-media"
             title={reel.title || "Instagram reel"}
-            onClick={(e) => e.stopPropagation()}
           />
         ) : directVideo ? (
           <video
@@ -280,10 +284,10 @@ function ReelViewer({ reels, currentIndex, onClose, onNavigate }) {
           {instagramEmbed ? (
             <iframe
               src={instagramEmbed}
+              scrolling="no"
               className="w-full h-full border-0"
               allow="autoplay; encrypted-media"
               title={currentReel.title || "Instagram reel"}
-              onClick={(e) => e.stopPropagation()}
             />
           ) : (
             <video ref={videoRef} src={currentReel.videoUrl} className="w-full h-full object-contain" loop playsInline />
@@ -333,7 +337,7 @@ function ReelViewer({ reels, currentIndex, onClose, onNavigate }) {
                 </div>
               </div>
               <button
-                onClick={(e) => { e.stopPropagation(); window.location.href = `/product/${product.slug || product.id}`; }}
+                onClick={(e) => { e.stopPropagation(); window.location.href = `/products/${product.slug || product.id}`; }}
                 className="flex-shrink-0 flex items-center gap-2 bg-white text-gray-900 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-100 transition-colors shadow-lg"
               >
                 <ShoppingCart className="h-4 w-4" />
