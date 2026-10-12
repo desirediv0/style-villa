@@ -11,12 +11,27 @@ import ReviewSection from "./ReviewSection";
 import { useAddVariantToCart } from "@/lib/cart-utils";
 import { useCart } from "@/lib/cart-context";
 import { ProductCard } from "@/components/products/ProductCard";
+import ProductLightbox from "./ProductLightbox";
 
 const getImageUrl = (img) => {
   if (!img) return "/placeholder.jpg";
   if (img.startsWith("http")) return img;
   return `https://desirediv-storage.blr1.digitaloceanspaces.com/${img}`;
 };
+
+// Shapes the admin can pick per product for the main image box. The whole photo is
+// always shown (object-contain), so the shape only decides how much empty space is left.
+const IMAGE_ASPECT_CLASS = {
+  "1:1": "aspect-square",
+  "3:4": "aspect-[3/4]",
+  "4:5": "aspect-[4/5]",
+  "2:3": "aspect-[2/3]",
+  "4:3": "aspect-[4/3]",
+};
+
+// Image for a product that came from a list API: its own image, else the first variant's.
+const getListImageUrl = (p) =>
+  p.image || p.images?.[0]?.url || p.variants?.find((v) => v.images?.length)?.images[0].url;
 
 // Detect the platform of a social/reel link so we can label the "View on ..." button.
 const getSocialVideoMeta = (rawUrl) => {
@@ -60,6 +75,8 @@ export default function ProductContent({ slug }) {
   const [bundleSelected, setBundleSelected] = useState({});
   const [isAddingBundle, setIsAddingBundle] = useState(false);
   const [activeThumb, setActiveThumb] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const { isAuthenticated } = useAuth();
   const router = useRouter();
@@ -346,7 +363,7 @@ export default function ProductContent({ slug }) {
 
   const bundleItems = [
     { id: product.id, name: product.name, price: parseFloat(effectivePriceInfo?.price || selectedVariant?.salePrice || selectedVariant?.price || product.basePrice || 0), isMain: true, stock, image: primary?.url },
-    ...relatedProducts.slice(0, 3).map((p) => { const v = p.variants?.[0] || {}; return { id: p.id, name: p.name, price: parseFloat(v.salePrice || v.price || p.basePrice || 0), isMain: false, stock: p.stock || 10, image: p.image || p.images?.[0]?.url }; })
+    ...relatedProducts.slice(0, 3).map((p) => { const v = p.variants?.[0] || {}; return { id: p.id, name: p.name, price: parseFloat(v.salePrice || v.price || p.basePrice || 0), isMain: false, stock: p.stock || 10, image: getListImageUrl(p) }; })
   ];
   const bundleTotal = bundleItems.reduce((sum, item) => sum + (bundleSelected[item.id] ? (item.price * (item.isMain ? quantity : 1)) : 0), 0);
 
@@ -387,11 +404,23 @@ export default function ProductContent({ slug }) {
             )}
 
             {/* Main Image */}
-            <div className="relative flex-1 aspect-[3/4] overflow-hidden bg-ivory group cursor-zoom-in" data-cursor="Zoom">
+            <div className={`relative flex-1 ${IMAGE_ASPECT_CLASS[product.imageAspectRatio] || "aspect-[3/4]"} overflow-hidden bg-ivory group`} data-cursor="Zoom">
               {images.length > 0 ? (
-                <Image src={getImageUrl(primary?.url)} alt={product.name} fill className="object-cover transition-transform duration-1200 ease-luxe group-hover:scale-110" priority sizes="(max-width: 1024px) 100vw, 50vw" />
+                <Image src={getImageUrl(primary?.url)} alt={product.name} fill className="object-contain" priority sizes="(max-width: 1024px) 100vw, 50vw" />
               ) : (
-                <Image src="/placeholder.jpg" alt={product.name} fill className="object-cover" />
+                <Image src="/placeholder.jpg" alt={product.name} fill className="object-contain" />
+              )}
+              {/* Click anywhere on the photo to open it full screen; badges and wishlist sit above (z-20) */}
+              {images.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLightboxIndex(Math.max(0, images.findIndex((i) => i.url === primary?.url)));
+                    setLightboxOpen(true);
+                  }}
+                  className="absolute inset-0 z-10 cursor-zoom-in"
+                  aria-label="View full image"
+                />
               )}
               <div className="absolute inset-3 border border-white/0 group-hover:border-white/40 transition-all duration-700 pointer-events-none z-10" />
               {/* Badges */}
@@ -595,7 +624,7 @@ export default function ProductContent({ slug }) {
                   <div key={item.id} className="flex items-center gap-4 p-3 bg-white border border-line hover:border-gold/50 transition-colors">
                     <input type="checkbox" checked={!!bundleSelected[item.id]} disabled={item.isMain} onChange={(e) => setBundleSelected({ ...bundleSelected, [item.id]: e.target.checked })} className="w-4 h-4 border-2 border-stone text-gold-dark focus:ring-gold cursor-pointer disabled:opacity-50 accent-[#A958A4]" />
                     <div className="relative w-14 h-16 bg-ivory overflow-hidden flex-shrink-0">
-                      <Image src={getImageUrl(item.image)} alt="" fill className="object-cover" sizes="56px" />
+                      {item.image && <Image src={getImageUrl(item.image)} alt="" fill className="object-cover" sizes="56px" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-noir truncate tracking-wide">{item.isMain && <span className="text-[9px] uppercase tracking-[0.2em] text-gold-dark mr-2">This piece</span>}{item.name}</p>
@@ -695,6 +724,16 @@ export default function ProductContent({ slug }) {
             {relatedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         </div>
+      )}
+
+      {lightboxOpen && images.length > 0 && (
+        <ProductLightbox
+          urls={images.map((i) => getImageUrl(i.url))}
+          index={lightboxIndex}
+          alt={product.name}
+          onIndexChange={setLightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
       )}
 
       {/* Sticky Bar */}

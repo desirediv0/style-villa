@@ -134,6 +134,8 @@ export function ProductForm({
     keywords: "",
     // Optional social / reel link (Instagram / Facebook / YouTube) shown on the product page
     socialVideoUrl: "",
+    // Shape of the main image box on the product page ("" = default 3:4)
+    imageAspectRatio: "",
     tags: [] as string[],
     // single brand association
     brandId: "",
@@ -608,6 +610,7 @@ export function ProductForm({
               metaDescription: productData.metaDescription || "",
               keywords: productData.keywords || "",
               socialVideoUrl: productData.socialVideoUrl || "",
+              imageAspectRatio: productData.imageAspectRatio || "",
               tags: productData.tags || [],
               topBrandIds: productData.topBrandIds || [],
               newBrandIds: productData.newBrandIds || [],
@@ -975,6 +978,7 @@ export function ProductForm({
       formData.append("metaDescription", metaDesc);
       formData.append("keywords", product.keywords || "");
       formData.append("socialVideoUrl", product.socialVideoUrl || "");
+      formData.append("imageAspectRatio", product.imageAspectRatio || "");
       formData.append("tags", JSON.stringify(product.tags || []));
 
       // Add categories information
@@ -2166,6 +2170,35 @@ export function ProductForm({
               )}
             </div>
           )}
+
+          {/* Product page display — shown for every product, with or without variants */}
+          <div className="space-y-4 rounded-lg border p-4 bg-gray-50">
+            <h2 className="text-xl font-semibold border-b pb-2">
+              Product Page Display
+            </h2>
+            <div className="space-y-2">
+              <Label htmlFor="imageAspectRatio">Main image shape (width : height)</Label>
+              <select
+                id="imageAspectRatio"
+                name="imageAspectRatio"
+                value={product.imageAspectRatio}
+                onChange={(e) =>
+                  setProduct((prev) => ({ ...prev, imageAspectRatio: e.target.value }))
+                }
+                className="rounded-md border bg-background px-3 py-2 text-sm w-full"
+              >
+                <option value="">Default (3:4 portrait)</option>
+                <option value="1:1">1:1 — Square</option>
+                <option value="4:5">4:5 — Slightly tall</option>
+                <option value="2:3">2:3 — Tall portrait</option>
+                <option value="4:3">4:3 — Landscape</option>
+              </select>
+              <p className="text-xs text-muted-foreground">
+                The full photo is always shown, never cropped. Pick the shape closest to your
+                photos so there is less empty space around them.
+              </p>
+            </div>
+          </div>
 
           {/* SEO Section */}
           <div className="space-y-4 rounded-lg border p-4 bg-gray-50">

@@ -27,6 +27,11 @@ const stripHtmlToPlain = (value = "", maxLength = 160) => {
   return `${plain.substring(0, maxLength)}...`;
 };
 
+// Shapes the admin can pick for the main product-page image box. Anything else is stored as null (default).
+const ALLOWED_IMAGE_ASPECT_RATIOS = ["1:1", "3:4", "4:5", "2:3", "4:3"];
+const cleanImageAspectRatio = (value) =>
+  ALLOWED_IMAGE_ASPECT_RATIOS.includes(value) ? value : null;
+
 const buildProductSeo = (name, description, metaTitle, metaDescription) => {
   const cleanName = String(name || "").trim();
   const plainDescription = stripHtmlToPlain(description);
@@ -442,6 +447,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     metaDescription,
     keywords,
     socialVideoUrl,
+    imageAspectRatio,
     ourProduct,
   } = req.body;
 
@@ -578,6 +584,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
           keywords,
           socialVideoUrl:
             socialVideoUrl && socialVideoUrl.trim() ? socialVideoUrl.trim() : null,
+          imageAspectRatio: cleanImageAspectRatio(imageAspectRatio),
           tags: req.body.tags
             ? Array.isArray(req.body.tags)
               ? req.body.tags
@@ -1155,6 +1162,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     metaDescription,
     keywords,
     socialVideoUrl,
+    imageAspectRatio,
     ourProduct,
   } = req.body;
 
@@ -1333,6 +1341,9 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
               socialVideoUrl && socialVideoUrl.trim()
                 ? socialVideoUrl.trim()
                 : null,
+          }),
+          ...(imageAspectRatio !== undefined && {
+            imageAspectRatio: cleanImageAspectRatio(imageAspectRatio),
           }),
           ...(req.body.tags !== undefined && {
             tags: Array.isArray(req.body.tags)
