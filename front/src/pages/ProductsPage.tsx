@@ -437,16 +437,15 @@ export function ProductForm({
       isPrimary: false,
     }));
 
-    setImageFiles((prev) => {
-      // Set first image as primary if there are no existing images
-      if (prev.length === 0 && newPreviews.length > 0) {
-        newPreviews[0].isPrimary = true;
-      }
+    setImageFiles((prev) => [...prev, ...validFiles]);
 
-      return [...prev, ...validFiles];
-    });
-
-    setImagePreviews((prev) => [...prev, ...newPreviews]);
+    // Only the very first photo of a product (nothing saved, nothing added yet) becomes primary.
+    // When the product already has photos, new ones are added without taking over as primary.
+    setImagePreviews((prev) =>
+      prev.length === 0
+        ? [{ ...newPreviews[0], isPrimary: true }, ...newPreviews.slice(1)]
+        : [...prev, ...newPreviews]
+    );
 
     toast.success(`${validFiles.length} image(s) added successfully`);
   }, []);
@@ -469,6 +468,13 @@ export function ProductForm({
     },
   });
 
+  // If the primary photo is gone, the first remaining one becomes primary. This is what the
+  // server does when a saved primary is deleted, so the screen stays in step with it.
+  const ensurePrimary = (list: ImagePreview[]) =>
+    list.length > 0 && !list.some((preview) => preview.isPrimary)
+      ? list.map((preview, i) => (i === 0 ? { ...preview, isPrimary: true } : preview))
+      : list;
+
   // Remove image from preview and files
   const removeImage = (index: number) => {
     // If there's an ID, it's an existing image from the server
@@ -488,7 +494,9 @@ export function ProductForm({
         .deleteImage(imageToRemove.id)
         .then(() => {
           toast.success("Image deleted successfully");
-          setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+          setImagePreviews((prev) =>
+            ensurePrimary(prev.filter((_, i) => i !== index))
+          );
         })
         .catch((error) => {
           console.error("Error deleting image:", error);
@@ -503,21 +511,44 @@ export function ProductForm({
       // Revoke the object URL to avoid memory leaks
       URL.revokeObjectURL(imagePreviews[index].url);
 
-      // Remove from both arrays
-      setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-      setImageFiles((prev) => prev.filter((_, i) => i !== index));
+      // `imageFiles` only holds the NEW photos, while `imagePreviews` also lists the saved
+      // ones, so find this photo's place among the new ones before removing its file.
+      const newIndex = imagePreviews.slice(0, index).filter((p) => !p.id).length;
+
+      setImagePreviews((prev) =>
+        ensurePrimary(prev.filter((_, i) => i !== index))
+      );
+      setImageFiles((prev) => prev.filter((_, i) => i !== newIndex));
     }
   };
 
   // Set an image as primary
-  const setPrimaryImage = (index: number) => {
-    // Update image previews with the new primary image
+  const setPrimaryImage = async (index: number) => {
+    const selected = imagePreviews[index];
+    if (!selected) return;
+
+    // A photo that is already saved: store the change on the server straight away
+    if (selected.id) {
+      try {
+        await products.setImageAsPrimary(selected.id);
+      } catch (error) {
+        console.error("Error setting primary image:", error);
+        toast.error("Failed to set primary image");
+        return;
+      }
+      toast.success("Primary image updated");
+    }
+
     setImagePreviews((prev) => {
-      const updated = prev.map((preview, i) => ({
+      const flagged = prev.map((preview, i) => ({
         ...preview,
         isPrimary: i === index,
       }));
-      return updated;
+      // A saved photo moves to the front, like on the server. New photos keep their place:
+      // their order in this list is how they are matched to the files that get uploaded.
+      return selected.id
+        ? [flagged[index], ...flagged.filter((_, i) => i !== index)]
+        : flagged;
     });
   };
 
@@ -1122,13 +1153,13 @@ export function ProductForm({
           imageFiles
         );
 
-        // Add primary image index — only count new files (imageFiles), not existing server images
+        // Only send which NEW photo is primary when one of the new photos is starred (or it is the
+        // product's first photo). Otherwise leave it out so the product keeps its current primary
+        // instead of the first new photo silently taking over. Counts new files only, not saved ones.
         const newImagePreviews = imagePreviews.filter((img) => !img.id);
         const primaryNewIndex = newImagePreviews.findIndex((img) => img.isPrimary === true);
         if (primaryNewIndex >= 0) {
           formData.append("primaryImageIndex", String(primaryNewIndex));
-        } else {
-          formData.append("primaryImageIndex", "0");
         }
 
         // Append each image file with proper field name for multer
@@ -1179,6 +1210,7 @@ export function ProductForm({
           );
 
           const uploadPromises = [];
+          let totalVariantImages = 0;
 
           // Match variants by their temporary IDs or color/size combination
           for (let i = 0; i < variants.length; i++) {
@@ -1222,42 +1254,42 @@ export function ProductForm({
                   `📸 Found ${newImages.length} new images for variant ${serverVariant.id} (${localVariant.color?.name || "N/A"} - ${localVariant.size?.name || "N/A"}) [Mode: ${mode}]`
                 );
 
-                // Upload each new image for this variant
-                for (let j = 0; j < newImages.length; j++) {
-                  const imageData = newImages[j];
+                // Upload this variant's images ONE AT A TIME, in the order the admin arranged them.
+                // The server works out each image's position from how many images the variant
+                // already has, so uploading them all at once gave several images the same position
+                // (and sometimes more than one "primary"), which made the order on the website
+                // random. Different variants don't affect each other, so they still run in parallel.
+                const variantId = serverVariant.id;
+                totalVariantImages += newImages.length;
 
-                  // FIXED: Send undefined for non-explicitly-marked images to let backend decide
-                  // Only send true/false when explicitly set, otherwise let backend handle it
-                  const isPrimary =
-                    imageData.isPrimary === true ? true : undefined;
+                uploadPromises.push(
+                  (async () => {
+                    for (let j = 0; j < newImages.length; j++) {
+                      const imageData = newImages[j];
 
-                  console.log(`📸 Upload decision for image ${j + 1}:`, {
-                    imageDataIsPrimary: imageData.isPrimary,
-                    finalIsPrimary: isPrimary,
-                    note: "undefined = let backend decide, true = force primary",
-                  });
+                      // Send true only for the image marked primary; otherwise let the backend decide
+                      const isPrimary =
+                        imageData.isPrimary === true ? true : undefined;
 
-                  const uploadPromise = products
-                    .uploadVariantImage(
-                      serverVariant.id,
-                      imageData.file,
-                      isPrimary
-                    )
-                    .then(() => {
-                      console.log(
-                        `📸 Uploaded image ${j + 1}/${newImages.length} for variant ${serverVariant.id} (isPrimary: ${isPrimary})`
-                      );
-                    })
-                    .catch((error) => {
-                      console.error(
-                        `❌ Failed to upload image ${j + 1} for variant ${serverVariant.id}:`,
-                        error
-                      );
-                      throw error;
-                    });
-
-                  uploadPromises.push(uploadPromise);
-                }
+                      try {
+                        await products.uploadVariantImage(
+                          variantId,
+                          imageData.file,
+                          isPrimary
+                        );
+                        console.log(
+                          `📸 Uploaded image ${j + 1}/${newImages.length} for variant ${variantId} (isPrimary: ${isPrimary})`
+                        );
+                      } catch (error) {
+                        console.error(
+                          `❌ Failed to upload image ${j + 1} for variant ${variantId}:`,
+                          error
+                        );
+                        throw error;
+                      }
+                    }
+                  })()
+                );
               }
             }
           }
@@ -1267,7 +1299,7 @@ export function ProductForm({
             try {
               await Promise.all(uploadPromises);
               toast.success(
-                `Successfully uploaded ${uploadPromises.length} variant image(s)`
+                `Successfully uploaded ${totalVariantImages} variant image(s)`
               );
             } catch (error) {
               console.error("Some variant image uploads failed:", error);

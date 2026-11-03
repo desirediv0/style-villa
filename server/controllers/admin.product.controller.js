@@ -6,6 +6,7 @@ import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { processAndUploadImage } from "../middlewares/multer.middlerware.js";
 import { createSlug } from "../helper/Slug.js";
 import { generateSKU } from "../utils/generateSKU.js";
+import { PRODUCT_IMAGE_ORDER, VARIANT_IMAGE_ORDER } from "../utils/imageOrder.js";
 import {
   formatVariantWithAttributes,
   formatVariantsWithAttributes,
@@ -35,6 +36,26 @@ const cleanImageAspectRatio = (value) => {
   const width = Number(match[1]);
   const height = Number(match[2]);
   return width > 0 && height > 0 ? `${width}:${height}` : null;
+};
+
+// Keeps a product's own (non-variant) images tidy: positions 0..n-1 with the primary first,
+// and exactly one primary. If the primary was removed, or there is more than one, the image
+// that comes first by position wins. `db` is `prisma` or a transaction client.
+const normalizeProductImages = async (db, productId) => {
+  const images = await db.productImage.findMany({
+    where: { productId },
+    orderBy: PRODUCT_IMAGE_ORDER,
+    select: { id: true, order: true, isPrimary: true },
+  });
+  for (const [index, image] of images.entries()) {
+    const shouldBePrimary = index === 0;
+    if (image.order !== index || image.isPrimary !== shouldBePrimary) {
+      await db.productImage.update({
+        where: { id: image.id },
+        data: { order: index, isPrimary: shouldBePrimary },
+      });
+    }
+  }
 };
 
 const buildProductSeo = (name, description, metaTitle, metaDescription) => {
@@ -226,7 +247,7 @@ export const getProducts = asyncHandler(async (req, res, next) => {
         },
       },
       images: {
-        orderBy: { order: "asc" },
+        orderBy: PRODUCT_IMAGE_ORDER,
       },
       variants: {
         include: {
@@ -240,7 +261,7 @@ export const getProducts = asyncHandler(async (req, res, next) => {
             },
           },
           images: {
-            orderBy: { order: "asc" },
+            orderBy: VARIANT_IMAGE_ORDER,
           },
         },
       },
@@ -334,7 +355,7 @@ export const getProductById = asyncHandler(async (req, res, next) => {
         },
       },
       images: {
-        orderBy: { order: "asc" },
+        orderBy: PRODUCT_IMAGE_ORDER,
       },
       variants: {
         include: {
@@ -348,7 +369,7 @@ export const getProductById = asyncHandler(async (req, res, next) => {
             },
           },
           images: {
-            orderBy: { order: "asc" },
+            orderBy: VARIANT_IMAGE_ORDER,
           },
         },
       },
@@ -965,6 +986,9 @@ export const createProduct = asyncHandler(async (req, res, next) => {
             console.warn(`⚠️ Continuing product creation without this image`);
           }
         }
+
+        // Primary first, positions 0..n-1 (also closes any gap left by a failed upload)
+        await normalizeProductImages(prisma, newProduct.id);
       } else if (req.file) {
         // For backward compatibility with single image upload
         const imageUrl = await processAndUploadImage(
@@ -2353,9 +2377,15 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
       // Handle image uploads if provided
       if (req.files && req.files.length > 0) {
-        const primaryImageIndex = req.body.primaryImageIndex
-          ? parseInt(req.body.primaryImageIndex)
-          : 0;
+        // Which NEW photo the admin starred. The admin form only sends this when a new photo was
+        // starred (or the product had no photos), so a missing value means "keep the current primary".
+        const requestedPrimary = parseInt(req.body.primaryImageIndex, 10);
+        const starredNewIndex =
+          Number.isInteger(requestedPrimary) &&
+          requestedPrimary >= 0 &&
+          requestedPrimary < req.files.length
+            ? requestedPrimary
+            : -1;
 
         // If replacing all images, delete existing ones first
         if (req.body.replaceAllImages === "true") {
@@ -2377,6 +2407,20 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
           }
         }
 
+        // New photos go AFTER the ones the product already has, so they never share a position
+        // with an existing photo, and they only take over as primary when asked to (or when the
+        // product has no primary).
+        const existingImages = await prisma.productImage.findMany({
+          where: { productId },
+          select: { id: true, order: true, isPrimary: true },
+        });
+        const existingPrimaryIds = existingImages.filter((img) => img.isPrimary).map((img) => img.id);
+        const firstNewOrder = existingImages.length
+          ? Math.max(...existingImages.map((img) => img.order)) + 1
+          : 0;
+        const newPrimaryIndex =
+          starredNewIndex >= 0 ? starredNewIndex : existingPrimaryIds.length ? -1 : 0;
+
         // Upload new images
         for (let i = 0; i < req.files.length; i++) {
           const file = req.files[i];
@@ -2390,11 +2434,22 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
               productId,
               url: imageUrl,
               alt: `${updatedProduct.name} - Image ${i + 1}`,
-              isPrimary: i === primaryImageIndex,
-              order: i,
+              isPrimary: i === newPrimaryIndex,
+              order: firstNewOrder + i,
             },
           });
         }
+
+        // A newly starred photo replaces the old primary
+        if (newPrimaryIndex >= 0 && existingPrimaryIds.length) {
+          await prisma.productImage.updateMany({
+            where: { id: { in: existingPrimaryIds } },
+            data: { isPrimary: false },
+          });
+        }
+
+        // Primary first, positions 0..n-1, exactly one primary
+        await normalizeProductImages(prisma, productId);
       } else if (req.file) {
         try {
           // For backward compatibility with single image upload
@@ -2663,36 +2718,39 @@ export const uploadProductImage = asyncHandler(async (req, res, next) => {
 
     // Use a transaction to ensure all database operations complete together
     const result = await prisma.$transaction(async (tx) => {
-      // If setting as primary, update other images to not be primary
-      if (isPrimary === "true" || isPrimary === true) {
+      // The new image becomes primary when asked to, or when the product has no primary yet
+      const hasPrimary =
+        (await tx.productImage.count({ where: { productId, isPrimary: true } })) > 0;
+      const makePrimary = isPrimary === "true" || isPrimary === true || !hasPrimary;
+
+      if (makePrimary) {
         await tx.productImage.updateMany({
-          where: {
-            productId,
-            isPrimary: true,
-          },
+          where: { productId, isPrimary: true },
           data: { isPrimary: false },
         });
       }
 
-      // Get the current highest order for this product
-      const maxOrder = await tx.productImage.findFirst({
+      // Put it after the current last image. (Position 0 is a valid last position, so don't
+      // use `order || -1`, which turns an existing 0 into -1 and hands out 0 again.)
+      const last = await tx.productImage.findFirst({
         where: { productId },
         orderBy: { order: "desc" },
         select: { order: true },
       });
 
-      const nextOrder = (maxOrder?.order || -1) + 1;
-
-      // Create image record
-      return await tx.productImage.create({
+      const created = await tx.productImage.create({
         data: {
           productId,
           url: imageUrl,
           alt: req.body.alt || product.name,
-          isPrimary: isPrimary === "true" || isPrimary === true,
-          order: nextOrder,
+          isPrimary: makePrimary,
+          order: last ? last.order + 1 : 0,
         },
       });
+
+      // Primary first, positions 0..n-1, exactly one primary
+      await normalizeProductImages(tx, productId);
+      return tx.productImage.findUnique({ where: { id: created.id } });
     });
 
     // Format response with full URL
@@ -2749,26 +2807,13 @@ export const deleteProductImage = asyncHandler(async (req, res, next) => {
     console.log(`Deleting image from S3: ${image.url}`);
     await deleteFromS3(image.url);
 
-    // Check if this was the primary image
-    const isPrimary = image.isPrimary;
-
     // Delete image record from database
     await prisma.productImage.delete({
       where: { id: imageId },
     });
 
-    // If deleted image was primary, set the first remaining image as primary
-    if (isPrimary) {
-      const remainingImages = image.product.images.filter(
-        (img) => img.id !== imageId
-      );
-      if (remainingImages.length > 0) {
-        await prisma.productImage.update({
-          where: { id: remainingImages[0].id },
-          data: { isPrimary: true },
-        });
-      }
-    }
+    // Close the gap and, if the primary was removed, promote the next image by position
+    await normalizeProductImages(prisma, image.product.id);
 
     res
       .status(200)
@@ -2777,6 +2822,39 @@ export const deleteProductImage = asyncHandler(async (req, res, next) => {
     console.error("Error deleting image:", error);
     throw new ApiError(500, `Failed to delete image: ${error.message}`);
   }
+});
+
+// Make an existing product image the primary one. It moves to position 0 and the others
+// keep their relative order.
+export const setProductImageAsPrimary = asyncHandler(async (req, res, next) => {
+  const { imageId } = req.params;
+
+  const image = await prisma.productImage.findUnique({
+    where: { id: imageId },
+    select: { id: true, productId: true, isPrimary: true },
+  });
+
+  if (!image) {
+    throw new ApiError(404, "Image not found");
+  }
+
+  if (!image.isPrimary) {
+    await prisma.$transaction(async (tx) => {
+      await tx.productImage.updateMany({
+        where: { productId: image.productId, isPrimary: true },
+        data: { isPrimary: false },
+      });
+      await tx.productImage.update({
+        where: { id: imageId },
+        data: { isPrimary: true },
+      });
+      await normalizeProductImages(tx, image.productId);
+    });
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponsive(200, {}, "Primary image updated successfully"));
 });
 
 // Create product variant

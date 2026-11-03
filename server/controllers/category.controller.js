@@ -5,6 +5,7 @@ import { prisma } from "../config/db.js";
 import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { processAndUploadImage } from "../middlewares/multer.middlerware.js";
 import { createSlug } from "../helper/Slug.js";
+import { VARIANT_IMAGE_ORDER, VARIANT_ORDER } from "../utils/imageOrder.js";
 
 // ---------------------- PUBLIC ROUTES ---------------------- //
 
@@ -162,8 +163,11 @@ export const getProductsByCategory = asyncHandler(async (req, res) => {
               },
             },
           },
-          images: true,
+          images: { orderBy: VARIANT_IMAGE_ORDER },
         },
+        // Same variant order as the home page / product list, so a product's card
+        // opens on the same variant (and image) everywhere.
+        orderBy: VARIANT_ORDER,
       },
       _count: {
         select: {
@@ -324,8 +328,9 @@ export const getProductsBySubCategory = asyncHandler(async (req, res) => {
         where: { isActive: true },
         include: {
           attributes: { include: { attributeValue: { include: { attribute: true } } } },
-          images: true,
+          images: { orderBy: VARIANT_IMAGE_ORDER },
         },
+        orderBy: VARIANT_ORDER,
       },
       _count: { select: { reviews: true } },
     },

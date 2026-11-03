@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { prisma } from "../config/db.js";
 import { getFileUrl } from "../utils/deleteFromS3.js";
 import { formatVariantWithAttributes } from "../utils/variant-attributes.js";
+import { VARIANT_IMAGE_ORDER, PRODUCT_IMAGE_ORDER, VARIANT_ORDER } from "../utils/imageOrder.js";
 
 // Get all products with filtering, pagination and sorting
 export const getAllProducts = asyncHandler(async (req, res) => {
@@ -206,10 +207,10 @@ export const getAllProducts = asyncHandler(async (req, res) => {
             },
           },
           images: {
-            orderBy: { order: "asc" }, // Sort images by order (0, 1, 2, 3...)
+            orderBy: VARIANT_IMAGE_ORDER, // primary first, then the admin's order
           },
         },
-        orderBy: { price: "asc" },
+        orderBy: VARIANT_ORDER,
       },
       _count: {
         select: {
@@ -388,7 +389,7 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
       },
       brand: true,
       images: {
-        orderBy: { isPrimary: "desc" },
+        orderBy: PRODUCT_IMAGE_ORDER, // primary first, then the admin's order
       },
       variants: {
         where: { isActive: true },
@@ -403,9 +404,11 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
             },
           },
           images: {
-            orderBy: { order: "asc" }, // Sort images by order (0, 1, 2, 3...)
+            orderBy: VARIANT_IMAGE_ORDER, // primary first, then the admin's order
           },
         },
+        // Same variant order as the cards, so the page opens on the same variant they showed.
+        orderBy: VARIANT_ORDER,
       },
       reviews: {
         where: { status: "APPROVED" },
@@ -690,7 +693,7 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
         },
         variants: {
           where: { isActive: true },
-          orderBy: { price: "asc" },
+          orderBy: VARIANT_ORDER,
           take: 1,
           include: {
             attributes: {
@@ -702,7 +705,7 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
                 },
               },
             },
-            images: true,
+            images: { orderBy: VARIANT_IMAGE_ORDER },
           },
         },
         _count: {
@@ -800,7 +803,7 @@ export const getProductVariant = asyncHandler(async (req, res) => {
           },
         },
       },
-      images: true,
+      images: { orderBy: VARIANT_IMAGE_ORDER },
     },
   });
 
@@ -851,7 +854,7 @@ export const getProductVariantById = asyncHandler(async (req, res) => {
           },
         },
       },
-      images: true,
+      images: { orderBy: VARIANT_IMAGE_ORDER },
       product: {
         include: {
           images: {
@@ -980,10 +983,10 @@ export const getProductsByType = asyncHandler(async (req, res) => {
                   },
                 },
                 images: {
-                  orderBy: { order: "asc" },
+                  orderBy: VARIANT_IMAGE_ORDER,
                 },
               },
-              orderBy: { price: "asc" },
+              orderBy: VARIANT_ORDER,
             },
             _count: {
               select: {

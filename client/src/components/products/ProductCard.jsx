@@ -38,7 +38,6 @@ export const ProductCard = ({ product, viewMode = "grid" }) => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [wishlistItems, setWishlistItems] = useState({});
   const [isAddingToWishlist, setIsAddingToWishlist] = useState({});
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [priceSettings, setPriceSettings] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
 
@@ -61,27 +60,17 @@ export const ProductCard = ({ product, viewMode = "grid" }) => {
       .catch(() => setPriceSettings({ hidePricesForGuests: false }));
   }, []);
 
-  const getAllProductImages = useMemo(() => {
-    const images = [];
-    const imageUrls = new Set();
-    const push = (raw) => {
-      const url = raw?.url || raw;
-      if (!url) return;
-      const full = getImageUrl(url);
-      if (!imageUrls.has(full)) { imageUrls.add(full); images.push(full); }
-    };
-    product.variants?.forEach((v) => v.images?.forEach(push));
-    product.images?.forEach(push);
-    if (images.length === 0 && product.image) push(product.image);
-    if (images.length === 0) images.push("/placeholder.jpg");
-    return images;
+  // The card always shows one fixed image and never changes on hover: the first variant's
+  // primary image (the API already returns images primary-first and variants in a fixed order),
+  // falling back to the product's own image.
+  const cardImage = useMemo(() => {
+    const raw =
+      product.variants?.find((v) => v.images?.length)?.images[0] ||
+      product.images?.[0] ||
+      product.image;
+    const url = raw?.url || raw;
+    return url ? getImageUrl(url) : "/placeholder.jpg";
   }, [product]);
-
-  useEffect(() => {
-    if (!isHovered || getAllProductImages.length <= 1) { setCurrentImageIndex(0); return; }
-    const t = setInterval(() => setCurrentImageIndex((p) => (p + 1) % getAllProductImages.length), 2000);
-    return () => clearInterval(t);
-  }, [isHovered, getAllProductImages.length]);
 
   const basePriceField = parsePrice(product.basePrice);
   const regularPriceField = parsePrice(product.regularPrice);
@@ -185,7 +174,7 @@ export const ProductCard = ({ product, viewMode = "grid" }) => {
           style={{ width: "160px", minHeight: "180px" }}
         >
           <Image
-            src={getAllProductImages[currentImageIndex] || "/placeholder.jpg"}
+            src={cardImage}
             alt={product.name}
             width={140}
             height={140}
@@ -243,7 +232,7 @@ export const ProductCard = ({ product, viewMode = "grid" }) => {
       <div className="relative block overflow-hidden bg-ivory" style={{ aspectRatio: "3/4" }}>
         <Link href={`/products/${product.slug}`} className="block w-full h-full">
           <Image
-            src={getAllProductImages[currentImageIndex] || "/placeholder.jpg"}
+            src={cardImage}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-900 ease-luxe group-hover:scale-[1.06]"

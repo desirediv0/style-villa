@@ -320,6 +320,9 @@ export const products = {
   deleteImage: (imageId: string) => {
     return api.delete(`/api/admin/products/images/${imageId}`);
   },
+  setImageAsPrimary: (imageId: string) => {
+    return api.patch(`/api/admin/products/images/${imageId}/set-primary`);
+  },
   // Product Variants
   manageVariants: (
     productId: string,

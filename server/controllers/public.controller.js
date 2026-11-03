@@ -2,6 +2,7 @@ import { prisma } from "../config/db.js";
 import { ApiResponsive } from "../utils/ApiResponsive.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { getFileUrl } from "../utils/deleteFromS3.js";
+import { VARIANT_IMAGE_ORDER, VARIANT_ORDER } from "../utils/imageOrder.js";
 
 export const getBrandsByTag = asyncHandler(async (req, res) => {
   const { tag } = req.query;
@@ -163,9 +164,9 @@ export const getBrandBySlug = asyncHandler(async (req, res) => {
               },
             },
           },
-          images: { orderBy: { order: "asc" } },
+          images: { orderBy: VARIANT_IMAGE_ORDER },
         },
-        orderBy: { price: "asc" },
+        orderBy: VARIANT_ORDER,
       },
       _count: {
         select: {
@@ -336,11 +337,11 @@ export const getActiveFlashSales = asyncHandler(async (req, res) => {
                 where: { isActive: true },
                 include: {
                   images: {
-                    orderBy: { order: "asc" },
+                    orderBy: VARIANT_IMAGE_ORDER,
                     take: 1,
                   },
                 },
-                orderBy: { price: "asc" },
+                orderBy: VARIANT_ORDER,
                 take: 1,
               },
             },
