@@ -2,7 +2,9 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponsive } from "../utils/ApiResponsive.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { prisma } from "../config/db.js";
-import { razorpay } from "../app.js";
+import { refundOrderPayment } from "../utils/orderCancel.js";
+import { createPartnerEarningsForDeliveredOrder } from "../utils/partnerEarnings.js";
+import { notifyOrderStatus } from "../utils/orderNotifications.js";
 import { cancelShiprocketOrder, getShiprocketSettings } from "../utils/shiprocket.js";
 
 // Get all orders with pagination, filtering, and sorting
@@ -356,6 +358,7 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
     where: { id: orderId },
     include: {
       razorpayPayment: true,
+      tracking: true,
     },
   });
 
@@ -369,6 +372,17 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
       400,
       `Cannot transition from ${order.status} to ${status}`
     );
+  }
+
+  // Refund first: if Razorpay refuses, the order keeps its status and the admin sees the real error
+  let refundInfo = null;
+  if (status === "REFUNDED" && order.razorpayPayment?.razorpayPaymentId) {
+    try {
+      refundInfo = await refundOrderPayment(order, notes || "Admin initiated refund");
+    } catch (error) {
+      console.error("Admin refund failed:", error);
+      throw new ApiError(502, `Razorpay refund failed: ${error?.message || "unknown error"}. Order status was not changed.`);
+    }
   }
 
   // Start a transaction for status-specific actions
@@ -418,8 +432,8 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
         await tx.tracking.update({
           where: { orderId },
           data: {
-            trackingNumber: req.body.trackingNumber || existingTracking.trackingNumber,
-            carrier: req.body.carrier || existingTracking.carrier,
+            trackingNumber: req.body.trackingNumber || order.awbCode || existingTracking.trackingNumber,
+            carrier: req.body.carrier || order.courierName || existingTracking.carrier,
             status: "SHIPPED",
             shippedAt: new Date(),
             updates: {
@@ -436,8 +450,8 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
         await tx.tracking.create({
           data: {
             orderId,
-            trackingNumber: req.body.trackingNumber || `SHP${Date.now()}`,
-            carrier: req.body.carrier || "Default Carrier",
+            trackingNumber: req.body.trackingNumber || order.awbCode || `SHP${Date.now()}`,
+            carrier: req.body.carrier || order.courierName || "Default Carrier",
             status: "SHIPPED",
             shippedAt: new Date(),
             updates: {
@@ -486,39 +500,6 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
       });
     }
 
-    // If refunding, initiate Razorpay refund
-    if (
-      status === "REFUNDED" &&
-      order.razorpayPayment &&
-      order.razorpayPayment.razorpayPaymentId
-    ) {
-      const refundData = await initiateRefund(
-        order.razorpayPayment.razorpayPaymentId,
-        order.total,
-        notes
-      );
-
-      if (refundData) {
-        await tx.razorpayRefund.create({
-          data: {
-            razorpayPaymentId: order.razorpayPayment.razorpayPaymentId,
-            amount: order.total,
-            razorpayRefundId: refundData.id,
-            status: "PROCESSED",
-            reason: notes || "Admin initiated refund",
-            notes: JSON.stringify(refundData.notes || {}),
-          },
-        });
-
-        await tx.razorpayPayment.update({
-          where: { orderId },
-          data: {
-            status: "REFUNDED",
-          },
-        });
-      }
-    }
-
     // Update the order
     const updatedOrder = await tx.order.update({
       where: { id: orderId },
@@ -529,61 +510,9 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
       },
     });
 
-    // Create partner commissions when order is delivered (safety check)
-    if (status === "DELIVERED" && order.couponId) {
-      try {
-        // Check if commissions already exist for this order
-        const existingCommissions = await tx.partnerEarning.findMany({
-          where: { orderId: orderId },
-        });
-
-        if (existingCommissions.length === 0) {
-          // Calculate final order amount (subtotal - discount)
-          const finalOrderAmount =
-            parseFloat(order.subTotal) - parseFloat(order.discount);
-
-          // Get coupon partners
-          const couponPartners = await tx.couponPartner.findMany({
-            where: { couponId: order.couponId },
-            include: { partner: true },
-          });
-
-          // Create commissions for each partner
-          for (const couponPartner of couponPartners) {
-            if (
-              couponPartner.commission &&
-              couponPartner.commission > 0 &&
-              finalOrderAmount > 0
-            ) {
-              // Calculate commission based on FINAL ORDER AMOUNT (not discount)
-              const commissionAmount =
-                (finalOrderAmount * couponPartner.commission) / 100;
-
-              await tx.partnerEarning.create({
-                data: {
-                  partnerId: couponPartner.partnerId,
-                  orderId: orderId,
-                  couponId: order.couponId,
-                  amount: commissionAmount.toFixed(2),
-                  percentage: couponPartner.commission,
-                  createdAt: new Date(),
-                },
-              });
-
-              console.log(
-                `Created delayed commission for partner ${couponPartner.partner.name
-                }: ₹${commissionAmount.toFixed(2)} (${couponPartner.commission
-                }% of final order ₹${finalOrderAmount.toFixed(2)})`
-              );
-            }
-          }
-        }
-      } catch (commissionError) {
-        console.error(
-          "Error creating partner commissions on delivery:",
-          commissionError
-        );
-      }
+    // Partner commission on delivery (idempotent, shared with the Shiprocket webhook)
+    if (status === "DELIVERED") {
+      await createPartnerEarningsForDeliveredOrder(tx, orderId);
     }
 
     return updatedOrder;
@@ -601,12 +530,19 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
     },
   });
 
+  if (["SHIPPED", "DELIVERED", "CANCELLED", "REFUNDED"].includes(status)) {
+    notifyOrderStatus(orderId, status, {
+      refundAmount: refundInfo?.amount,
+      reason: notes,
+    }).catch(() => {});
+  }
+
   res
     .status(200)
     .json(
       new ApiResponsive(
         200,
-        { order: updatedOrder },
+        { order: updatedOrder, refund: refundInfo?.refunded ? { amount: refundInfo.amount, id: refundInfo.refund?.id } : null },
         "Order status updated successfully"
       )
     );
@@ -1413,27 +1349,6 @@ async function handleInventoryReturn(tx, orderId, adminId) {
         createdBy: adminId,
       },
     });
-  }
-}
-
-// Helper function to initiate Razorpay refund
-async function initiateRefund(paymentId, amount, notes) {
-  try {
-    // Check if Razorpay is initialized
-    if (!razorpay) {
-      console.error("Razorpay not initialized");
-      return null;
-    }
-
-    const refund = await razorpay.payments.refund(paymentId, {
-      amount: amount * 100, // Convert to paisa
-      notes: { reason: notes || "Admin initiated refund" },
-    });
-
-    return refund;
-  } catch (error) {
-    console.error("Razorpay refund error:", error);
-    return null;
   }
 }
 

@@ -89,6 +89,7 @@ export const getPartnerDashboard = asyncHandler(async (req, res) => {
                     orderNumber: true,
                     status: true,
                     total: true,
+                    subTotal: true,
                     discount: true,
                     createdAt: true
                 }
@@ -105,7 +106,8 @@ export const getPartnerDashboard = asyncHandler(async (req, res) => {
     let totalCommissionRate = 0;
 
     earningsRows.forEach(e => {
-        totalOrderValue += parseFloat(e.order?.total || 0);
+        // Order value = goods value after the coupon discount (what commission is calculated on)
+        totalOrderValue += parseFloat(e.order?.subTotal || 0) - parseFloat(e.order?.discount || 0);
         totalCommissionEarned += parseFloat(e.amount);
         totalCommissionRate += e.percentage || 0;
     });
@@ -141,6 +143,7 @@ export const getPartnerDashboard = asyncHandler(async (req, res) => {
 });
 
 // Get partner coupons (protected)
+// Earnings come from PartnerEarning rows (created when an order is delivered), so every partner screen shows the same figure.
 export const getPartnerCoupons = asyncHandler(async (req, res) => {
     const partnerId = req.partner.id;
 
@@ -163,49 +166,22 @@ export const getPartnerCoupons = asyncHandler(async (req, res) => {
         }
     });
 
-    // Calculate actual earnings for each coupon (only from delivered orders)
-    const couponsWithEarnings = await Promise.all(
-        coupons.map(async (couponPartner) => {
-            // Get only DELIVERED orders using this specific coupon for this partner
-            const ordersForCoupon = await prisma.order.findMany({
-                where: {
-                    couponId: couponPartner.couponId,
-                    status: 'DELIVERED', // Only delivered orders count for earnings
-                    coupon: {
-                        couponPartners: {
-                            some: { partnerId: couponPartner.partnerId }
-                        }
-                    }
-                },
-                include: {
-                    coupon: {
-                        include: {
-                            couponPartners: {
-                                where: { partnerId: couponPartner.partnerId }
-                            }
-                        }
-                    }
-                }
-            });
+    const grouped = await prisma.partnerEarning.groupBy({
+        by: ['couponId'],
+        where: { partnerId, order: { status: 'DELIVERED' } },
+        _sum: { amount: true },
+        _count: { _all: true }
+    });
+    const byCoupon = new Map(grouped.map(g => [g.couponId, g]));
 
-            // Calculate actual earnings from delivered orders only
-            let actualEarnings = 0;
-            ordersForCoupon.forEach(order => {
-                const orderAmount = parseFloat(order.total || 0);
-                // Assigned partner–coupon row is source of truth for commission %
-                const commissionRate = Number(
-                    couponPartner.commission ?? order.coupon?.couponPartners?.[0]?.commission ?? 0
-                );
-                actualEarnings += (orderAmount * commissionRate) / 100;
-            });
-
-            return {
-                ...couponPartner,
-                actualEarnings: parseFloat(actualEarnings.toFixed(2)),
-                orderCount: ordersForCoupon.length
-            };
-        })
-    );
+    const couponsWithEarnings = coupons.map(couponPartner => {
+        const g = byCoupon.get(couponPartner.couponId);
+        return {
+            ...couponPartner,
+            actualEarnings: parseFloat(parseFloat(g?._sum?.amount || 0).toFixed(2)),
+            orderCount: g?._count?._all || 0
+        };
+    });
 
     res.status(200).json(new ApiResponsive(200, { coupons: couponsWithEarnings }, 'Coupons fetched successfully'));
 });
@@ -229,75 +205,52 @@ export const getPartnerEarnings = asyncHandler(async (req, res) => {
             };
             break;
         case 'week':
-            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            dateFilter = {
-                createdAt: {
-                    gte: weekAgo
-                }
-            };
+            dateFilter = { createdAt: { gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) } };
             break;
         case 'month':
-            dateFilter = {
-                createdAt: {
-                    gte: new Date(now.getFullYear(), now.getMonth(), 1)
-                }
-            };
+            dateFilter = { createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), 1) } };
             break;
         case 'year':
-            dateFilter = {
-                createdAt: {
-                    gte: new Date(now.getFullYear(), 0, 1)
-                }
-            };
+            dateFilter = { createdAt: { gte: new Date(now.getFullYear(), 0, 1) } };
             break;
         default:
             // 'all' - no date filter
             break;
     }
 
-    // Get detailed earnings with orders (only DELIVERED orders)
-    const orders = await prisma.order.findMany({
-        where: {
-            ...dateFilter,
-            status: 'DELIVERED', // Only show earnings from delivered orders
-            coupon: {
-                couponPartners: {
-                    some: { partnerId }
-                }
-            }
-        },
+    // One row per delivered order the partner earned on. The amount is the stored commission.
+    const rows = await prisma.partnerEarning.findMany({
+        where: { ...dateFilter, partnerId, order: { status: 'DELIVERED' } },
         include: {
-            coupon: {
-                include: {
-                    couponPartners: {
-                        where: { partnerId }
-                    }
-                }
-            },
-            user: {
+            coupon: { select: { code: true } },
+            order: {
                 select: {
-                    name: true,
-                    email: true
+                    id: true,
+                    orderNumber: true,
+                    status: true,
+                    subTotal: true,
+                    discount: true,
+                    createdAt: true,
+                    razorpayPayment: { select: { id: true } },
+                    user: { select: { name: true, email: true } },
+                    items: { select: { product: { select: { name: true } } } }
                 }
             }
         },
         orderBy: { createdAt: 'desc' }
     });
 
-    // Calculate earnings for each order
-    const earningsData = orders.map(order => {
-        const couponPartner = order.coupon?.couponPartners[0];
-        const commissionRate = couponPartner?.commission || 0;
-        const orderTotal = parseFloat(order.total || 0);
-        const earningAmount = (orderTotal * commissionRate) / 100;
-
+    const earningsData = rows.map(row => {
+        const order = row.order;
+        const orderAmount = parseFloat(order.subTotal || 0) - parseFloat(order.discount || 0);
         return {
             id: order.id,
             orderNumber: order.orderNumber,
-            orderAmount: orderTotal,
-            commission: commissionRate,
-            earningAmount: parseFloat(earningAmount.toFixed(2)),
-            couponCode: order.coupon?.code,
+            orderAmount: parseFloat(orderAmount.toFixed(2)),
+            commission: row.percentage || 0,
+            earningAmount: parseFloat(parseFloat(row.amount).toFixed(2)),
+            couponCode: row.coupon?.code,
+            productName: order.items.map(i => i.product?.name).filter(Boolean).join(', '),
             customerName: order.user?.name,
             customerEmail: order.user?.email,
             orderStatus: order.status,

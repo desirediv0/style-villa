@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useCart } from "@/lib/cart-context";
@@ -45,6 +45,8 @@ export default function CheckoutPage() {
     });
     const [paymentMethod, setPaymentMethod] = useState("RAZORPAY");
     const [processing, setProcessing] = useState(false);
+    // Blocks a second click while an order is being created or the Razorpay window is open (prevents double payment)
+    const checkoutLock = useRef(false);
     const [orderCreated, setOrderCreated] = useState(false);
     const [orderId, setOrderId] = useState("");
     const [paymentId, setPaymentId] = useState("");
@@ -57,6 +59,8 @@ export default function CheckoutPage() {
     const [confettiCannon, setConfettiCannon] = useState(false);
 
     const totals = getCartTotals();
+    const codCharge = paymentMethod === "CASH" ? Number(paymentSettings.codCharge) || 0 : 0;
+    const displayTotal = Math.round((totals.total + codCharge) * 100) / 100;
 
     // Redirect if not authenticated
     useEffect(() => {
@@ -225,11 +229,15 @@ export default function CheckoutPage() {
             return;
         }
 
+        if (checkoutLock.current) return;
+        checkoutLock.current = true;
+        let keepLocked = false;
+
         setProcessing(true);
         setError("");
 
         try {
-            const calculatedAmount = totals.total;
+            const calculatedAmount = displayTotal;
             const amount = Math.max(parseFloat(calculatedAmount.toFixed(2)), 1);
 
             if (calculatedAmount < 1) {
@@ -267,6 +275,7 @@ export default function CheckoutPage() {
                 };
                 setOrderNumber(orderResponse.data.orderNumber);
                 setOrderId(orderResponse.data.orderId || "");
+                keepLocked = true;
                 handleSuccessfulPayment(null, orderData);
                 return;
             } else if (paymentMethod === "RAZORPAY") {
@@ -409,6 +418,7 @@ export default function CheckoutPage() {
                             toast.dismiss("payment-verification");
                             setError(error.message || "Payment verification failed");
                             toast.error(error.message || "Verification failed. Please contact support.");
+                            checkoutLock.current = false;
                             setProcessing(false);
                         }
                     },
@@ -417,12 +427,14 @@ export default function CheckoutPage() {
                     },
                     modal: {
                         ondismiss: function () {
+                            checkoutLock.current = false;
                             setProcessing(false);
                         },
                     },
                 };
 
                 const razorpay = new window.Razorpay(options);
+                keepLocked = true; // stays locked until the Razorpay window is dismissed or payment is verified
                 razorpay.open();
             }
         } catch (error) {
@@ -433,7 +445,10 @@ export default function CheckoutPage() {
             setError(error.message || "Checkout failed");
             toast.error(error.message || "Checkout failed. Please try again.");
         } finally {
-            setProcessing(false);
+            if (!keepLocked) {
+                checkoutLock.current = false;
+                setProcessing(false);
+            }
         }
     };
 
@@ -742,13 +757,19 @@ export default function CheckoutPage() {
                                         <span className="text-green-600 uppercase tracking-widest font-semibold">FREE</span>
                                     )}
                                 </div>
+                                {codCharge > 0 && (
+                                    <div className="flex justify-between">
+                                        <span className="uppercase tracking-wider">COD Charge</span>
+                                        <span className="text-neutral-900 font-semibold">{formatCurrency(codCharge)}</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Total Due */}
                             <div className="flex justify-between items-center text-base border-t border-neutral-100 pt-4 font-semibold">
                                 <span className="uppercase tracking-widest text-neutral-900">Amount Due</span>
                                 <span className="text-neutral-900 text-lg font-bold">
-                                    {formatCurrency(totals.total)}
+                                    {formatCurrency(displayTotal)}
                                 </span>
                             </div>
 
@@ -758,7 +779,7 @@ export default function CheckoutPage() {
                                 disabled={processing || !selectedAddressId}
                                 className="w-full bg-noir border border-noir text-ivory text-xs font-semibold uppercase tracking-[0.25em] transition-all duration-500 hover:bg-gold hover:border-gold hover:text-white disabled:opacity-40 h-14"
                             >
-                                {processing ? "Processing…" : `Pay Now • ${formatCurrency(totals.total)}`}
+                                {processing ? "Processing…" : `${paymentMethod === "CASH" ? "Place Order" : "Pay Now"} • ${formatCurrency(displayTotal)}`}
                             </button>
 
                             <p className="text-[9px] text-neutral-400 text-center leading-relaxed">

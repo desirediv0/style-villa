@@ -13,6 +13,7 @@ import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { processAndUploadImage } from "../middlewares/multer.middlerware.js";
 
 import sendEmail from "../utils/sendEmail.js";
+import { cancelOrderForCustomer } from "../utils/orderCancel.js";
 import {
   getResetTemplate,
   getDeleteTemplate,
@@ -1333,6 +1334,7 @@ export const getOrderDetails = asyncHandler(async (req, res, next) => {
           },
           variant: {
             include: {
+              images: { orderBy: [{ isPrimary: "desc" }, { order: "asc" }] },
               attributes: {
                 include: {
                   attributeValue: {
@@ -1348,7 +1350,7 @@ export const getOrderDetails = asyncHandler(async (req, res, next) => {
       },
       tracking: {
         include: {
-          updates: true,
+          updates: { orderBy: { timestamp: "desc" } },
         },
       },
       razorpayPayment: true,
@@ -1395,47 +1397,23 @@ export const getOrderDetails = asyncHandler(async (req, res, next) => {
     );
 });
 
-// Cancel order
+// Cancel order (restocks, cancels the courier booking and refunds online payments)
 export const cancelOrder = asyncHandler(async (req, res, next) => {
   const { orderId } = req.params;
   const { reason } = req.body;
 
-  // Find order
-  const order = await prisma.order.findFirst({
-    where: {
-      id: orderId,
-      userId: req.user.id,
-    },
+  const result = await cancelOrderForCustomer({
+    orderId,
+    userId: req.user.id,
+    reason: reason || "Cancelled by customer",
   });
-
-  if (!order) {
-    throw new ApiError(404, "Order not found");
-  }
-
-  // Check if order can be cancelled
-  if (order.status !== "PENDING" && order.status !== "PROCESSING") {
-    throw new ApiError(400, "This order cannot be cancelled");
-  }
-
-  // Update order status
-  const updatedOrder = await prisma.order.update({
-    where: { id: orderId },
-    data: {
-      status: "CANCELLED",
-      cancelReason: reason,
-      cancelledAt: new Date(),
-      cancelledBy: req.user.id,
-    },
-  });
-
-  // TODO: Handle inventory restock and payment refund logic
 
   res
     .status(200)
     .json(
       new ApiResponsive(
         200,
-        { order: updatedOrder },
+        { order: result.order, refund: result.refund, refundFailed: result.refundFailed },
         "Order cancelled successfully"
       )
     );

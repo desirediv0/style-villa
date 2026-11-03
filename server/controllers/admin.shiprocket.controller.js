@@ -6,6 +6,7 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponsive } from "../utils/ApiResponsive.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import crypto from "crypto";
 import { prisma } from "../config/db.js";
 import { encrypt, decrypt } from "../utils/encryption.js";
 import {
@@ -20,7 +21,10 @@ import {
     printInvoice,
     getPickupLocations,
     addPickupLocation,
+    mapShiprocketStatus,
 } from "../utils/shiprocket.js";
+import { createPartnerEarningsForDeliveredOrder } from "../utils/partnerEarnings.js";
+import { notifyOrderStatus } from "../utils/orderNotifications.js";
 
 // Get Shiprocket settings
 export const getSettings = asyncHandler(async (req, res) => {
@@ -419,7 +423,22 @@ export const getOrderInvoice = asyncHandler(async (req, res) => {
 });
 
 // Webhook handler for Shiprocket tracking updates
+// Shiprocket sends the token configured in its dashboard in the `x-api-key` header.
+const STATUS_RANK = { PENDING: 0, PROCESSING: 1, PAID: 2, SHIPPED: 3, DELIVERED: 4 };
+
 export const handleWebhook = asyncHandler(async (req, res) => {
+    const expected = process.env.SHIPROCKET_WEBHOOK_TOKEN;
+    if (expected) {
+        const got = String(req.headers["x-api-key"] || "");
+        const a = Buffer.from(got);
+        const b = Buffer.from(expected);
+        if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+            throw new ApiError(401, "Invalid webhook token");
+        }
+    } else {
+        console.warn("SHIPROCKET_WEBHOOK_TOKEN is not set - accepting Shiprocket webhook without authentication");
+    }
+
     const {
         awb,
         current_status,
@@ -429,35 +448,22 @@ export const handleWebhook = asyncHandler(async (req, res) => {
         courier_name,
         etd,
         scans,
-    } = req.body;
+    } = req.body || {};
 
-    console.log("Shiprocket webhook received:", {
-        awb,
-        current_status,
-        order_id,
-    });
-
-    // Find order by AWB code or Shiprocket order ID
+    // Find order by AWB code, Shiprocket order ID or our order number
     let order = null;
+    const include = { tracking: true };
 
     if (awb) {
-        order = await prisma.order.findFirst({
-            where: { awbCode: awb },
-        });
+        order = await prisma.order.findFirst({ where: { awbCode: String(awb) }, include });
     }
-
     if (!order && sr_order_id) {
-        order = await prisma.order.findFirst({
-            where: { shiprocketOrderId: sr_order_id },
-        });
+        order = await prisma.order.findFirst({ where: { shiprocketOrderId: String(sr_order_id) }, include });
     }
-
     if (!order && order_id) {
-        // order_id from webhook is in format "orderNumber_shiprocketId"
-        const orderNumber = order_id.split("_")[0];
-        order = await prisma.order.findUnique({
-            where: { orderNumber },
-        });
+        // order_id from the webhook is "orderNumber" (or "orderNumber_suffix")
+        const orderNumber = String(order_id).split("_")[0];
+        order = await prisma.order.findUnique({ where: { orderNumber }, include });
     }
 
     if (!order) {
@@ -466,59 +472,101 @@ export const handleWebhook = asyncHandler(async (req, res) => {
         return res.status(200).json({ status: "ok" });
     }
 
-    // Update order with tracking status
-    const updateData = {
-        shiprocketStatus: current_status,
-    };
+    const mapped = mapShiprocketStatus(current_status, current_status_id);
+    const updateData = {};
+    if (current_status) updateData.shiprocketStatus = String(current_status);
+    if (courier_name) updateData.courierName = courier_name;
+    if (awb && !order.awbCode) updateData.awbCode = String(awb);
 
-    if (courier_name) {
-        updateData.courierName = courier_name;
+    // Never move an order backwards (late webhooks) and never touch a finished order
+    const terminal = ["DELIVERED", "CANCELLED", "REFUNDED"].includes(order.status);
+    let newOrderStatus = null;
+    if (mapped && !terminal) {
+        const target = mapped.orderStatus;
+        const forward =
+            target === "CANCELLED" || (STATUS_RANK[target] ?? -1) > (STATUS_RANK[order.status] ?? -1);
+        if (forward) newOrderStatus = target;
     }
+    if (newOrderStatus) updateData.status = newOrderStatus;
 
-    // Map Shiprocket status to our order status
-    const statusMapping = {
-        PICKED_UP: "SHIPPED",
-        SHIPPED: "SHIPPED",
-        IN_TRANSIT: "SHIPPED",
-        OUT_FOR_DELIVERY: "SHIPPED",
-        DELIVERED: "DELIVERED",
-        CANCELLED: "CANCELLED",
-        RTO_INITIATED: "CANCELLED",
-        RTO_DELIVERED: "CANCELLED",
-    };
+    const shipmentStatus = mapped?.shipmentStatus || null;
+    const etdDate = etd ? new Date(etd) : null;
+    const validEtd = etdDate && !isNaN(etdDate.getTime()) ? etdDate : null;
 
-    if (statusMapping[current_status]) {
-        updateData.status = statusMapping[current_status];
-    }
+    await prisma.$transaction(async (tx) => {
+        await tx.order.update({ where: { id: order.id }, data: updateData });
 
-    await prisma.order.update({
-        where: { id: order.id },
-        data: updateData,
-    });
+        const trackingNumber = String(awb || order.awbCode || "");
+        const carrier = courier_name || order.courierName || "";
+        let tracking = order.tracking;
 
-    // Also update tracking table if exists
-    if (order.tracking) {
-        const latestScan = scans && scans.length > 0 ? scans[scans.length - 1] : null;
-
-        await prisma.tracking.update({
-            where: { orderId: order.id },
-            data: {
-                status: current_status === "DELIVERED" ? "DELIVERED" : "IN_TRANSIT",
-                ...(current_status === "DELIVERED" && { deliveredAt: new Date() }),
-            },
-        });
-
-        // Add tracking update if we have scan data
-        if (latestScan) {
-            await prisma.trackingUpdate.create({
+        if (!tracking && trackingNumber) {
+            tracking = await tx.tracking.create({
                 data: {
-                    trackingId: order.tracking.id,
-                    status: current_status,
-                    location: latestScan.location || "",
-                    description: latestScan.activity || current_status,
+                    orderId: order.id,
+                    trackingNumber,
+                    carrier,
+                    status: shipmentStatus || "PROCESSING",
+                    estimatedDelivery: validEtd,
+                    shippedAt: shipmentStatus && shipmentStatus !== "PROCESSING" ? new Date() : null,
+                    deliveredAt: shipmentStatus === "DELIVERED" ? new Date() : null,
+                },
+            });
+        } else if (tracking && shipmentStatus && tracking.status !== "DELIVERED") {
+            tracking = await tx.tracking.update({
+                where: { orderId: order.id },
+                data: {
+                    status: shipmentStatus,
+                    ...(trackingNumber && { trackingNumber }),
+                    ...(carrier && { carrier }),
+                    ...(validEtd && { estimatedDelivery: validEtd }),
+                    ...(!tracking.shippedAt && shipmentStatus !== "PROCESSING" && { shippedAt: new Date() }),
+                    ...(shipmentStatus === "DELIVERED" && { deliveredAt: new Date() }),
                 },
             });
         }
+
+        // Store scan history without duplicates
+        if (tracking && Array.isArray(scans) && scans.length) {
+            const existing = await tx.trackingUpdate.findMany({
+                where: { trackingId: tracking.id },
+                select: { description: true, location: true, timestamp: true },
+            });
+            const seen = new Set(
+                existing.map((u) => `${u.description || ""}|${u.location || ""}|${u.timestamp.getTime()}`)
+            );
+            for (const scan of scans) {
+                const when = new Date(scan.date || scan.timestamp || Date.now());
+                const ts = isNaN(when.getTime()) ? new Date() : when;
+                const description = scan.activity || scan["sr-status-label"] || scan.status || current_status || "";
+                const location = scan.location || "";
+                const key = `${description}|${location}|${ts.getTime()}`;
+                if (seen.has(key)) continue;
+                seen.add(key);
+                const scanMapped = mapShiprocketStatus(scan["sr-status-label"] || scan.status || scan.activity, scan["sr-status"]);
+                await tx.trackingUpdate.create({
+                    data: {
+                        trackingId: tracking.id,
+                        status: scanMapped?.shipmentStatus || shipmentStatus || tracking.status,
+                        location,
+                        description,
+                        timestamp: ts,
+                    },
+                });
+            }
+        }
+
+        if (newOrderStatus === "DELIVERED") {
+            await createPartnerEarningsForDeliveredOrder(tx, order.id);
+        }
+    });
+
+    // Emails only when the status really changed
+    if (newOrderStatus && ["SHIPPED", "DELIVERED", "CANCELLED"].includes(newOrderStatus)) {
+        notifyOrderStatus(order.id, newOrderStatus, {
+            awbCode: awb || order.awbCode,
+            courierName: courier_name || order.courierName,
+        }).catch(() => {});
     }
 
     res.status(200).json({ status: "ok" });
