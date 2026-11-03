@@ -314,6 +314,164 @@ export const getOrderConfirmationTemplate = (data, storeConfig = null) => {
 </html>`;
 };
 
+/* ─── Order status updates (customer) ────────────────────────────────── */
+const esc = (v) =>
+    String(v ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+const fmtMoney = (v) => `₹${parseFloat(v || 0).toFixed(2)}`;
+
+// data: { userName, orderNumber, status: SHIPPED|DELIVERED|CANCELLED|REFUNDED, awbCode, courierName,
+//         trackingUrl, total, refundAmount, reason, isPrepaid }
+export const getOrderStatusTemplate = (data, storeConfig = null) => {
+    const store = storeConfig || getStoreConfig();
+    const ordersUrl = `${process.env.FRONTEND_URL || store.websiteUrl}/account/orders`;
+    const status = String(data.status || "").toUpperCase();
+
+    const variants = {
+        SHIPPED: { title: "Your Order Is On Its Way!", accent: "Order Shipped", danger: false, button: data.trackingUrl ? "Track Your Shipment" : "View Your Order", link: data.trackingUrl || ordersUrl },
+        DELIVERED: { title: "Your Order Has Been Delivered", accent: "Order Delivered", danger: false, button: "View Your Order", link: ordersUrl },
+        CANCELLED: { title: "Your Order Was Cancelled", accent: "Order Cancelled", danger: true, button: "View Your Orders", link: ordersUrl },
+        REFUNDED: { title: "Your Refund Is On Its Way", accent: "Refund Processed", danger: false, button: "View Your Orders", link: ordersUrl },
+    };
+    const v = variants[status] || { title: `Order Update: ${esc(status)}`, accent: "Order Update", danger: false, button: "View Your Order", link: ordersUrl };
+
+    let message = "";
+    if (status === "SHIPPED") {
+        message = "Good news — your order has been handed to our courier partner and is on its way to you.";
+    } else if (status === "DELIVERED") {
+        message = "Your order has been delivered. We hope you love it! If anything is not right, just reply to this email or message us on WhatsApp.";
+    } else if (status === "CANCELLED") {
+        message = `Your order has been cancelled.${data.reason ? ` Reason: ${esc(data.reason)}.` : ""}${data.isPrepaid ? " Any payment you made will be refunded to your original payment method." : ""}`;
+    } else if (status === "REFUNDED") {
+        message = `We have refunded ${fmtMoney(data.refundAmount ?? data.total)} to your original payment method. It usually reaches your account within 5-7 working days, depending on your bank.`;
+    }
+
+    const shipmentBox =
+        status === "SHIPPED" && (data.awbCode || data.courierName)
+            ? `<div class="info-box">
+                <h3>Shipment Details</h3>
+                ${data.courierName ? `<div style="margin-bottom:8px;"><strong>Courier:</strong> ${esc(data.courierName)}</div>` : ""}
+                ${data.awbCode ? `<div><strong>Tracking (AWB) number:</strong> ${esc(data.awbCode)}</div>` : ""}
+              </div>`
+            : "";
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${esc(v.accent)} - ${esc(store.storeName)}</title>
+    <style>${BASE_STYLES}</style>
+</head>
+<body>
+    <div class="container">
+        ${HEADER_HTML(v.title, v.accent, store, v.danger)}
+        <div class="content">
+            <p>Dear ${esc(data.userName || "Valued Customer")},</p>
+            <p>${message}</p>
+            <div class="info-box">
+                <div style="margin-bottom:8px;"><strong>Order Number:</strong> ${esc(data.orderNumber)}</div>
+                <div><strong>Order Total:</strong> ${fmtMoney(data.total)}</div>
+            </div>
+            ${shipmentBox}
+            <div class="button-container">
+                <a href="${esc(v.link)}" class="button">${esc(v.button)}</a>
+            </div>
+        </div>
+        ${FOOTER_HTML(store)}
+    </div>
+</body>
+</html>`;
+};
+
+/* ─── New order alert (store owner / admin) ──────────────────────────── */
+// data: { orderId, orderNumber, orderDate, customerName, customerEmail, customerPhone, paymentMethod, items,
+//         subtotal, shipping, discount, codCharge, couponCode, total, shippingAddress }
+export const getAdminNewOrderTemplate = (data, storeConfig = null) => {
+    const store = storeConfig || getStoreConfig();
+    const adminBase = process.env.ADMIN_URL || "https://admin.stylevillaofficial.com";
+    const addr = data.shippingAddress || {};
+    const isCod = /cash/i.test(String(data.paymentMethod));
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New order ${esc(data.orderNumber)}</title>
+    <style>
+        ${BASE_STYLES}
+        .order-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        .order-table th { background: #003E29; color: #fff; padding: 10px; text-align: left; font-size: 13px; }
+        .order-table td { padding: 10px; border-bottom: 1px solid #E5E7EB; font-size: 14px; }
+        .row { display: flex; justify-content: space-between; padding: 6px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${HEADER_HTML("New Order Received", isCod ? "Cash on Delivery" : "Paid Online", store)}
+        <div class="content">
+            <div class="info-box">
+                <div style="margin-bottom:6px;"><strong>Order:</strong> ${esc(data.orderNumber)}</div>
+                <div style="margin-bottom:6px;"><strong>Placed:</strong> ${esc(new Date(data.orderDate).toLocaleString("en-IN"))}</div>
+                <div style="margin-bottom:6px;"><strong>Payment:</strong> ${esc(data.paymentMethod)}${isCod ? ` — collect <strong>${fmtMoney(data.total)}</strong> on delivery` : ""}</div>
+                ${data.couponCode ? `<div><strong>Coupon:</strong> ${esc(data.couponCode)}</div>` : ""}
+            </div>
+
+            <table class="order-table">
+                <thead><tr><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th></tr></thead>
+                <tbody>
+                    ${(data.items || []).map((item) => `
+                    <tr>
+                        <td>${esc(item.name)}${item.variant ? `<div style="font-size:12px;color:#666;">${esc(item.variant)}</div>` : ""}</td>
+                        <td style="text-align:center;">${esc(item.quantity)}</td>
+                        <td style="text-align:right;">${fmtMoney(item.price)}</td>
+                    </tr>`).join("")}
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <div class="row"><span>Subtotal</span><span>${fmtMoney(data.subtotal)}</span></div>
+                ${parseFloat(data.discount) > 0 ? `<div class="row"><span>Discount</span><span>-${fmtMoney(data.discount)}</span></div>` : ""}
+                <div class="row"><span>Shipping</span><span>${parseFloat(data.shipping) > 0 ? fmtMoney(data.shipping) : "FREE"}</span></div>
+                ${parseFloat(data.codCharge) > 0 ? `<div class="row"><span>COD charge</span><span>${fmtMoney(data.codCharge)}</span></div>` : ""}
+                <div class="row" style="font-weight:bold;font-size:17px;border-top:2px solid #002216;margin-top:6px;padding-top:10px;"><span>Total</span><span>${fmtMoney(data.total)}</span></div>
+            </div>
+
+            <div class="info-box">
+                <h3>Customer</h3>
+                <p style="margin-bottom:0;">
+                    <strong>${esc(data.customerName || "Customer")}</strong><br>
+                    ${esc(data.customerEmail)}${data.customerPhone ? `<br>📞 ${esc(data.customerPhone)}` : ""}
+                </p>
+            </div>
+
+            <div class="info-box">
+                <h3>Ship to</h3>
+                <p style="margin-bottom:0;">
+                    ${esc(addr.name)}<br>
+                    ${esc(addr.street)}<br>
+                    ${esc(addr.city)}, ${esc(addr.state)} ${esc(addr.postalCode)}<br>
+                    ${esc(addr.country)}${addr.phone ? `<br>📞 ${esc(addr.phone)}` : ""}
+                </p>
+            </div>
+
+            <div class="button-container">
+                <a href="${esc(`${adminBase}/orders/${data.orderId}`)}" class="button">Open Order in Admin</a>
+            </div>
+        </div>
+        ${FOOTER_HTML(store)}
+    </div>
+</body>
+</html>`;
+};
+
 /* ─── Payment Receipt ────────────────────────────────────────────────── */
 export const getFeeReceiptTemplate = (data) => {
     const store = getStoreConfig();

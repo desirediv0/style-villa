@@ -2,6 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponsive } from "../utils/ApiResponsive.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { prisma } from "../config/db.js";
+import { getEffectivePrice } from "../utils/pricing.js";
 import { getFileUrl } from "../utils/deleteFromS3.js";
 import { formatVariantWithAttributes } from "../utils/variant-attributes.js";
 
@@ -93,89 +94,15 @@ export const getUserCart = asyncHandler(async (req, res) => {
         }
       }
 
-      // Get pricing slabs for this variant
-      const variantSlabs = await prisma.pricingSlab.findMany({
-        where: {
-          variantId: variant.id,
-        },
-        orderBy: {
-          minQty: "asc",
-        },
-      });
-
-      // Get product-level pricing slabs
-      const productSlabs = await prisma.pricingSlab.findMany({
-        where: {
-          productId: variant.productId,
-          variantId: null,
-        },
-        orderBy: {
-          minQty: "asc",
-        },
-      });
-
-      // Combine slabs (variant slabs override product slabs)
-      const allSlabs = [...variantSlabs, ...productSlabs].sort((a, b) => a.minQty - b.minQty);
-
-      // Get effective price based on quantity
-      let effectivePrice = parseFloat(variant.salePrice || variant.price);
-      let priceSource = "DEFAULT";
-      let appliedSlab = null;
-
-      // Find matching pricing slab
-      for (const slab of allSlabs) {
-        if (item.quantity >= slab.minQty && (slab.maxQty === null || item.quantity <= slab.maxQty)) {
-          effectivePrice = parseFloat(slab.price);
-          priceSource = slab.variantId ? "VARIANT_SLAB" : "PRODUCT_SLAB";
-          appliedSlab = {
-            id: slab.id,
-            minQty: slab.minQty,
-            maxQty: slab.maxQty,
-            price: parseFloat(slab.price),
-          };
-          break; // Use first matching slab (highest priority)
-        }
-      }
-
-      // Check for active flash sale for this product
-      const now = new Date();
-      const flashSaleProduct = await prisma.flashSaleProduct.findFirst({
-        where: {
-          productId: variant.productId,
-          flashSale: {
-            isActive: true,
-            startTime: { lte: now },
-            endTime: { gte: now },
-          },
-        },
-        include: {
-          flashSale: {
-            select: {
-              id: true,
-              name: true,
-              discountPercentage: true,
-              endTime: true,
-            },
-          },
-        },
-      });
-
-      // Apply flash sale discount if applicable
-      let flashSaleInfo = null;
-      let priceBeforeFlashSale = effectivePrice;
-
-      if (flashSaleProduct) {
-        const discountAmount = (effectivePrice * flashSaleProduct.flashSale.discountPercentage) / 100;
-        effectivePrice = Math.round((effectivePrice - discountAmount) * 100) / 100;
-        priceSource = "FLASH_SALE";
-        flashSaleInfo = {
-          flashSaleId: flashSaleProduct.flashSale.id,
-          name: flashSaleProduct.flashSale.name,
-          discountPercentage: flashSaleProduct.flashSale.discountPercentage,
-          endTime: flashSaleProduct.flashSale.endTime,
-          originalPrice: priceBeforeFlashSale,
-        };
-      }
+      // Effective price: pricing slab, then any active flash sale. This is the same function the
+      // checkout uses, so the price shown here is exactly the price that is charged.
+      const {
+        price: effectivePrice,
+        priceSource,
+        appliedSlab,
+        allSlabs,
+        flashSale: flashSaleInfo,
+      } = await getEffectivePrice(prisma, variant, item.quantity);
 
       const itemTotal = effectivePrice * item.quantity;
       subtotal += itemTotal;
@@ -613,60 +540,21 @@ export const updateCartItem = asyncHandler(async (req, res) => {
     },
   });
 
-  // Calculate effective price based on new quantity
+  // Effective price for the new quantity (same pricing function as the cart page and the checkout)
   const variant = updatedCartItem.productVariant;
-  let effectivePrice = parseFloat(variant.salePrice || variant.price);
-  let priceSource = "DEFAULT";
-  let appliedSlab = null;
-
-  // Get pricing slabs
-  const variantSlabs = await prisma.pricingSlab.findMany({
-    where: {
-      variantId: variant.id,
-    },
-    orderBy: {
-      minQty: "asc",
-    },
-  });
-
-  const productSlabs = await prisma.pricingSlab.findMany({
-    where: {
-      productId: variant.productId,
-      variantId: null,
-    },
-    orderBy: {
-      minQty: "asc",
-    },
-  });
-
-  const allSlabs = [...variantSlabs, ...productSlabs].sort((a, b) => a.minQty - b.minQty);
-
-  // Find matching pricing slab for the new quantity
-  for (const slab of allSlabs) {
-    if (parseInt(quantity) >= slab.minQty && (slab.maxQty === null || parseInt(quantity) <= slab.maxQty)) {
-      effectivePrice = parseFloat(slab.price);
-      priceSource = slab.variantId ? "VARIANT_SLAB" : "PRODUCT_SLAB";
-      appliedSlab = {
-        id: slab.id,
-        minQty: slab.minQty,
-        maxQty: slab.maxQty,
-        price: parseFloat(slab.price),
-      };
-      break;
-    }
-  }
-
-  const itemTotal = effectivePrice * parseInt(quantity);
+  const priced = await getEffectivePrice(prisma, variant, parseInt(quantity));
+  const itemTotal = priced.price * parseInt(quantity);
 
   // Format response with effective price
   const formattedItem = {
     id: updatedCartItem.id,
     quantity: updatedCartItem.quantity,
-    price: effectivePrice,
+    price: priced.price,
     originalPrice: parseFloat(variant.salePrice || variant.price),
     subtotal: itemTotal,
-    priceSource,
-    appliedSlab,
+    priceSource: priced.priceSource,
+    appliedSlab: priced.appliedSlab,
+    flashSale: priced.flashSale,
   };
 
   return res
