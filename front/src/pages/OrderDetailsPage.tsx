@@ -20,10 +20,13 @@ import { toast } from "sonner";
 import { formatCurrency, debugData, cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/context/LanguageContext";
+import { usePermissions } from "@/hooks/usePermissions";
 
 export default function OrderDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useLanguage();
+  const { canUpdate } = usePermissions();
+  const [srBusy, setSrBusy] = useState<string | null>(null);
 
   interface OrderDetails {
     id: string;
@@ -334,6 +337,45 @@ export default function OrderDetailsPage() {
     }
   };
 
+  // Shiprocket actions (sync, label, invoice, cancel shipment)
+  const runShiprocket = async (key: string, fn: () => Promise<any>, onDone?: (data: any) => void) => {
+    setSrBusy(key);
+    try {
+      const response = await fn();
+      if (response?.data?.success) {
+        onDone?.(response.data.data);
+        return;
+      }
+      toast.error(response?.data?.message || "Shiprocket request failed");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Shiprocket request failed");
+    } finally {
+      setSrBusy(null);
+    }
+  };
+  const openFile = (url?: string, what = "File") => {
+    if (url) window.open(url, "_blank", "noopener");
+    else toast.error(`${what} is not ready yet. Try again in a minute.`);
+  };
+  const handleSyncShiprocket = () =>
+    runShiprocket("sync", () => orders.syncShiprocket(id!), () => {
+      toast.success("Order sent to Shiprocket");
+      fetchOrderDetails();
+    });
+  const handleLabel = () =>
+    runShiprocket("label", () => orders.getShiprocketLabel(id!), (d) =>
+      openFile(d?.label?.label_url || d?.label?.response?.label_url, "Label"));
+  const handleInvoice = () =>
+    runShiprocket("invoice", () => orders.getShiprocketInvoice(id!), (d) =>
+      openFile(d?.invoice?.invoice_url, "Invoice"));
+  const handleCancelShipment = () => {
+    if (!window.confirm("Cancel this shipment in Shiprocket?")) return;
+    runShiprocket("cancel", () => orders.cancelShiprocketShipment(id!), () => {
+      toast.success("Shipment cancelled in Shiprocket");
+      fetchOrderDetails();
+    });
+  };
+
   // Handle order status update
   const handleStatusUpdate = async (newStatus: string) => {
     if (!id) return;
@@ -346,11 +388,12 @@ export default function OrderDetailsPage() {
       if (response && response.data && response.data.success) {
         toast.success(t('orders.actions.status_update_success', { status: newStatus }));
 
-        // Update the order status in the UI
+        // Update the order status in the UI, then reload (tracking / refund details change too)
         setOrderDetails((prev: OrderDetails | null) => ({
           ...prev!,
           status: newStatus,
         }));
+        fetchOrderDetails();
       } else {
         toast.error(response.data?.message || t('orders.actions.status_update_error'));
       }
@@ -1123,6 +1166,9 @@ export default function OrderDetailsPage() {
                       </p>
                     </div>
                   )}
+                  {!orderDetails.shiprocket.orderId && (
+                    <p className="text-sm text-[#6B7280]">Not sent to Shiprocket yet.</p>
+                  )}
                   {orderDetails.shiprocket.status && (
                     <div>
                       <p className="text-xs text-[#9CA3AF] mb-1">Shiprocket Status</p>
@@ -1136,6 +1182,48 @@ export default function OrderDetailsPage() {
                       </Badge>
                     </div>
                   )}
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {orderDetails.shiprocket.awbCode && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          window.open(`https://shiprocket.co/tracking/${orderDetails.shiprocket!.awbCode}`, "_blank", "noopener")
+                        }
+                      >
+                        Track shipment
+                      </Button>
+                    )}
+                    {orderDetails.shiprocket.shipmentId && (
+                      <Button size="sm" variant="outline" disabled={srBusy === "label"} onClick={handleLabel}>
+                        {srBusy === "label" ? "Preparing…" : "Download label"}
+                      </Button>
+                    )}
+                    {orderDetails.shiprocket.orderId && (
+                      <Button size="sm" variant="outline" disabled={srBusy === "invoice"} onClick={handleInvoice}>
+                        {srBusy === "invoice" ? "Preparing…" : "Download invoice"}
+                      </Button>
+                    )}
+                    {canUpdate("orders") && !orderDetails.shiprocket.orderId &&
+                      !["CANCELLED", "REFUNDED", "DELIVERED"].includes(orderDetails.status) && (
+                        <Button size="sm" disabled={srBusy === "sync"} onClick={handleSyncShiprocket}>
+                          {srBusy === "sync" ? "Sending…" : "Send to Shiprocket"}
+                        </Button>
+                      )}
+                    {canUpdate("orders") && orderDetails.shiprocket.orderId &&
+                      orderDetails.shiprocket.status !== "CANCELLED" &&
+                      !["DELIVERED", "CANCELLED", "REFUNDED"].includes(orderDetails.status) && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-[#EF4444] border-[#FEE2E2] hover:bg-[#FEF2F2]"
+                          disabled={srBusy === "cancel"}
+                          onClick={handleCancelShipment}
+                        >
+                          Cancel shipment
+                        </Button>
+                      )}
+                  </div>
                 </div>
               </CardContent>
             </Card>

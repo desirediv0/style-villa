@@ -578,6 +578,14 @@ export const orders = {
   updateOrderStatus: (orderId: string, data: { status: string }) => {
     return api.patch(`/api/admin/orders/${orderId}/status`, data);
   },
+  syncShiprocket: (orderId: string) =>
+    api.post(`/api/admin/shiprocket/orders/${orderId}/sync`),
+  getShiprocketLabel: (orderId: string) =>
+    api.get(`/api/admin/shiprocket/orders/${orderId}/label`),
+  getShiprocketInvoice: (orderId: string) =>
+    api.get(`/api/admin/shiprocket/orders/${orderId}/invoice`),
+  cancelShiprocketShipment: (orderId: string) =>
+    api.post(`/api/admin/shiprocket/orders/${orderId}/cancel`),
   getOrderStats: async () => {
     try {
       const response = await api.get("/api/admin/orders-stats");

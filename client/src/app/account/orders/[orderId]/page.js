@@ -74,7 +74,13 @@ export default function OrderDetailPage() {
                 credentials: "include",
             });
             if (response.success) {
-                toast.success("Order cancelled successfully");
+                if (response.data?.refundFailed) {
+                    toast.success("Order cancelled. Your refund could not be started automatically; our team will process it shortly.");
+                } else if (response.data?.refund) {
+                    toast.success("Order cancelled. Your refund has been started and reaches your account in 5-7 working days.");
+                } else {
+                    toast.success("Order cancelled successfully");
+                }
                 setOrder({ ...order, status: "CANCELLED" });
             } else {
                 toast.error(response.message || "Failed to cancel order");
@@ -161,7 +167,7 @@ export default function OrderDetailPage() {
                     <span className={`px-4 py-2 text-sm font-semibold rounded-full border ${getStatusColor(order.status)}`}>
                         {order.status}
                     </span>
-                    {order.status !== "CANCELLED" && order.status !== "DELIVERED" && order.status !== "SHIPPED" && (
+                    {["PENDING", "PROCESSING", "PAID"].includes(order.status) && (
                         <Button variant="destructive" size="sm" className="rounded-xl" onClick={handleCancelOrder} disabled={cancelling}>
                             {cancelling ? (
                                 <><DynamicIcon name="Loader2" className="mr-2 h-4 w-4 animate-spin" /> Cancelling...</>
@@ -236,7 +242,7 @@ export default function OrderDetailPage() {
                     </div>
 
                     {/* Tracking Info */}
-                    {order.tracking && (
+                    {(order.tracking || order.awbCode) && (
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                             <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
                                 <h2 className="font-semibold text-lg">Tracking Information</h2>
@@ -245,16 +251,31 @@ export default function OrderDetailPage() {
                                 <div className="flex items-center gap-4 mb-4">
                                     <DynamicIcon name="Truck" className="h-8 w-8 text-[#00AEEF]" />
                                     <div>
-                                        <p className="font-medium">{order.tracking.carrier || "Carrier"}</p>
-                                        <p className="text-sm text-gray-500">Tracking #: {order.tracking.trackingNumber}</p>
+                                        <p className="font-medium">{order.tracking?.carrier || order.courierName || "Carrier"}</p>
+                                        <p className="text-sm text-gray-500">Tracking #: {order.tracking?.trackingNumber || order.awbCode}</p>
+                                        {(order.tracking?.status || order.shiprocketStatus) && (
+                                            <p className="text-xs text-gray-500 mt-0.5">
+                                                Status: {String(order.tracking?.status || order.shiprocketStatus).replace(/_/g, " ")}
+                                            </p>
+                                        )}
+                                        {(order.tracking?.trackingNumber || order.awbCode) && (
+                                            <a
+                                                href={`https://shiprocket.co/tracking/${order.tracking?.trackingNumber || order.awbCode}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-xs text-[#00AEEF] underline mt-1 inline-block"
+                                            >
+                                                Track on courier site
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
-                                {order.tracking.estimatedDelivery && (
+                                {order.tracking?.estimatedDelivery && (
                                     <p className="text-sm text-gray-600 mb-4">
                                         <span className="font-medium">Estimated Delivery:</span> {formatDate(order.tracking.estimatedDelivery)}
                                     </p>
                                 )}
-                                {order.tracking.updates && order.tracking.updates.length > 0 && (
+                                {order.tracking?.updates && order.tracking.updates.length > 0 && (
                                     <div className="border-t border-gray-100 pt-4 mt-4">
                                         <h3 className="font-medium text-sm mb-3">Tracking Updates</h3>
                                         <div className="space-y-3">
@@ -262,8 +283,8 @@ export default function OrderDetailPage() {
                                                 <div key={idx} className="flex gap-3">
                                                     <div className="w-2 h-2 mt-2 rounded-full bg-[#00AEEF] flex-shrink-0"></div>
                                                     <div>
-                                                        <p className="text-sm font-medium">{update.status}</p>
-                                                        <p className="text-xs text-gray-500">{formatDate(update.createdAt)}</p>
+                                                        <p className="text-sm font-medium">{update.description || String(update.status).replace(/_/g, " ")}</p>
+                                                        <p className="text-xs text-gray-500">{formatDate(update.timestamp || update.createdAt)}</p>
                                                         {update.location && <p className="text-xs text-gray-500">{update.location}</p>}
                                                     </div>
                                                 </div>
