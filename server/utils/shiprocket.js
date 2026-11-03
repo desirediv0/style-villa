@@ -279,7 +279,7 @@ export function mapShiprocketStatus(statusText, statusId = null) {
     let key = String(statusText || "")
         .trim()
         .toUpperCase()
-        .replace(/[s-]+/g, "_");
+        .replace(/[\s-]+/g, "_");
     if (key === "CANCELED") key = "CANCELLED";
     if (!SHIPROCKET_STATUS_MAP[key] && statusId != null && SHIPROCKET_STATUS_BY_ID[statusId]) {
         key = SHIPROCKET_STATUS_BY_ID[statusId] === "CANCELED" ? "CANCELLED" : SHIPROCKET_STATUS_BY_ID[statusId];
