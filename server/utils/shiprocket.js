@@ -243,6 +243,51 @@ export async function trackByOrderId(shiprocketOrderId) {
 }
 
 /**
+ * Translate a Shiprocket tracking status into our order status and our shipment-tracking status.
+ *
+ * Shiprocket reports words with spaces ("PICKED UP", "OUT FOR DELIVERY", "RTO INITIATED"), sometimes only
+ * a numeric status id. Both are understood. Returns null for statuses that should not change anything
+ * (for example "PICKUP SCHEDULED" or "OUT FOR PICKUP").
+ *  orderStatus: our Order.status    shipmentStatus: our Tracking/TrackingUpdate status
+ */
+const SHIPROCKET_STATUS_BY_ID = {
+    6: "SHIPPED",
+    7: "DELIVERED",
+    8: "CANCELED",
+    9: "RTO_INITIATED",
+    10: "RTO_DELIVERED",
+    17: "OUT_FOR_DELIVERY",
+    18: "IN_TRANSIT",
+    21: "UNDELIVERED",
+    42: "PICKED_UP",
+};
+const SHIPROCKET_STATUS_MAP = {
+    PICKED_UP: { orderStatus: "SHIPPED", shipmentStatus: "SHIPPED" },
+    SHIPPED: { orderStatus: "SHIPPED", shipmentStatus: "SHIPPED" },
+    IN_TRANSIT: { orderStatus: "SHIPPED", shipmentStatus: "IN_TRANSIT" },
+    REACHED_AT_DESTINATION_HUB: { orderStatus: "SHIPPED", shipmentStatus: "IN_TRANSIT" },
+    MISROUTED: { orderStatus: "SHIPPED", shipmentStatus: "IN_TRANSIT" },
+    OUT_FOR_DELIVERY: { orderStatus: "SHIPPED", shipmentStatus: "OUT_FOR_DELIVERY" },
+    DELIVERED: { orderStatus: "DELIVERED", shipmentStatus: "DELIVERED" },
+    UNDELIVERED: { orderStatus: null, shipmentStatus: "FAILED" },
+    CANCELLED: { orderStatus: "CANCELLED", shipmentStatus: null },
+    RTO_INITIATED: { orderStatus: "CANCELLED", shipmentStatus: "RETURNED" },
+    RTO_IN_TRANSIT: { orderStatus: "CANCELLED", shipmentStatus: "RETURNED" },
+    RTO_DELIVERED: { orderStatus: "CANCELLED", shipmentStatus: "RETURNED" },
+};
+export function mapShiprocketStatus(statusText, statusId = null) {
+    let key = String(statusText || "")
+        .trim()
+        .toUpperCase()
+        .replace(/[s-]+/g, "_");
+    if (key === "CANCELED") key = "CANCELLED";
+    if (!SHIPROCKET_STATUS_MAP[key] && statusId != null && SHIPROCKET_STATUS_BY_ID[statusId]) {
+        key = SHIPROCKET_STATUS_BY_ID[statusId] === "CANCELED" ? "CANCELLED" : SHIPROCKET_STATUS_BY_ID[statusId];
+    }
+    return SHIPROCKET_STATUS_MAP[key] || null;
+}
+
+/**
  * Cancel order in Shiprocket
  */
 export async function cancelShiprocketOrder(shiprocketOrderId) {
@@ -303,12 +348,12 @@ export async function processShiprocketReturn(orderId, returnReason = "Customer 
             pickup_customer_name: order.shippingAddress.name || order.user.name,
             pickup_last_name: "",
             company_name: "",
-            pickup_address: order.shippingAddress.address1 || order.shippingAddress.street,
+            pickup_address: order.shippingAddress.street,
             pickup_address_2: order.shippingAddress.address2 || "",
             pickup_city: order.shippingAddress.city,
             pickup_state: order.shippingAddress.state,
             pickup_country: order.shippingAddress.country || "India",
-            pickup_pincode: order.shippingAddress.pincode,
+            pickup_pincode: order.shippingAddress.postalCode,
             pickup_email: order.user.email,
             pickup_phone: order.shippingAddress.phone || order.user.phone,
             pickup_isd_code: "91",
@@ -565,7 +610,12 @@ export async function buildShiprocketOrderPayload(order) {
         // Include shipping cost in sub_total for Shiprocket
         // Shiprocket calculates: sub_total - total_discount = final amount
         // So we need: (subTotal + shipping) - discount = total
-        sub_total: parseFloat(order.subTotal) + parseFloat(order.shippingCost || 0),
+        // For Cash on Delivery the courier collects exactly sub_total - total_discount, so the COD charge
+        // (part of what the customer owes) must be included here.
+        sub_total:
+            parseFloat(order.subTotal) +
+            parseFloat(order.shippingCost || 0) +
+            parseFloat(order.codCharge || 0),
         total_discount: parseFloat(order.discount) || 0,
 
         // Dimensions
@@ -632,6 +682,22 @@ export async function processOrderForShipping(orderId) {
         throw new Error("Order not found");
     }
 
+    // Already in Shiprocket: never create a second shipment (and a second courier charge) for the same order
+    if (order.shiprocketOrderId) {
+        console.log(`Order ${order.orderNumber} is already in Shiprocket, skipping`);
+        return null;
+    }
+
+    // Claim the order so that only one caller (payment callback, admin Sync button...) creates the shipment
+    const claim = await prisma.order.updateMany({
+        where: { id: orderId, shiprocketOrderId: null, shiprocketStatus: null },
+        data: { shiprocketStatus: "SYNCING" },
+    });
+    if (claim.count === 0) {
+        console.log(`Order ${order.orderNumber} is already being sent to Shiprocket, skipping`);
+        return null;
+    }
+
     try {
         // Build and send order to Shiprocket
         const payload = await buildShiprocketOrderPayload(order);
@@ -681,6 +747,11 @@ export async function processOrderForShipping(orderId) {
         return shiprocketResponse;
     } catch (error) {
         console.error("Failed to process order for Shiprocket:", error);
+        // The shipment was not created: release the claim so the admin can retry from the order page
+        await prisma.order.updateMany({
+            where: { id: orderId, shiprocketOrderId: null },
+            data: { shiprocketStatus: null },
+        });
         throw error;
     }
 }
