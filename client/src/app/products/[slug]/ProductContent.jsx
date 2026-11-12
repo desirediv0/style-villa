@@ -311,7 +311,7 @@ export default function ProductContent({ slug }) {
         <div className="flex items-baseline gap-4 flex-wrap">
           <span className="font-display text-4xl md:text-[2.6rem] text-noir">{formatCurrency(fp)}</span>
           <span className="text-lg text-stone line-through font-light">{formatCurrency(rp)}</span>
-          <span className="px-3 py-1.5 bg-gold text-white text-[9px] uppercase tracking-[0.2em] font-bold">−{product.flashSale.discountPercentage}% Flash</span>
+          <span className="px-3 py-1.5 bg-gold text-white text-[9px] uppercase tracking-[0.2em] font-bold">{product.flashSale.discountPercentage}% OFF Flash</span>
         </div>
       );
     }

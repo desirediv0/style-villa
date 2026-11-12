@@ -192,7 +192,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
               )}
               {!hasFlashSale && discountPct > 0 && (
                 <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[10px]   bg-red-500 text-white shadow-sm">
-                  -{discountPct}% OFF
+                  {discountPct}% OFF
                 </span>
               )}
 
@@ -250,7 +250,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                   <span className="text-sm text-gray-400 line-through">{formatCurrency(showOriginal)}</span>
                 )}
                 {discountPct > 0 && (
-                  <span className="text-[10px]   bg-red-50 text-red-500 px-1.5 py-0.5 rounded-md">-{discountPct}%</span>
+                  <span className="text-[10px]   bg-red-50 text-red-500 px-1.5 py-0.5 rounded-md">{discountPct}% OFF</span>
                 )}
               </div>
             </div>

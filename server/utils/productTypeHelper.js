@@ -62,24 +62,39 @@ export function parseProductTypes(rawProductType, rawFeatured) {
  * Builds Prisma where condition to match products for a given type or aliases
  */
 export function buildProductTypeWhereCondition(productType) {
+  if (!productType) return null;
   const canonical = normalizeProductType(productType);
   if (!canonical) return null;
 
   const aliases = getLegacyAliasesForType(canonical);
-  const conditions = aliases.map((alias) => ({
-    productType: {
-      array_contains: [alias],
-    },
-  }));
+  const allKeys = Array.from(
+    new Set([canonical, productType.toLowerCase(), ...aliases].filter(Boolean))
+  );
 
-  // Also include exact canonical match
+  const conditions = [];
+
+  // 1. JSON array contains (scalar value for Prisma PostgreSQL JSON array)
+  allKeys.forEach((key) => {
+    conditions.push({ productType: { array_contains: key } });
+    conditions.push({ productType: { string_contains: key } });
+    conditions.push({ productType: { equals: key } });
+  });
+
+  // 2. Also check ProductSection join table (so products in Homepage Sections match immediately)
   conditions.push({
-    productType: {
-      array_contains: [canonical],
+    productSections: {
+      some: {
+        productSection: {
+          slug: {
+            in: allKeys,
+            mode: "insensitive",
+          },
+        },
+      },
     },
   });
 
-  // If type is featured, also match on featured boolean
+  // 3. If type is featured, also match on featured boolean
   if (canonical === "featured") {
     conditions.push({ featured: true });
   }

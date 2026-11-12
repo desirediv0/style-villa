@@ -187,8 +187,10 @@ function ProductsContent() {
           }
         );
       } catch (err) {
-        console.error(err);
+        console.error("fetchProducts error:", err);
         setError(err.message);
+        setProducts([]);
+        setPagination({ page: 1, limit: 12, total: 0, pages: 0 });
       } finally {
         setLoading(false);
       }
@@ -207,7 +209,8 @@ function ProductsContent() {
     add("minPrice", f.minPrice); add("maxPrice", f.maxPrice);
     if (f.sort !== "createdAt" || f.order !== "desc") { add("sort", f.sort); add("order", f.order); }
     if (f.page > 1) add("page", f.page);
-    router.push(pairs.length ? `?${pairs.join("&")}` : window.location.pathname, { scroll: false });
+    const basePath = typeof window !== "undefined" ? window.location.pathname : "/products";
+    router.push(pairs.length ? `${basePath}?${pairs.join("&")}` : basePath, { scroll: false });
   };
 
   const handleFilterChange = (name, value) => {
