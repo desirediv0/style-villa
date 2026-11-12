@@ -1,5 +1,20 @@
 import { prisma } from "../config/db.js";
-import { normalizeProductType, getLegacyAliasesForType } from "../constants/productTypes.js";
+import {
+  normalizeProductType,
+  getLegacyAliasesForType,
+  PRODUCT_TYPES,
+  PRODUCT_TYPE_KEYS,
+  PRODUCT_TYPE_ALIASES,
+} from "../constants/productTypes.js";
+
+// Re-export constants and normalization functions
+export {
+  normalizeProductType,
+  getLegacyAliasesForType,
+  PRODUCT_TYPES,
+  PRODUCT_TYPE_KEYS,
+  PRODUCT_TYPE_ALIASES,
+};
 
 /**
  * Cleanly parse and normalize product types from request payload
