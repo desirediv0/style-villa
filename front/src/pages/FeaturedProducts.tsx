@@ -158,6 +158,9 @@ export default function FeaturedProductsPage() {
       // Create form data
       const formData = new FormData();
       formData.append("productType", JSON.stringify(newTypes));
+      if (productType === "featured") {
+        formData.append("featured", String(isAdding));
+      }
 
       // Update product
       const response = await products.updateProduct(productId, formData as any);

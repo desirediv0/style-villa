@@ -167,7 +167,7 @@ export default function HomePageContent() {
     if (!dbSection) return null;
 
     const sectionTitle = dbSection.name || key.toUpperCase();
-    const linkUrl = `/products?search=${key}`;
+    const linkUrl = `/products?productType=${encodeURIComponent(key)}`;
 
     return (
       <section className={`py-14 md:py-20 overflow-hidden ${sectionIndex % 2 === 1 ? "bg-ivory" : "bg-white"}`}>

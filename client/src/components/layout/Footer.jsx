@@ -191,9 +191,9 @@ export const Footer = () => {
             <h4 className="text-[10px] uppercase tracking-[0.35em] mb-5 text-plum font-medium">Discover</h4>
             <ul className="space-y-3">
               {[
-                { label: "New Arrivals", href: "/products?search=new" },
-                { label: "Best Sellers", href: "/products?search=bestseller" },
-                { label: "Trending Now", href: "/products?search=trending" },
+                { label: "New Arrivals", href: "/products?productType=new" },
+                { label: "Best Sellers", href: "/products?productType=bestseller" },
+                { label: "Trending Now", href: "/products?productType=trending" },
                 { label: "Sale", href: "/products?search=sale" },
               ].map(({ label, href }) => (
                 <li key={label}>

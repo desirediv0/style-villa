@@ -10,6 +10,7 @@ import {
 import { ClientOnly } from "@/components/client-only";
 import { ProductCard } from "@/components/products/ProductCard";
 import Link from "next/link";
+import { PRODUCT_TYPE_TABS, normalizeProductType } from "@/constants/productTypes";
 
 function ProductCardSkeleton() {
   return (
@@ -49,7 +50,7 @@ function ProductsContent() {
   const decodePlus = (s) => (s ? s.replace(/\+/g, " ") : "");
   const searchQuery = decodePlus(searchParams.get("search") || "");
   const categorySlug = searchParams.get("category") || "";
-  const productType = searchParams.get("productType") || "";
+  const productType = normalizeProductType(searchParams.get("productType") || "");
   const colorId = searchParams.get("color") || "";
   const sizeId = searchParams.get("size") || "";
   const minPrice = searchParams.get("minPrice") || "";
@@ -84,6 +85,52 @@ function ProductsContent() {
     sort: sortParam, order: orderParam,
   });
 
+  // Keep filters in sync when URL searchParams change (navigation, back/forward, direct links)
+  useEffect(() => {
+    const rawType = searchParams.get("productType") || "";
+    const normalizedType = normalizeProductType(rawType);
+    const search = decodePlus(searchParams.get("search") || "");
+    const category = searchParams.get("category") || "";
+    const color = searchParams.get("color") || "";
+    const size = searchParams.get("size") || "";
+    const minP = searchParams.get("minPrice") || "";
+    const maxP = searchParams.get("maxPrice") || "";
+    const sort = searchParams.get("sort") || "createdAt";
+    const order = searchParams.get("order") || "desc";
+    const page = parseInt(searchParams.get("page")) || 1;
+
+    setFilters((prev) => {
+      if (
+        prev.productType === normalizedType &&
+        prev.search === search &&
+        prev.category === category &&
+        prev.color === color &&
+        prev.size === size &&
+        prev.minPrice === minP &&
+        prev.maxPrice === maxP &&
+        prev.sort === sort &&
+        prev.order === order
+      ) {
+        return prev;
+      }
+      return {
+        search,
+        category,
+        productType: normalizedType,
+        color,
+        size,
+        minPrice: minP,
+        maxPrice: maxP,
+        sort,
+        order,
+      };
+    });
+
+    if (color) setSelectedColors([color]);
+    if (size) setSelectedSizes([size]);
+    setPagination((p) => (p.page === page ? p : { ...p, page }));
+  }, [searchParams]);
+
   useEffect(() => { setSearchInput(filters.search || ""); }, [filters.search]);
 
   useEffect(() => {
@@ -109,38 +156,36 @@ function ProductsContent() {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        let response;
-        if (filters.productType) {
-          const q = new URLSearchParams({ limit: String(pagination.limit * pagination.page) });
-          response = await fetchApi(`/public/products/type/${filters.productType}?${q}`);
-          const all = response.data?.products || [];
-          const s = (pagination.page - 1) * pagination.limit;
-          setProducts(all.slice(s, s + pagination.limit));
-          setPagination((p) => ({ ...p, total: all.length, pages: Math.ceil(all.length / p.limit) }));
-        } else {
-          const q = new URLSearchParams({
-            page: String(pagination.page),
-            limit: String(pagination.limit),
-            sort: ["createdAt", "updatedAt", "name", "price", "featured"].includes(filters.sort) ? filters.sort : "createdAt",
-            order: filters.order,
-          });
-          if (filters.search) q.append("search", filters.search);
-          if (filters.category) q.append("category", filters.category);
-          if (filters.minPrice) q.append("minPrice", filters.minPrice);
-          if (filters.maxPrice) q.append("maxPrice", filters.maxPrice);
+        const q = new URLSearchParams({
+          page: String(pagination.page),
+          limit: String(pagination.limit),
+          sort: ["createdAt", "updatedAt", "name", "price", "featured"].includes(filters.sort) ? filters.sort : "createdAt",
+          order: filters.order,
+        });
+        if (filters.search) q.append("search", filters.search);
+        if (filters.category) q.append("category", filters.category);
+        if (filters.productType) q.append("productType", filters.productType);
+        if (filters.minPrice) q.append("minPrice", filters.minPrice);
+        if (filters.maxPrice) q.append("maxPrice", filters.maxPrice);
 
-          const attrIds = new Set();
-          if (selectedColors.length > 0) { q.append("color", selectedColors[0]); selectedColors.forEach((id) => attrIds.add(id)); }
-          if (selectedSizes.length > 0) { q.append("size", selectedSizes[0]); selectedSizes.forEach((id) => attrIds.add(id)); }
-          Object.keys(selectedAttributes).forEach((k) => {
-            if (k !== "color" && k !== "size") (selectedAttributes[k] || []).forEach((id) => attrIds.add(id));
-          });
-          if (attrIds.size > 0) q.append("attributeValueIds", [...attrIds].join(","));
+        const attrIds = new Set();
+        if (selectedColors.length > 0) { q.append("color", selectedColors[0]); selectedColors.forEach((id) => attrIds.add(id)); }
+        if (selectedSizes.length > 0) { q.append("size", selectedSizes[0]); selectedSizes.forEach((id) => attrIds.add(id)); }
+        Object.keys(selectedAttributes).forEach((k) => {
+          if (k !== "color" && k !== "size") (selectedAttributes[k] || []).forEach((id) => attrIds.add(id));
+        });
+        if (attrIds.size > 0) q.append("attributeValueIds", [...attrIds].join(","));
 
-          response = await fetchApi(`/public/products?${q}`);
-          setProducts(response.data.products || []);
-          setPagination(response.data.pagination || {});
-        }
+        const response = await fetchApi(`/public/products?${q}`);
+        setProducts(response.data?.products || []);
+        setPagination(
+          response.data?.pagination || {
+            page: pagination.page,
+            limit: pagination.limit,
+            total: (response.data?.products || []).length,
+            pages: Math.ceil(((response.data?.products || []).length || 1) / pagination.limit),
+          }
+        );
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -416,23 +461,27 @@ function ProductsContent() {
 
             {/* Quick Filter Tags */}
             <div className="flex flex-wrap items-center gap-2 mb-7">
-              {[
-                { label: "Featured", type: "featured" },
-                { label: "Best Sellers", type: "bestseller" },
-                { label: "Trending", type: "trending" },
-                { label: "New Arrivals", type: "new" },
-              ].map(({ label, type }) => (
-                <button
-                  key={type}
-                  onClick={() => handleFilterChange("productType", filters.productType === type ? "" : type)}
-                  className={`px-5 py-2.5 text-[9px] uppercase tracking-[0.25em] font-semibold border transition-all duration-300 ${filters.productType === type
-                    ? "bg-noir border-noir text-gold-light"
-                    : "border-line text-noir/60 hover:border-noir hover:text-noir"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+              {PRODUCT_TYPE_TABS.map(({ label, type }) => {
+                const isActive =
+                  type === "" ? !filters.productType : filters.productType === type;
+                return (
+                  <button
+                    key={type || "all"}
+                    onClick={() =>
+                      handleFilterChange(
+                        "productType",
+                        type === "" ? "" : filters.productType === type ? "" : type
+                      )
+                    }
+                    className={`px-5 py-2.5 text-[9px] uppercase tracking-[0.25em] font-semibold border transition-all duration-300 ${isActive
+                      ? "bg-noir border-noir text-gold-light"
+                      : "border-line text-noir/60 hover:border-noir hover:text-noir"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
               {activeCount > 0 && (
                 <button
                   onClick={clearFilters}

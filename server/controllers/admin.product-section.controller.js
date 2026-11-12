@@ -6,6 +6,10 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import s3client from "../utils/s3client.js";
 import { deleteFromS3, getFileUrl } from "../utils/deleteFromS3.js";
 import { v4 as uuidv4 } from "uuid";
+import {
+  normalizeProductType,
+  buildProductTypeWhereCondition,
+} from "../utils/productTypeHelper.js";
 
 // Helper to get products for a section slug
 const getProductsForSection = async (slug, maxProducts = 15) => {
@@ -22,6 +26,7 @@ const getProductsForSection = async (slug, maxProducts = 15) => {
 
     if (section) {
       // 1. Fetch matching products from the Product table
+      const canonical = normalizeProductType(slug);
       let dbProducts = [];
       if (slug === "latest") {
         dbProducts = await prisma.product.findMany({
@@ -30,12 +35,15 @@ const getProductsForSection = async (slug, maxProducts = 15) => {
           take: maxProducts,
         });
       } else {
+        const typeCond = buildProductTypeWhereCondition(canonical || slug) || {
+          productType: {
+            array_contains: [slug],
+          },
+        };
         dbProducts = await prisma.product.findMany({
           where: {
             isActive: true,
-            productType: {
-              array_contains: [slug],
-            },
+            ...typeCond,
           },
           orderBy: { createdAt: "desc" },
           take: maxProducts,
@@ -530,23 +538,43 @@ export const syncSectionProducts = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "Product section not found");
   }
 
-  // Find products that have this section's slug in their productType array
+  // Find products that match this section's slug (canonical or aliases)
+  const canonical = normalizeProductType(section.slug);
+  const typeCond = buildProductTypeWhereCondition(canonical || section.slug) || {
+    productType: {
+      array_contains: [section.slug],
+    },
+  };
+
   const matchingProducts = await prisma.product.findMany({
     where: {
       isActive: true,
-      productType: {
-        array_contains: [section.slug],
-      },
+      ...typeCond,
     },
     orderBy: { createdAt: "desc" },
     take: section.maxProducts,
   });
 
-  // Get existing product IDs in this section
-  const existingProductIds = new Set(section.items.map(item => item.productId));
+  const matchingProductIds = new Set(matchingProducts.map((p) => p.id));
+
+  // Remove items in this section that no longer match this type
+  const itemsToRemove = section.items.filter(
+    (item) => !matchingProductIds.has(item.productId)
+  );
+  if (itemsToRemove.length > 0) {
+    await prisma.productSectionItem.deleteMany({
+      where: { id: { in: itemsToRemove.map((i) => i.id) } },
+    });
+  }
+
+  // Get remaining existing product IDs in this section
+  const remainingItems = section.items.filter((item) =>
+    matchingProductIds.has(item.productId)
+  );
+  const existingProductIds = new Set(remainingItems.map((item) => item.productId));
 
   // Filter out products already in the section
-  const newProducts = matchingProducts.filter(p => !existingProductIds.has(p.id));
+  const newProducts = matchingProducts.filter((p) => !existingProductIds.has(p.id));
 
   if (newProducts.length === 0) {
     return res
@@ -554,14 +582,22 @@ export const syncSectionProducts = asyncHandler(async (req, res, next) => {
       .json(
         new ApiResponsive(
           200,
-          { added: 0, total: matchingProducts.length, message: "No new products to add. Products must have '" + section.slug + "' in their productType field." },
+          {
+            added: 0,
+            removed: itemsToRemove.length,
+            total: matchingProducts.length,
+            message: `Sync completed: ${itemsToRemove.length} removed, ${matchingProducts.length} total active products.`,
+          },
           "Sync completed"
         )
       );
   }
 
   // Add new products to the section
-  let maxOrder = section.items.reduce((max, item) => Math.max(max, item.displayOrder), -1);
+  let maxOrder = remainingItems.reduce(
+    (max, item) => Math.max(max, item.displayOrder),
+    -1
+  );
   const createPromises = newProducts.map((p, idx) =>
     prisma.productSectionItem.create({
       data: {

@@ -140,7 +140,7 @@ export const FeaturedProducts = () => {
 
         {/* View All Button */}
         <div className="text-center mt-6">
-          <Link href="/products?featured=true">
+          <Link href="/products?productType=featured">
             <Button
               variant="outline"
               size="lg"

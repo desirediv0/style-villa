@@ -58,6 +58,7 @@ import {
 
 import { useLanguage } from "@/context/LanguageContext";
 import { usePermissions } from "@/hooks/usePermissions";
+import { PRODUCT_TYPE_OPTIONS, normalizeProductType } from "@/constants/productTypes";
 
 function useCategories() {
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
@@ -674,20 +675,33 @@ export function ProductForm({
                   !productData.variants[0].sizeId
                   ? productData.variants[0].quantity
                   : 0,
-              featured: productData.featured || false,
+              featured: Boolean(
+                productData.featured ||
+                (Array.isArray(productData.productType) &&
+                  productData.productType.includes("featured"))
+              ),
               ourProduct: productData.ourProduct || false,
-              productType: Array.isArray(productData.productType)
-                ? productData.productType
-                : typeof productData.productType === "string"
-                  ? (() => {
-                    try {
-                      const parsed = JSON.parse(productData.productType);
-                      return Array.isArray(parsed) ? parsed : [];
-                    } catch {
-                      return [];
-                    }
-                  })()
-                  : [],
+              productType: (() => {
+                const rawTypes = Array.isArray(productData.productType)
+                  ? productData.productType
+                  : typeof productData.productType === "string"
+                    ? (() => {
+                      try {
+                        const parsed = JSON.parse(productData.productType);
+                        return Array.isArray(parsed) ? parsed : [];
+                      } catch {
+                        return [];
+                      }
+                    })()
+                    : [];
+                const loaded = rawTypes
+                  .map((t: string) => normalizeProductType(t))
+                  .filter(Boolean);
+                if (productData.featured && !loaded.includes("featured")) {
+                  loaded.push("featured");
+                }
+                return loaded;
+              })(),
               isActive:
                 productData.isActive !== undefined
                   ? productData.isActive
@@ -1045,7 +1059,11 @@ export function ProductForm({
       formData.append("details", detailsEditorContent || product.details || "");
       formData.append("shippingInfo", shippingEditorContent || product.shippingInfo || "");
       formData.append("returnPolicy", returnEditorContent || product.returnPolicy || "");
-      formData.append("featured", String(product.featured));
+      const isProductFeatured = Boolean(
+        product.featured ||
+        (Array.isArray(product.productType) && product.productType.includes("featured"))
+      );
+      formData.append("featured", String(isProductFeatured));
       formData.append("ourProduct", String(product.ourProduct));
       formData.append("productType", JSON.stringify(product.productType));
       formData.append("isActive", String(product.isActive));
@@ -2018,12 +2036,7 @@ export function ProductForm({
                     {t("products.form.settings.select_type_hint")}
                   </p>
                   <div className="grid gap-2 sm:grid-cols-2">
-                    {[
-                      { key: "featured", label: t("products.form.settings.types.featured"), icon: "⭐" },
-                      { key: "bestseller", label: t("products.form.settings.types.bestseller"), icon: "📈" },
-                      { key: "trending", label: t("products.form.settings.types.trending"), icon: "🔥" },
-                      { key: "new", label: t("products.form.settings.types.new"), icon: "🆕" },
-                    ].map((type) => (
+                    {PRODUCT_TYPE_OPTIONS.map((type) => (
                       <div key={type.key} className="flex items-center gap-2">
                         <Checkbox
                           id={`productType-${type.key}`}
@@ -2032,14 +2045,23 @@ export function ProductForm({
                             product.productType.includes(type.key)
                           }
                           onCheckedChange={(checked) => {
-                            setProduct((prev) => ({
-                              ...prev,
-                              productType: checked
-                                ? [...prev.productType, type.key]
-                                : prev.productType.filter(
-                                  (t) => t !== type.key
-                                ),
-                            }));
+                            setProduct((prev) => {
+                              const prevTypes = Array.isArray(prev.productType)
+                                ? prev.productType
+                                : [];
+                              const newTypes = checked
+                                ? (prevTypes.includes(type.key)
+                                  ? prevTypes
+                                  : [...prevTypes, type.key])
+                                : prevTypes.filter((t) => t !== type.key);
+                              return {
+                                ...prev,
+                                productType: newTypes,
+                                ...(type.key === "featured"
+                                  ? { featured: !!checked }
+                                  : {}),
+                              };
+                            });
                           }}
                           className="h-6 w-6 border-gray-400 cursor-pointer"
                         />
@@ -2048,7 +2070,7 @@ export function ProductForm({
                           className="flex items-center gap-1 cursor-pointer"
                         >
                           <span>{type.icon}</span>
-                          {type.label}
+                          {t(type.labelKey) || type.defaultLabel}
                         </Label>
                       </div>
                     ))}

@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge";
+import { normalizeProductType } from "@/constants/productTypes";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -196,8 +197,9 @@ export const loadScript = (src) => {
 // Fetch products by type
 export async function fetchProductsByType(productType, limit = 8) {
   try {
+    const canonical = normalizeProductType(productType) || productType;
     const response = await fetchApi(
-      `/public/products/type/${productType}?limit=${limit}`
+      `/public/products/type/${canonical}?limit=${limit}`
     );
     return response;
   } catch (error) {

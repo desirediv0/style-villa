@@ -5,6 +5,7 @@ import { prisma } from "../config/db.js";
 import { getFileUrl } from "../utils/deleteFromS3.js";
 import { formatVariantWithAttributes } from "../utils/variant-attributes.js";
 import { VARIANT_IMAGE_ORDER, PRODUCT_IMAGE_ORDER, VARIANT_ORDER } from "../utils/imageOrder.js";
+import { normalizeProductType, buildProductTypeWhereCondition } from "../utils/productTypeHelper.js";
 
 // Get all products with filtering, pagination and sorting
 export const getAllProducts = asyncHandler(async (req, res) => {
@@ -32,11 +33,12 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   const normalizedSearch =
     typeof search === "string" ? search.replace(/\+/g, " ") : "";
 
-  // Build filter conditions
-  const whereConditions = {
-    isActive: true,
-    // Search in name or description
-    ...(normalizedSearch && {
+  // Build filter conditions using AND array to avoid any OR key collisions
+  const andClauses = [{ isActive: true }];
+
+  // Search in name or description, category, brand, tags
+  if (normalizedSearch) {
+    andClauses.push({
       OR: [
         { name: { contains: normalizedSearch, mode: "insensitive" } },
         { description: { contains: normalizedSearch, mode: "insensitive" } },
@@ -61,16 +63,19 @@ export const getAllProducts = asyncHandler(async (req, res) => {
         },
         // Also allow searching by tags
         {
-          tags: { hasSome: normalizedSearch.split(" ").filter(t => t.length > 2) }
+          tags: { hasSome: normalizedSearch.split(" ").filter((t) => t.length > 2) },
         },
         // Handle full string match in tags too
         {
-          tags: { has: normalizedSearch }
-        }
+          tags: { has: normalizedSearch },
+        },
       ],
-    }),
-    // Filter by category
-    ...(category && {
+    });
+  }
+
+  // Filter by category
+  if (category) {
+    andClauses.push({
       categories: {
         some: {
           category: {
@@ -78,17 +83,22 @@ export const getAllProducts = asyncHandler(async (req, res) => {
           },
         },
       },
-    }),
-    // Filter by featured
-    ...(featured === "true" && { featured: true }),
-    // Filter by product type
-    ...(productType && {
-      productType: {
-        array_contains: [productType],
-      },
-    }),
-    // Filter by price range via variants
-    ...((minPrice || maxPrice) && {
+    });
+  }
+
+  // Filter by product type (canonical + aliases + featured sync)
+  if (productType) {
+    const typeCond = buildProductTypeWhereCondition(productType);
+    if (typeCond) andClauses.push(typeCond);
+  } else if (featured === "true") {
+    // Filter by featured if productType filter not explicitly set
+    const featCond = buildProductTypeWhereCondition("featured");
+    if (featCond) andClauses.push(featCond);
+  }
+
+  // Filter by price range via variants
+  if (minPrice || maxPrice) {
+    andClauses.push({
       variants: {
         some: {
           AND: [
@@ -96,85 +106,79 @@ export const getAllProducts = asyncHandler(async (req, res) => {
             // Min price
             ...(minPrice
               ? [
-                {
-                  OR: [
-                    { price: { gte: parseFloat(minPrice) } },
-                    {
-                      AND: [
-                        { salePrice: { not: null } },
-                        { salePrice: { gte: parseFloat(minPrice) } },
-                      ],
-                    },
-                  ],
-                },
-              ]
+                  {
+                    OR: [
+                      { price: { gte: parseFloat(minPrice) } },
+                      {
+                        AND: [
+                          { salePrice: { not: null } },
+                          { salePrice: { gte: parseFloat(minPrice) } },
+                        ],
+                      },
+                    ],
+                  },
+                ]
               : []),
             // Max price
             ...(maxPrice
               ? [
-                {
-                  OR: [
-                    {
-                      AND: [
-                        { salePrice: { not: null } },
-                        { salePrice: { lte: parseFloat(maxPrice) } },
-                      ],
-                    },
-                    {
-                      AND: [
-                        { salePrice: null },
-                        { price: { lte: parseFloat(maxPrice) } },
-                      ],
-                    },
-                  ],
-                },
-              ]
+                  {
+                    OR: [
+                      {
+                        AND: [
+                          { salePrice: { not: null } },
+                          { salePrice: { lte: parseFloat(maxPrice) } },
+                        ],
+                      },
+                      {
+                        AND: [
+                          { salePrice: null },
+                          { price: { lte: parseFloat(maxPrice) } },
+                        ],
+                      },
+                    ],
+                  },
+                ]
               : []),
           ],
         },
       },
-    }),
-    // Filter by attribute values (dynamic - supports all attributes)
-    // Collect all attribute value IDs
-    ...((() => {
-      const allAttributeValueIds = [];
+    });
+  }
 
-      // Add color and size if provided (backward compatibility)
-      if (color) allAttributeValueIds.push(color);
-      if (size) allAttributeValueIds.push(size);
+  // Filter by attribute values (dynamic - supports all attributes)
+  const allAttributeValueIds = [];
+  if (color) allAttributeValueIds.push(color);
+  if (size) allAttributeValueIds.push(size);
+  if (attributeValueIds) {
+    const valueIds = attributeValueIds
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
+    allAttributeValueIds.push(...valueIds);
+  }
+  const uniqueAttributeValueIds = [...new Set(allAttributeValueIds)];
 
-      // Add all attribute value IDs from attributeValueIds parameter
-      if (attributeValueIds) {
-        const valueIds = attributeValueIds.split(",").map((id) => id.trim()).filter(Boolean);
-        allAttributeValueIds.push(...valueIds);
-      }
-
-      // Remove duplicates
-      const uniqueAttributeValueIds = [...new Set(allAttributeValueIds)];
-
-      if (uniqueAttributeValueIds.length === 0) return {};
-
-      // Filter: product must have at least one variant with ALL selected attribute values
-      return {
-        variants: {
-          some: {
-            AND: [
-              { isActive: true },
-              // Variant must have ALL selected attribute values
-              // Each attribute value ID must be present in variant's attributes
-              ...uniqueAttributeValueIds.map((valueId) => ({
-                attributes: {
-                  some: {
-                    attributeValueId: valueId,
-                  },
+  if (uniqueAttributeValueIds.length > 0) {
+    andClauses.push({
+      variants: {
+        some: {
+          AND: [
+            { isActive: true },
+            ...uniqueAttributeValueIds.map((valueId) => ({
+              attributes: {
+                some: {
+                  attributeValueId: valueId,
                 },
-              })),
-            ],
-          },
+              },
+            })),
+          ],
         },
-      };
-    })()),
-  };
+      },
+    });
+  }
+
+  const whereConditions = { AND: andClauses };
 
   // Get total count for pagination
   const totalProducts = await prisma.product.count({
@@ -932,14 +936,65 @@ export const getProductsByType = asyncHandler(async (req, res) => {
   } = req.query;
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
+  const take = parseInt(limit);
 
-  // Find matching product section by slug
+  const canonicalType = normalizeProductType(productType);
+  if (!canonicalType) {
+    return res.status(200).json(
+      new ApiResponsive(200, { products: [], totalProducts: 0, totalPages: 0, currentPage: parseInt(page) })
+    );
+  }
+
+  const typeCondition = buildProductTypeWhereCondition(canonicalType);
+
+  // Standard product include shape
+  const productInclude = {
+    categories: {
+      include: {
+        category: true,
+      },
+    },
+    images: {
+      orderBy: [{ isPrimary: "desc" }, { order: "asc" }],
+      take: 2,
+    },
+    variants: {
+      where: { isActive: true },
+      include: {
+        attributes: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+        },
+        images: {
+          orderBy: VARIANT_IMAGE_ORDER,
+        },
+      },
+      orderBy: VARIANT_ORDER,
+    },
+    _count: {
+      select: {
+        reviews: {
+          where: {
+            status: "APPROVED",
+          },
+        },
+        variants: true,
+      },
+    },
+  };
+
+  // Find matching product section by slug or canonical slug
   const section = await prisma.productSection.findFirst({
     where: {
-      slug: {
-        equals: productType,
-        mode: "insensitive",
-      },
+      OR: [
+        { slug: { equals: canonicalType, mode: "insensitive" } },
+        { slug: { equals: productType, mode: "insensitive" } },
+      ],
     },
   });
 
@@ -947,7 +1002,67 @@ export const getProductsByType = asyncHandler(async (req, res) => {
   let totalProducts = 0;
 
   if (section) {
-    // Fetch products ordered by displayOrder in the section
+    // 1. Find all active products matching this type
+    const matchingProducts = await prisma.product.findMany({
+      where: {
+        isActive: true,
+        ...typeCondition,
+      },
+      select: { id: true },
+    });
+    const matchingProductIds = new Set(matchingProducts.map((p) => p.id));
+
+    // 2. Find current section items
+    const currentSectionItems = await prisma.productSectionItem.findMany({
+      where: { productSectionId: section.id },
+      select: { id: true, productId: true, displayOrder: true },
+    });
+
+    // 3. Remove section items that are no longer matching this type
+    const itemsToDelete = currentSectionItems.filter(
+      (item) => !matchingProductIds.has(item.productId)
+    );
+    if (itemsToDelete.length > 0) {
+      await prisma.productSectionItem.deleteMany({
+        where: { id: { in: itemsToDelete.map((i) => i.id) } },
+      });
+    }
+
+    // 4. Add any matching products that aren't yet in this section
+    const currentItemProductIds = new Set(
+      currentSectionItems
+        .filter((item) => matchingProductIds.has(item.productId))
+        .map((item) => item.productId)
+    );
+    const newProductIds = matchingProducts
+      .filter((p) => !currentItemProductIds.has(p.id))
+      .map((p) => p.id);
+
+    if (newProductIds.length > 0) {
+      let maxOrder = currentSectionItems.reduce(
+        (max, item) => Math.max(max, item.displayOrder),
+        -1
+      );
+      for (const pid of newProductIds) {
+        maxOrder += 1;
+        await prisma.productSectionItem.create({
+          data: {
+            productSectionId: section.id,
+            productId: pid,
+            displayOrder: maxOrder,
+          },
+        });
+      }
+    }
+
+    // 5. Query synced items with displayOrder
+    totalProducts = await prisma.productSectionItem.count({
+      where: {
+        productSectionId: section.id,
+        product: { isActive: true },
+      },
+    });
+
     const sectionItems = await prisma.productSectionItem.findMany({
       where: {
         productSectionId: section.id,
@@ -960,67 +1075,32 @@ export const getProductsByType = asyncHandler(async (req, res) => {
       },
       include: {
         product: {
-          include: {
-            categories: {
-              include: {
-                category: true,
-              },
-            },
-            images: {
-              where: { isPrimary: true },
-              take: 1,
-            },
-            variants: {
-              where: { isActive: true },
-              include: {
-                attributes: {
-                  include: {
-                    attributeValue: {
-                      include: {
-                        attribute: true,
-                      },
-                    },
-                  },
-                },
-                images: {
-                  orderBy: VARIANT_IMAGE_ORDER,
-                },
-              },
-              orderBy: VARIANT_ORDER,
-            },
-            _count: {
-              select: {
-                reviews: {
-                  where: {
-                    status: "APPROVED",
-                  },
-                },
-                variants: true,
-              },
-            },
-          },
+          include: productInclude,
         },
       },
       skip,
-      take: parseInt(limit),
+      take,
     });
 
     products = sectionItems.map((item) => item.product);
-    totalProducts = await prisma.productSectionItem.count({
-      where: {
-        productSectionId: section.id,
-        product: {
-          isActive: true,
-        },
-      },
+  } else {
+    // If no section exists in DB, query directly from Product table
+    const whereConditions = {
+      isActive: true,
+      ...typeCondition,
+    };
+
+    totalProducts = await prisma.product.count({
+      where: whereConditions,
     });
 
-    // Section exists but has no assigned products — return empty
-  } else {
-    // Section not found in DB — return empty, no fallback
-    return res.status(200).json(
-      new ApiResponsive(200, { products: [], totalProducts: 0, totalPages: 0, currentPage: parseInt(page) })
-    );
+    products = await prisma.product.findMany({
+      where: whereConditions,
+      orderBy: { createdAt: "desc" },
+      include: productInclude,
+      skip,
+      take,
+    });
   }
 
   // Batch fetch active flash sales for these products

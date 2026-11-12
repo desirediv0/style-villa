@@ -11,6 +11,12 @@ import {
   formatVariantWithAttributes,
   formatVariantsWithAttributes,
 } from "../utils/variant-attributes.js";
+import {
+  normalizeProductType,
+  buildProductTypeWhereCondition,
+  parseProductTypes,
+  syncProductWithSections,
+} from "../utils/productTypeHelper.js";
 
 const stripHtmlToPlain = (value = "", maxLength = 160) => {
   const plain = String(value)
@@ -83,12 +89,16 @@ export const getProductsByType = asyncHandler(async (req, res, next) => {
 
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
-  // Build filter conditions for product type
-  const filterConditions = {
-    isActive: true,
+  // Build filter conditions for product type with canonical and alias support
+  const typeCondition = buildProductTypeWhereCondition(productType) || {
     productType: {
       array_contains: [productType],
     },
+  };
+
+  const filterConditions = {
+    isActive: true,
+    ...typeCondition,
   };
 
   // Get total count for pagination
@@ -393,8 +403,15 @@ export const getProductById = asyncHandler(async (req, res, next) => {
   }
 
   // Format the response data
+  const { productTypes: cleanProductTypes, isFeatured: cleanFeatured } = parseProductTypes(
+    product.productType,
+    product.featured
+  );
+
   const formattedProduct = {
     ...product,
+    productType: cleanProductTypes,
+    featured: cleanFeatured,
     // Extract categories into a more usable format
     categories: product.categories.map((pc) => ({
       id: pc.category.id,
@@ -569,22 +586,11 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   try {
     const result = await prisma.$transaction(async (prisma) => {
       // Create the product
-      // Parse productType if provided
-      let parsedProductType = [];
-      if (productType) {
-        try {
-          parsedProductType =
-            typeof productType === "string"
-              ? JSON.parse(productType)
-              : productType;
-          if (!Array.isArray(parsedProductType)) {
-            parsedProductType = [];
-          }
-        } catch (error) {
-          console.error("Error parsing productType:", error);
-          parsedProductType = [];
-        }
-      }
+      // Parse and normalize productType & sync featured flag
+      const { productTypes: parsedProductType, isFeatured } = parseProductTypes(
+        productType,
+        featured
+      );
 
       const newProduct = await prisma.product.create({
         data: {
@@ -602,7 +608,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
           }),
           slug,
           hasVariants: hasVariants === "true" || hasVariants === true,
-          featured: featured === "true" || featured === true,
+          featured: isFeatured,
           productType: parsedProductType,
           isActive: isActive === "true" || isActive === true || true,
           metaTitle: seo.metaTitle,
@@ -634,6 +640,9 @@ export const createProduct = asyncHandler(async (req, res, next) => {
           ourProduct: ourProduct === "true" || ourProduct === true,
         },
       });
+
+      // Auto-sync product with Homepage Product Sections
+      await syncProductWithSections(newProduct.id, parsedProductType, prisma);
 
       // Create product-category connections
       for (const catId of parsedCategoryIds) {
@@ -1339,6 +1348,19 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   try {
     const result = await prisma.$transaction(async (prisma) => {
       const hasVariantsValue = hasVariants === "true" || hasVariants === true;
+
+      // Cleanly parse productType and sync featured flag
+      let parsedProductType = undefined;
+      let isFeatured = undefined;
+      if (productType !== undefined || featured !== undefined) {
+        const parsed = parseProductTypes(
+          productType !== undefined ? productType : product.productType,
+          featured !== undefined ? featured : product.featured
+        );
+        parsedProductType = parsed.productTypes;
+        isFeatured = parsed.isFeatured;
+      }
+
       // Update product basic info
       const updatedProduct = await prisma.product.update({
         where: { id: productId },
@@ -1350,14 +1372,11 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
           ...(shippingInfo !== undefined && { shippingInfo: shippingInfo || null }),
           ...(returnPolicy !== undefined && { returnPolicy: returnPolicy || null }),
           ...(hasVariants !== undefined && { hasVariants: hasVariantsValue }),
-          ...(featured !== undefined && {
-            featured: featured === "true" || featured === true,
+          ...(isFeatured !== undefined && {
+            featured: isFeatured,
           }),
-          ...(productType !== undefined && {
-            productType:
-              typeof productType === "string"
-                ? JSON.parse(productType)
-                : productType,
+          ...(parsedProductType !== undefined && {
+            productType: parsedProductType,
           }),
           ...(isActive !== undefined && {
             isActive: isActive === "true" || isActive === true,
@@ -1408,6 +1427,11 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
           }),
         },
       });
+
+      // Auto-sync product with Homepage Product Sections if productType changed
+      if (parsedProductType !== undefined) {
+        await syncProductWithSections(productId, parsedProductType, prisma);
+      }
 
       // Get all categories for this product after update
       const updatedCategories = await prisma.productCategory.findMany({
