@@ -323,7 +323,7 @@ function ReelViewer({ reels, currentIndex, onClose, onNavigate }) {
               <div className="flex-1 min-w-0">
                 <h3 className="text-white text-sm font-semibold truncate">{product.name}</h3>
                 <div className="flex items-center gap-2 mt-1">
-                  {product.salePrice ? (
+                  {Number(product.salePrice) > 0 && Number(product.price) > Number(product.salePrice) ? (
                     <>
                       <span className="text-white text-base font-bold">₹{Number(product.salePrice).toLocaleString("en-IN")}</span>
                       <span className="text-white/50 text-xs line-through">₹{Number(product.price).toLocaleString("en-IN")}</span>

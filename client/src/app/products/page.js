@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/utils";
@@ -79,57 +79,19 @@ function ProductsContent() {
   const [searchInput, setSearchInput] = useState(searchQuery);
   const [pagination, setPagination] = useState({ page: pageParam, limit: 12, total: 0, pages: 0 });
 
-  const [filters, setFilters] = useState({
+  // URL is the single source of truth for filters + page
+  const filters = useMemo(() => ({
     search: searchQuery, category: categorySlug, productType,
     color: colorId, size: sizeId, minPrice, maxPrice,
     sort: sortParam, order: orderParam,
-  });
+  }), [searchQuery, categorySlug, productType, colorId, sizeId, minPrice, maxPrice, sortParam, orderParam]);
+  const currentPage = pageParam;
 
-  // Keep filters in sync when URL searchParams change (navigation, back/forward, direct links)
+  // Keep color/size selections in sync with URL (including when cleared)
   useEffect(() => {
-    const rawType = searchParams.get("productType") || "";
-    const normalizedType = normalizeProductType(rawType);
-    const search = decodePlus(searchParams.get("search") || "");
-    const category = searchParams.get("category") || "";
-    const color = searchParams.get("color") || "";
-    const size = searchParams.get("size") || "";
-    const minP = searchParams.get("minPrice") || "";
-    const maxP = searchParams.get("maxPrice") || "";
-    const sort = searchParams.get("sort") || "createdAt";
-    const order = searchParams.get("order") || "desc";
-    const page = parseInt(searchParams.get("page")) || 1;
-
-    setFilters((prev) => {
-      if (
-        prev.productType === normalizedType &&
-        prev.search === search &&
-        prev.category === category &&
-        prev.color === color &&
-        prev.size === size &&
-        prev.minPrice === minP &&
-        prev.maxPrice === maxP &&
-        prev.sort === sort &&
-        prev.order === order
-      ) {
-        return prev;
-      }
-      return {
-        search,
-        category,
-        productType: normalizedType,
-        color,
-        size,
-        minPrice: minP,
-        maxPrice: maxP,
-        sort,
-        order,
-      };
-    });
-
-    if (color) setSelectedColors([color]);
-    if (size) setSelectedSizes([size]);
-    setPagination((p) => (p.page === page ? p : { ...p, page }));
-  }, [searchParams]);
+    setSelectedColors(colorId ? [colorId] : []);
+    setSelectedSizes(sizeId ? [sizeId] : []);
+  }, [colorId, sizeId]);
 
   useEffect(() => { setSearchInput(filters.search || ""); }, [filters.search]);
 
@@ -153,11 +115,12 @@ function ProductsContent() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchProducts = async () => {
       setLoading(true);
       try {
         const q = new URLSearchParams({
-          page: String(pagination.page),
+          page: String(currentPage),
           limit: String(pagination.limit),
           sort: ["createdAt", "updatedAt", "name", "price", "featured"].includes(filters.sort) ? filters.sort : "createdAt",
           order: filters.order,
@@ -177,26 +140,29 @@ function ProductsContent() {
         if (attrIds.size > 0) q.append("attributeValueIds", [...attrIds].join(","));
 
         const response = await fetchApi(`/public/products?${q}`);
+        if (cancelled) return;
         setProducts(response.data?.products || []);
         setPagination(
           response.data?.pagination || {
-            page: pagination.page,
+            page: currentPage,
             limit: pagination.limit,
             total: (response.data?.products || []).length,
             pages: Math.ceil(((response.data?.products || []).length || 1) / pagination.limit),
           }
         );
       } catch (err) {
+        if (cancelled) return;
         console.error("fetchProducts error:", err);
         setError(err.message);
         setProducts([]);
         setPagination({ page: 1, limit: 12, total: 0, pages: 0 });
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
     fetchProducts();
-  }, [filters, pagination.page, selectedColors, selectedSizes, selectedAttributes]);
+    return () => { cancelled = true; };
+  }, [filters, currentPage, selectedColors, selectedSizes, selectedAttributes]);
 
   const updateURL = (f) => {
     const pairs = [];
@@ -214,10 +180,11 @@ function ProductsContent() {
   };
 
   const handleFilterChange = (name, value) => {
-    const nf = { ...filters, [name]: value };
-    setFilters(nf);
-    updateURL(nf);
-    if (pagination.page !== 1) setPagination((p) => ({ ...p, page: 1 }));
+    updateURL({ ...filters, [name]: value, page: 1 });
+  };
+
+  const handleFiltersChange = (changes) => {
+    updateURL({ ...filters, ...changes, page: 1 });
   };
 
   const handleAttrChange = (attrName, valueId) => {
@@ -231,9 +198,9 @@ function ProductsContent() {
 
   const clearFilters = () => {
     const cf = { search: "", category: "", productType: "", color: "", size: "", minPrice: "", maxPrice: "", sort: "createdAt", order: "desc" };
-    setFilters(cf); setSelectedColors([]); setSelectedSizes([]); setSelectedAttributes({});
+    setSelectedColors([]); setSelectedSizes([]); setSelectedAttributes({});
     setPriceRange({ min: 0, max: 1000 });
-    updateURL(cf); setPagination((p) => ({ ...p, page: 1 }));
+    updateURL({ ...cf, page: 1 });
   };
 
   const handleSortChange = (e) => {
@@ -245,14 +212,11 @@ function ProductsContent() {
       featured: ["featured", "desc"]
     };
     const [sort, order] = map[e.target.value] || ["createdAt", "desc"];
-    const nf = { ...filters, sort, order };
-    setFilters(nf);
-    updateURL(nf);
+    updateURL({ ...filters, sort, order, page: 1 });
   };
 
   const handlePageChange = (p) => {
     if (p < 1 || p > pagination.pages) return;
-    setPagination((prev) => ({ ...prev, page: p }));
     const params = new URLSearchParams(searchParams.toString());
     p > 1 ? params.set("page", p) : params.delete("page");
     router.push(`${window.location.pathname}?${params.toString()}`, { scroll: false });
@@ -332,8 +296,7 @@ function ProductsContent() {
             <span className="text-xs text-stone-dark tracking-wide">₹{priceRange.min} — ₹{priceRange.max}</span>
             <button
               onClick={() => {
-                handleFilterChange("minPrice", String(priceRange.min));
-                handleFilterChange("maxPrice", String(priceRange.max));
+                handleFiltersChange({ minPrice: String(priceRange.min), maxPrice: String(priceRange.max) });
               }}
               className="px-5 py-2 bg-noir text-ivory text-[9px] uppercase tracking-[0.25em] font-semibold hover:bg-gold hover:text-white transition-colors duration-300"
             >
